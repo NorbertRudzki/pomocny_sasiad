@@ -1,3 +1,26 @@
 <resources>
-    <string name="app_name">pomocnysasiad</string>
+    <string name="app_name">Pomocny sąsiad</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Hasło</string>
+    <string name="signup_login_hint">Masz już konto? Zaloguj się</string>
+    <string name="login_signup_hint">Nie masz konta? Zarejestruj się</string>
+    <string name="password_repeat_correclty">Powtórz hasło poprawnie</string>
+    <string name="weak_password">Hasło powinno mieć przynajmniej 6 znaków</string>
+    <string name="email_is_used">Ten adres email jest już używany przez inne konto</string>
+    <string name="email_is_bad_formated">Wpisany adres email jest niepoprawny</string>
+    <string name="email_name">Email</string>
+    <string name="password">Hasło</string>
+    <string name="password_repeat">Powtórz hasło</string>
+    <string name="display_name">Wyświetlana nazwa</string>
+    <string name="Wrong_password">Złe hasło</string>
+    <string name="No_user_record">Nie ma użytkownika z takim emailem</string>
+    <string name="forgot_password">Zapomniałem hasła</string>
+    <string name="loginIn">Zaloguj się</string>
+    <string name="register">Zarejestruj się</string>
+    <string name="choose_role">Wybierz rolę</string>
+    <string name="volunteer">Wolontariusz</string>
+    <string name="inNeed">Potrzebujący</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

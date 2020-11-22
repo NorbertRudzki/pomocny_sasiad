@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item
+    android:title="Przyjęte zgłoszenia"
+    android:id="@+id/acceptedRequestsFragment2"
+    android:icon="@drawable/ic_baseline_format_list_bulleted_24"
+    />
+    <item
+        android:title="Szukaj zgłoszeń"
+        android:id="@+id/searchRequestFragment2"
+        android:icon="@drawable/ic_baseline_search_24"
+        />
+    <item
+        android:title="Profil"
+        android:id="@+id/accountFragment2"
+        android:icon="@drawable/ic_baseline_account_circle_24"
+        />
+</menu>

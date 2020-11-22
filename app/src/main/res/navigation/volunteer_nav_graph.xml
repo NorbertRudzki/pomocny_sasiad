@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/volunteer_nav_graph"
+    app:startDestination="@id/searchRequestFragment2">
+
+    <fragment
+        android:id="@+id/acceptedRequestsFragment2"
+        android:name="com.example.pomocnysasiad.fragment.AcceptedRequestsFragment"
+        android:label="fragment_accepted_requests"
+        tools:layout="@layout/fragment_accepted_requests" />
+    <fragment
+        android:id="@+id/accountFragment2"
+        android:name="com.example.pomocnysasiad.fragment.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/searchRequestFragment2"
+        android:name="com.example.pomocnysasiad.fragment.SearchRequestFragment"
+        android:label="fragment_search_request"
+        tools:layout="@layout/fragment_search_request" />
+</navigation>

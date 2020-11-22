@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/inneed_nav_graph"
+    app:startDestination="@id/createRequestFragment">
+
+    <fragment
+        android:id="@+id/myRequestsFragment"
+        android:name="com.example.pomocnysasiad.fragment.MyRequestsFragment"
+        android:label="fragment_my_requests"
+        tools:layout="@layout/fragment_my_requests" />
+    <fragment
+        android:id="@+id/accountFragment3"
+        android:name="com.example.pomocnysasiad.fragment.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/createRequestFragment"
+        android:name="com.example.pomocnysasiad.fragment.CreateRequestFragment"
+        android:label="fragment_create_request"
+        tools:layout="@layout/fragment_create_request" />
+</navigation>
