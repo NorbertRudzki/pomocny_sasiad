@@ -14,15 +14,15 @@ class ChooseRoleActivity : AppCompatActivity() {
         volunteerRoleBT.setOnClickListener {
             startActivity(
                 Intent(applicationContext, VolunteerActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             )
+            finish()
         }
 
         inNeedRoleBT.setOnClickListener {
             startActivity(
                 Intent(applicationContext, InNeedActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             )
+            finish()
         }
     }
 }
