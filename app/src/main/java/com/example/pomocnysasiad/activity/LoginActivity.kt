@@ -14,6 +14,7 @@ import com.example.pomocnysasiad.R
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.*
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
 
 
@@ -29,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         auth = FirebaseAuth.getInstance()
         auth.setLanguageCode("pl")
-        Log.d("login","onCreate")
+        Log.d("login", "onCreate")
         val user = auth.currentUser
         if (user == null || (!user.isEmailVerified && user.email != null)) {
             val providers = arrayListOf(
@@ -45,6 +46,7 @@ class LoginActivity : AppCompatActivity() {
                 .build()
             startActivityForResult(intent, SIGN_IN)
         } else {
+            Log.d("userId", user.uid)
             startActivity(
                 Intent(applicationContext, ChooseRoleActivity::class.java)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -61,10 +63,21 @@ class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
-            Log.d("response", response!!.toString())
+
             if (resultCode == Activity.RESULT_OK) {
+
                 //success, get user and do some work
                 val user = FirebaseAuth.getInstance().currentUser
+                if (response!!.isNewUser) {
+                    Log.d("nowy user",".")
+                    FirebaseFirestore.getInstance().collection("users").add(
+                        hashMapOf(
+                            "id" to user!!.uid,
+                            "tokens" to 5,
+                            "score" to 0
+                        )
+                    )
+                }
                 if (!user!!.isEmailVerified && user.email != null) {
                     user.sendEmailVerification()
                     waitUntilVerified()
