@@ -21,6 +21,13 @@ class FirebaseRepository {
         cloud.collection("requestsForHelp").add(request)
     }
 
+    fun insertShoppingListForRequest(request: Request, list: ProductsListWrapper) {
+        cloud.collection("requestsForHelp").document("shoppingLists")
+            .collection("shoppingLists")
+            .document(request.id.toString())
+            .set(list)
+    }
+
     //users
     fun createNewUser() {
         cloud.collection("users").document(auth.currentUser!!.uid).set(
@@ -35,7 +42,7 @@ class FirebaseRepository {
 
     fun getUser(): LiveData<User> {
         val user = MutableLiveData<User>()
-        if(auth.currentUser != null) {
+        if (auth.currentUser != null) {
             cloud.collection("users").document(auth.currentUser!!.uid)
                 .addSnapshotListener { value, _ ->
                     if (value != null && value.exists()) {
@@ -59,12 +66,12 @@ class FirebaseRepository {
     fun isLogoutUserOrNotVerified() =
         (auth.currentUser == null || (!auth.currentUser!!.isEmailVerified && auth.currentUser!!.phoneNumber == null))
 
-    fun isUserVerified(): Boolean{
+    fun isUserVerified(): Boolean {
         auth.currentUser!!.reload()
         return auth.currentUser!!.isEmailVerified || auth.currentUser!!.phoneNumber != null
     }
 
-    fun sendEmailVerif(){
+    fun sendEmailVerif() {
         auth.currentUser!!.sendEmailVerification()
     }
 }

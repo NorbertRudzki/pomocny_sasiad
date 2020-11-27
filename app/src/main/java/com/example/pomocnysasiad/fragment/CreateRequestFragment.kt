@@ -7,15 +7,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pomocnysasiad.R
-import com.example.pomocnysasiad.model.Request
-import com.example.pomocnysasiad.model.User
+import com.example.pomocnysasiad.model.*
 import com.example.pomocnysasiad.view.CategoryAdapter
 import com.example.pomocnysasiad.view.OnCategorySelected
+import com.example.pomocnysasiad.view.ProductsListCreator
+import com.example.pomocnysasiad.viewmodel.ProductsListViewModel
 import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.example.pomocnysasiad.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -29,30 +31,11 @@ import kotlinx.coroutines.runBlocking
 class CreateRequestFragment : Fragment(), OnCategorySelected {
     private val userVM by viewModels<UserViewModel>()
     private val requestVM by viewModels<RequestViewModel>()
+    private val productsVM by viewModels<ProductsListViewModel>()
     private var currentUser: User? = null
     private var selectedCategory: String? = null
-    private val categoryList = listOf(
-        hashMapOf(
-            "name" to "zakupy",
-            "image" to R.drawable.shopping
-        ),
-        hashMapOf(
-            "name" to "zakupy2",
-            "image" to R.drawable.shopping
-        ),
-        hashMapOf(
-            "name" to "zakupy3",
-            "image" to R.drawable.shopping
-        ),
-        hashMapOf(
-            "name" to "zakupy4",
-            "image" to R.drawable.shopping
-        ),
-        hashMapOf(
-            "name" to "zakupy5",
-            "image" to R.drawable.shopping
-        ),
-    ) as List<HashMap<String, Any>>
+    private var productsListCreator: ProductsListCreator? = null
+    private var currentProductsList : List<Product>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,17 +56,21 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
 
         createRequestCategoryRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        createRequestCategoryRecycler.setItemViewCacheSize(categoryList.size)
+        createRequestCategoryRecycler.setItemViewCacheSize(Category.categoryList.size)
         setupRecycler(null)
 
         createRequestCreateBT.setOnClickListener {
 
             currentUser?.let { user ->
-                if(user.tokens > 0){
+                if (user.tokens > 0) {
                     val request = createRequest()
-                    request?.let {
-                        requestVM.insertRequest(it)
+                    request?.let { req ->
+                        requestVM.insertRequest(req)
                         userVM.decreaseToken()
+                        currentProductsList?.let { list ->
+                            currentProductsList!!.forEach { it.listId = req.id}
+                            requestVM.insertShoppingListForRequest(req, ProductsListWrapper(list))
+                        }
                     }
                 }
             }
@@ -92,13 +79,29 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
     }
 
     override fun onCategorySelected(position: Int) {
-        selectedCategory = categoryList[position]["name"] as String
+        selectedCategory = Category.categoryList[position]["name"] as String
         setupRecycler(position)
+        if (Category.categoryList[position]["name"].toString() == "Zakupy" && productsListCreator == null) {
+            createRequestShoppingList.visibility = View.VISIBLE
+            productsListCreator = ProductsListCreator(createRequestShoppingList, requireActivity(), productsVM)
+            productsListCreator!!.drawListOfProducts(emptyList())
+            productsVM.getProducts().observe(viewLifecycleOwner){
+                if(it != null) {
+                    currentProductsList = it
+                    productsListCreator!!.drawListOfProducts(it)
+                }
+            }
+        } else if(productsListCreator != null) {
+            productsVM.getProducts().removeObservers(viewLifecycleOwner)
+            productsListCreator = null
+            currentProductsList = null
+            createRequestShoppingList.visibility = View.GONE
+        }
     }
 
     private fun setupRecycler(selectedCategory: Int?) {
         createRequestCategoryRecycler.adapter =
-            CategoryAdapter(requireContext(), categoryList, this, selectedCategory)
+            CategoryAdapter(requireContext(), Category.categoryList, this, selectedCategory)
         selectedCategory?.let {
             val smoothScroller = object : LinearSmoothScroller(requireContext()) {
                 override fun getHorizontalSnapPreference(): Int {
@@ -117,7 +120,8 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
         val title = createRequestName.text.toString()
         val description = createRequestDescription.text.toString()
         val category = selectedCategory
-        val location = GeoPoint(52.209, 19.683)
+        val location = GeoPoint(50.0, 20.0)
+        val longitudeZone = 20
         when {
             category == null -> showAlert(resources.getString(R.string.empty_request_category))
             description.isBlank() -> showAlert(resources.getString(R.string.empty_request_description))
@@ -128,7 +132,8 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
                 title = title,
                 description = description,
                 category = category,
-                location = location
+                location = location,
+                longitudeZone = longitudeZone
             )
         }
         return null

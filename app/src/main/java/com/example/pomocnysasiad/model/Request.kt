@@ -13,5 +13,6 @@ data class Request(
     val title: String = "",
     val description: String = "",
     val category: String = "",
-    val location: GeoPoint
+    val location: GeoPoint = GeoPoint(0.0, 0.0),
+    val longitudeZone: Int = 0
     )

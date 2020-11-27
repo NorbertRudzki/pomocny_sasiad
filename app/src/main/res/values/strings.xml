@@ -14,6 +14,9 @@
     <string name="empty_request_description">Musisz uzupełnić opis zgłoszenia</string>
     <string name="empty_request_category">Musisz wybrać kategorie zgłoszenia</string>
     <string name="not_enough_token_to_create_request">Upss.. zabrakło Ci żetonów do utworzenia zgłoszenia</string>
+    <string name="product_name">Nazwa produktu</string>
+    <string name="product_amount">Ilość</string>
+    <string name="shopping_list">Twoja lista zakupów</string>
 
 
 </resources>
