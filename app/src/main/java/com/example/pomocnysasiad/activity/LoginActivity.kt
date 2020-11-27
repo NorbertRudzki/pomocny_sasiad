@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Window
 import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.example.pomocnysasiad.R
+import com.example.pomocnysasiad.viewmodel.UserViewModel
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.*
@@ -23,16 +25,13 @@ class LoginActivity : AppCompatActivity() {
         const val SIGN_IN = 500
     }
 
-    private lateinit var auth: FirebaseAuth
+    private val userVM by viewModels<UserViewModel>()
     private lateinit var dialog: Dialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        auth = FirebaseAuth.getInstance()
-        auth.setLanguageCode("pl")
         Log.d("login", "onCreate")
-        val user = auth.currentUser
-        if (user == null || (!user.isEmailVerified && user.email != null)) {
+        if (userVM.isLogoutUserOrNotVerified()) {
             val providers = arrayListOf(
                 AuthUI.IdpConfig.EmailBuilder().build(),
                 AuthUI.IdpConfig.PhoneBuilder()
@@ -46,7 +45,6 @@ class LoginActivity : AppCompatActivity() {
                 .build()
             startActivityForResult(intent, SIGN_IN)
         } else {
-            Log.d("userId", user.uid)
             startActivity(
                 Intent(applicationContext, ChooseRoleActivity::class.java)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -55,9 +53,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -67,19 +62,12 @@ class LoginActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
 
                 //success, get user and do some work
-                val user = FirebaseAuth.getInstance().currentUser
                 if (response!!.isNewUser) {
-                    Log.d("nowy user",".")
-                    FirebaseFirestore.getInstance().collection("users").add(
-                        hashMapOf(
-                            "id" to user!!.uid,
-                            "tokens" to 5,
-                            "score" to 0
-                        )
-                    )
+                    Log.d("nowy user", ".")
+                    userVM.createUser()
                 }
-                if (!user!!.isEmailVerified && user.email != null) {
-                    user.sendEmailVerification()
+                if (!userVM.isUserVerified()) {
+                    userVM.sendEmailVerif()
                     waitUntilVerified()
                 } else {
                     startActivity(
@@ -115,16 +103,14 @@ class LoginActivity : AppCompatActivity() {
 
     private fun waitUntilVerified() {
         Log.d("waitUntilVerified", "enter")
-        val verified = auth.currentUser!!.isEmailVerified
-        if (!verified) {
+
+        if (!userVM.isUserVerified()) {
             Log.d("waitUntilVerified", "not verified")
             showDialog()
             val job = CoroutineScope(Dispatchers.Main).launch {
                 Log.d("Coroutine", "enetred")
-                while (!auth.currentUser!!.isEmailVerified) {
+                while (!userVM.isUserVerified()) {
                     delay(2000)
-                    auth.currentUser!!.reload()
-                    Log.d("user", auth.currentUser!!.toString())
                 }
                 dialog.dismiss()
                 this.cancel()

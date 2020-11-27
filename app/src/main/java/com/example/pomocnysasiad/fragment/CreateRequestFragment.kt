@@ -7,13 +7,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.model.Request
+import com.example.pomocnysasiad.model.User
 import com.example.pomocnysasiad.view.CategoryAdapter
 import com.example.pomocnysasiad.view.OnCategorySelected
+import com.example.pomocnysasiad.viewmodel.RequestViewModel
+import com.example.pomocnysasiad.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,7 +27,9 @@ import kotlinx.coroutines.runBlocking
 
 
 class CreateRequestFragment : Fragment(), OnCategorySelected {
-    private val firebaseFirestore = FirebaseFirestore.getInstance()
+    private val userVM by viewModels<UserViewModel>()
+    private val requestVM by viewModels<RequestViewModel>()
+    private var currentUser: User? = null
     private var selectedCategory: String? = null
     private val categoryList = listOf(
         hashMapOf(
@@ -59,6 +65,12 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        userVM.user.observe(viewLifecycleOwner) {
+            if (it != null) {
+                currentUser = it
+            }
+        }
+
         createRequestCategoryRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         createRequestCategoryRecycler.setItemViewCacheSize(categoryList.size)
@@ -66,22 +78,15 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
 
         createRequestCreateBT.setOnClickListener {
 
-            firebaseFirestore.collection("users")
-                .whereEqualTo("id", FirebaseAuth.getInstance().uid!!).limit(1).get().addOnSuccessListener { querySnapshot ->
-                    if(!querySnapshot.isEmpty) {
-                        val userData = querySnapshot.documents[0].data
-                        userData?.let {
-                            val tokens = it["tokens"] as Long
-                            if(tokens > 0) {
-                               val request = createRequest()
-                                if(request != null) {
-                                    insertNewRequest(request)
-                                    decreaseUsersToken()
-                                }
-                            }
-                        }
+            currentUser?.let { user ->
+                if(user.tokens > 0){
+                    val request = createRequest()
+                    request?.let {
+                        requestVM.insertRequest(it)
+                        userVM.decreaseToken()
                     }
                 }
+            }
         }
 
     }
@@ -105,13 +110,10 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
         }
     }
 
-    private fun insertNewRequest(request: Request) {
-        firebaseFirestore.collection("requestsForHelp").add(request)
-    }
-
     private fun createRequest(): Request? {
-        val userId = FirebaseAuth.getInstance().currentUser!!.uid
-        val username = FirebaseAuth.getInstance().currentUser!!.displayName
+        //todo upewnij sie, ze name zostalo ustawione w profilu
+        val userId = currentUser!!.id
+        val username = currentUser!!.name
         val title = createRequestName.text.toString()
         val description = createRequestDescription.text.toString()
         val category = selectedCategory
@@ -140,10 +142,5 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
             }
     }
 
-    private fun decreaseUsersToken(){
-        firebaseFirestore.collection("users")
-            .whereEqualTo("id", FirebaseAuth.getInstance().uid!!).limit(1).get().addOnSuccessListener {
-              it.documents[0].reference.update("tokens", FieldValue.increment(-1))
-            }
-    }
+
 }
