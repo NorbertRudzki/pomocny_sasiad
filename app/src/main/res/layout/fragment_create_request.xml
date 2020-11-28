@@ -51,7 +51,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="150dp">
+            android:minHeight="80dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/createRequestDescription"
                 android:layout_width="match_parent"

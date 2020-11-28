@@ -16,7 +16,8 @@
     <string name="not_enough_token_to_create_request">Upss.. zabrakło Ci żetonów do utworzenia zgłoszenia</string>
     <string name="product_name">Nazwa produktu</string>
     <string name="product_amount">Ilość</string>
-    <string name="shopping_list">Twoja lista zakupów</string>
+    <string name="shopping_list">Twoja lista zakupów:</string>
+    <string name="add_product">Dodaj produkt do listy</string>
 
 
 </resources>

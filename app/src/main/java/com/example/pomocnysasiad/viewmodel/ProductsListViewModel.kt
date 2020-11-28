@@ -25,4 +25,5 @@ class ProductsListViewModel : ViewModel() {
         list?.remove(product)
         products.value = list
     }
+
 }

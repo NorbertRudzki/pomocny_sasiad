@@ -1,9 +1,11 @@
 package com.example.pomocnysasiad.view
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -20,7 +22,7 @@ class ProductsListCreator(
 ) : UnitSelector {
     var selectedNewProductUnit = ""
     private lateinit var addNewproductRow: View
-    private var isNewProductAdded = true
+    private var isNewProductAdded = false
 init {
     val param = parent.layoutParams as ViewGroup.MarginLayoutParams
     param.setMargins(0,10,0,25)
@@ -60,6 +62,13 @@ init {
             }
             parent.addView(row)
         }
+        val labelAddProduct = TextView(activity)
+        labelAddProduct.text = activity.resources.getString(R.string.add_product)
+        val param = parent.layoutParams as ViewGroup.MarginLayoutParams
+        param.setMargins(0,100,0,5)
+        labelAddProduct.layoutParams = param
+        parent.addView(labelAddProduct)
+
         addNewproductRow = activity.layoutInflater.inflate(R.layout.product_row, null)
         addNewproductRow.productBT.setImageResource(R.drawable.add)
         addNewproductRow.productAmount.setText("1")
