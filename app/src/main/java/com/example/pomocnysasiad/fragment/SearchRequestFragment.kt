@@ -1,34 +1,36 @@
 package com.example.pomocnysasiad.fragment
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.FragmentManager
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.model.LocationService
 import com.example.pomocnysasiad.model.Request
 import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.firestore.GeoPoint
 import kotlinx.android.synthetic.main.fragment_search_request.*
 
 
-class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+class SearchRequestFragment : Fragment(), OnMapReadyCallback {
 
-    var map: GoogleMap? = null
-    val cloudVM by viewModels<RequestViewModel>()
+    var mMap: GoogleMap? = null
+    var currentRequests: List<Request>? = listOf(
+            Request(1, "", "", "testN", "", "", GeoPoint(52.0, 19.0), 0),
+            Request(2, "", "", "testE", "", "", GeoPoint(51.5, 19.5), 0),
+            Request(3, "", "", "testS", "", "", GeoPoint(51.0, 19.0), 0),
+            Request(4, "", "", "testW", "", "", GeoPoint(51.5, 18.5), 0)
+    )
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search_request, container, false)
@@ -41,63 +43,50 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLoca
         MapsInitializer.initialize(requireActivity().applicationContext)
         mapView.getMapAsync(this)
 
+        readLocation.setOnClickListener { refreshMap() }
+    }
 
-
-        readLocation.setOnClickListener {
-
-            locationDisplay.text =
+    fun refreshMap(){
+        mMap?.setMinZoomPreference(8f)
+        locationDisplay.text =
                 "current location:\nlatitude = ${LocationService.myLocation.latitude} \nlongitude = ${LocationService.myLocation.longitude}"
-            map?.moveCamera(
+        mMap?.moveCamera(
                 CameraUpdateFactory.newLatLng(
-                    LatLng(
-                        LocationService.myLocation.latitude,
-                        LocationService.myLocation.longitude
-                    )
+                        LatLng(
+                                LocationService.myLocation.latitude,
+                                LocationService.myLocation.longitude
+                        )
                 )
-            )
-
+        )
+        mMap?.addMarker(
+                MarkerOptions()
+                        .position(LatLng(51.0, 19.0))
+                        .title("My test pin")
+        )
+        currentRequests?.let {
+            showPins(it)
         }
     }
 
-
-   override fun onMapReady(googleMap: GoogleMap?) {
-       if (ActivityCompat.checkSelfPermission(
-               requireContext(),
-               Manifest.permission.ACCESS_FINE_LOCATION
-           ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-               requireContext(),
-               Manifest.permission.ACCESS_COARSE_LOCATION
-           ) != PackageManager.PERMISSION_GRANTED
-       ) {
-           Log.d("brak","uprawnien")
-           // TODO: Consider calling
-           //    ActivityCompat#requestPermissions
-           // here to request the missing permissions, and then overriding
-           //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-           //                                          int[] grantResults)
-           // to handle the case where the user grants the permission. See the documentation
-           // for ActivityCompat#requestPermissions for more details.
-           return
-       }
-       map = googleMap
-       map?.setMinZoomPreference(12f)
-       map?.isMyLocationEnabled = true
-       map?.setOnMyLocationButtonClickListener(this)
-       map?.setOnMyLocationClickListener(this)
-       map?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(LocationService.myLocation.latitude,LocationService.myLocation.longitude)))
-   }
-
-    override fun onMyLocationButtonClick(): Boolean {
-        Toast.makeText(requireContext(), "MyLocation button clicked", Toast.LENGTH_SHORT)
-            .show()
-        // Return false so that we don't consume the event and the default behavior still occurs
-        // (the camera animates to the user's current position).
-        return false
+    override fun onMapReady(googleMap: GoogleMap?) {
+        mMap = googleMap
+        mMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(LocationService.myLocation.latitude, LocationService.myLocation.longitude)))
+        currentRequests?.let {
+            showPins(it)
+        }
     }
 
-    override fun onMyLocationClick(location: Location) {
-        Log.d("My location", location.toString())
+    fun showPins(requests: List<Request>) {
+        mMap?.let {
+            for (req in requests) {
+                it.addMarker(
+                        MarkerOptions()
+                                .position(LatLng(req.location.latitude, req.location.longitude))
+                                .title(req.title)
+                )
+            }
 
+        }
     }
 
 
