@@ -1,22 +1,31 @@
 package com.example.pomocnysasiad.fragment
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.model.LocationService
+import com.example.pomocnysasiad.model.Request
+import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.fragment_search_request.*
 
 
-class SearchRequestFragment : Fragment(), OnMapReadyCallback {
+class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
-    var mMap: GoogleMap? = null
-
+    var map: GoogleMap? = null
+    val cloudVM by viewModels<RequestViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,11 +42,12 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
         mapView.getMapAsync(this)
 
 
+
         readLocation.setOnClickListener {
-            mMap?.setMinZoomPreference(8f)
+
             locationDisplay.text =
                 "current location:\nlatitude = ${LocationService.myLocation.latitude} \nlongitude = ${LocationService.myLocation.longitude}"
-            mMap?.moveCamera(
+            map?.moveCamera(
                 CameraUpdateFactory.newLatLng(
                     LatLng(
                         LocationService.myLocation.latitude,
@@ -51,10 +61,44 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
 
 
    override fun onMapReady(googleMap: GoogleMap?) {
-       mMap = googleMap
-       mMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(LocationService.myLocation.latitude,LocationService.myLocation.longitude)))
+       if (ActivityCompat.checkSelfPermission(
+               requireContext(),
+               Manifest.permission.ACCESS_FINE_LOCATION
+           ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+               requireContext(),
+               Manifest.permission.ACCESS_COARSE_LOCATION
+           ) != PackageManager.PERMISSION_GRANTED
+       ) {
+           Log.d("brak","uprawnien")
+           // TODO: Consider calling
+           //    ActivityCompat#requestPermissions
+           // here to request the missing permissions, and then overriding
+           //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+           //                                          int[] grantResults)
+           // to handle the case where the user grants the permission. See the documentation
+           // for ActivityCompat#requestPermissions for more details.
+           return
+       }
+       map = googleMap
+       map?.setMinZoomPreference(12f)
+       map?.isMyLocationEnabled = true
+       map?.setOnMyLocationButtonClickListener(this)
+       map?.setOnMyLocationClickListener(this)
+       map?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(LocationService.myLocation.latitude,LocationService.myLocation.longitude)))
    }
 
+    override fun onMyLocationButtonClick(): Boolean {
+        Toast.makeText(requireContext(), "MyLocation button clicked", Toast.LENGTH_SHORT)
+            .show()
+        // Return false so that we don't consume the event and the default behavior still occurs
+        // (the camera animates to the user's current position).
+        return false
+    }
+
+    override fun onMyLocationClick(location: Location) {
+        Log.d("My location", location.toString())
+
+    }
 
 
 }
