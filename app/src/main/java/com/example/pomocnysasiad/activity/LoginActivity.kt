@@ -1,17 +1,23 @@
 package com.example.pomocnysasiad.activity
 
+import android.Manifest
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Window
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.example.pomocnysasiad.R
+import com.example.pomocnysasiad.model.LocationService
 import com.example.pomocnysasiad.viewmodel.UserViewModel
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -29,6 +35,19 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var dialog: Dialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PermissionChecker.PERMISSION_DENIED || ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PermissionChecker.PERMISSION_DENIED
+        ) {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 10)
+        }
+        LocationService.initialize(getSystemService(Context.LOCATION_SERVICE) as LocationManager)
+
         setContentView(R.layout.activity_login)
         Log.d("login", "onCreate")
         if (userVM.isLogoutUserOrNotVerified()) {

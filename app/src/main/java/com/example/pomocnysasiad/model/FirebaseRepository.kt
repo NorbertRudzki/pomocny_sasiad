@@ -28,6 +28,21 @@ class FirebaseRepository {
             .set(list)
     }
 
+    fun getAllRequests(): LiveData<List<Request>> {
+        //todo tylko testowo, pozniej tylko dla podanej lokalizacji
+        val requests = MutableLiveData<List<Request>>()
+        cloud.collection("requestsForHelp").addSnapshotListener { value, error ->
+            if (value != null && !value.isEmpty) {
+                val list = ArrayList<Request>()
+                for (req in value.documents) {
+                    val data = req.toObject(Request::class.java)
+                    data?.let { list.add(it) }
+                }
+                requests.postValue(list.toList())
+            }
+        }
+        return requests
+    }
     //users
     fun createNewUser() {
         cloud.collection("users").document(auth.currentUser!!.uid).set(
