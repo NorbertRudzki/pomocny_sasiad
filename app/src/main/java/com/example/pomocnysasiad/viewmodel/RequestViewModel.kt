@@ -6,14 +6,16 @@ import com.example.pomocnysasiad.model.Product
 import com.example.pomocnysasiad.model.ProductsListWrapper
 import com.example.pomocnysasiad.model.Request
 
-class RequestViewModel: ViewModel() {
+class RequestViewModel : ViewModel() {
     private val repository = FirebaseRepository()
 
-    fun insertRequest(request: Request){
+    fun insertRequest(request: Request) {
         repository.insertRequest(request)
     }
 
     fun insertShoppingListForRequest(request: Request, list: ProductsListWrapper) {
         repository.insertShoppingListForRequest(request, list)
     }
+
+    fun getAllRequests() = repository.getAllRequests()
 }

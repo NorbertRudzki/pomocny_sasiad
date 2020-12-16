@@ -19,5 +19,14 @@
         android:id="@+id/searchRequestFragment2"
         android:name="com.example.pomocnysasiad.fragment.SearchRequestFragment"
         android:label="fragment_search_request"
-        tools:layout="@layout/fragment_search_request" />
+        tools:layout="@layout/fragment_search_request" >
+        <action
+            android:id="@+id/action_searchRequestFragment2_to_requestDetails"
+            app:destination="@id/requestDetails" />
+    </fragment>
+    <fragment
+        android:id="@+id/requestDetails"
+        android:name="com.example.pomocnysasiad.fragment.RequestDetails"
+        android:label="fragment_request_details"
+        tools:layout="@layout/fragment_request_details" />
 </navigation>
