@@ -2,6 +2,7 @@ package com.example.pomocnysasiad.fragment
 
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -54,12 +55,12 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-      //  todo w taki sposob przechodzi się do innego fragmentu i przekazuje wartość w bundle jako mapa key - value
+        //  todo w taki sposob przechodzi się do innego fragmentu i przekazuje wartość w bundle jako mapa key - value
         //todo a tak się odbiera:   val value = arguments?.get("key")
-     //   findNavController().navigate(
-     //       SearchRequestFragmentDirections.actionSearchRequestFragment2ToRequestDetails().actionId,
-     //       bundleOf("key" to "value")
-     //   )
+        //   findNavController().navigate(
+        //       SearchRequestFragmentDirections.actionSearchRequestFragment2ToRequestDetails().actionId,
+        //       bundleOf("key" to "value")
+        //   )
     }
 
     fun refreshMap() {
@@ -112,5 +113,6 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-
 }
+
+
