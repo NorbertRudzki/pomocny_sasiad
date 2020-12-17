@@ -57,6 +57,9 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
                             )
                     )
             )
+            mMap?.moveCamera(
+                    CameraUpdateFactory.zoomTo(7.5f)
+            )
         }
         requestViewModel.getAllRequests().observe(viewLifecycleOwner) {
             if (it != null) {
@@ -109,7 +112,11 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
                 )
             )
         )
-        mMap?.setMinZoomPreference(7.5f)
+        mMap?.moveCamera(
+                CameraUpdateFactory.zoomTo(7.5f)
+        )
+        //mMap?.setMinZoomPreference(7.5f)
+
         currentRequests?.let {
             showPins(it)
         }
