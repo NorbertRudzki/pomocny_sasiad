@@ -47,7 +47,17 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
         MapsInitializer.initialize(requireActivity().applicationContext)
         mapView.getMapAsync(this)
 
-        readLocation.setOnClickListener { refreshMap() }
+        readLocation.setOnClickListener {
+            refreshMap()
+            mMap?.moveCamera(
+                    CameraUpdateFactory.newLatLng(
+                            LatLng(
+                                    LocationService.myLocation.latitude,
+                                    LocationService.myLocation.longitude
+                            )
+                    )
+            )
+        }
         requestViewModel.getAllRequests().observe(viewLifecycleOwner) {
             if (it != null) {
                 currentRequests = it
@@ -67,14 +77,16 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
         mMap?.clear()
         locationDisplay.text =
             "current location:\nlatitude = ${LocationService.myLocation.latitude} \nlongitude = ${LocationService.myLocation.longitude}"
-        mMap?.moveCamera(
-            CameraUpdateFactory.newLatLng(
-                LatLng(
-                    LocationService.myLocation.latitude,
-                    LocationService.myLocation.longitude
-                )
-            )
-        )
+
+        //mMap?.moveCamera(
+        //    CameraUpdateFactory.newLatLng(
+        //        LatLng(
+        //            LocationService.myLocation.latitude,
+        //            LocationService.myLocation.longitude
+        //        )
+        //    )
+        //)
+
         mMap?.addMarker(
             MarkerOptions()
                 .position(LatLng(51.0, 19.0))
@@ -87,8 +99,8 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap
-        mMap?.uiSettings?.isScrollGesturesEnabled = false
-        mMap?.uiSettings?.isZoomGesturesEnabled = false
+        //mMap?.uiSettings?.isScrollGesturesEnabled = false
+        //mMap?.uiSettings?.isZoomGesturesEnabled = false
         mMap?.moveCamera(
             CameraUpdateFactory.newLatLng(
                 LatLng(
