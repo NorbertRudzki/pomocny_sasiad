@@ -64,7 +64,7 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
     }
 
     fun refreshMap() {
-        mMap?.setMinZoomPreference(8f)
+        mMap?.clear()
         locationDisplay.text =
             "current location:\nlatitude = ${LocationService.myLocation.latitude} \nlongitude = ${LocationService.myLocation.longitude}"
         mMap?.moveCamera(
@@ -87,6 +87,8 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap
+        mMap?.uiSettings?.isScrollGesturesEnabled = false
+        mMap?.uiSettings?.isZoomGesturesEnabled = false
         mMap?.moveCamera(
             CameraUpdateFactory.newLatLng(
                 LatLng(
@@ -95,6 +97,7 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback {
                 )
             )
         )
+        mMap?.setMinZoomPreference(7.5f)
         currentRequests?.let {
             showPins(it)
         }
