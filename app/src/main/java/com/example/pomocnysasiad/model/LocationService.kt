@@ -8,9 +8,29 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.core.content.ContextCompat
 import android.os.Bundle
+import kotlin.math.cos
+import kotlin.math.floor
 
 object LocationService  {
     var myLocation: Location = Location("")
+
+
+    fun getLongZone(range: Double): ArrayList<Int> {
+        val zoneLenght : Double = 40075.014 * cos(myLocation.latitude)
+        val rangeInDegrees = range / zoneLenght;
+        val position1 = floor(myLocation.longitude - rangeInDegrees).toInt()
+        val position2 = floor(myLocation.longitude + rangeInDegrees).toInt()
+        val array = ArrayList<Int>()
+        array.add(position1)
+        if(position2 != position1){
+            array.add(position2)
+        }
+        return array
+    }
+
+
+
+
 
     @SuppressLint("MissingPermission")
     fun initialize(locationManager : LocationManager) {
