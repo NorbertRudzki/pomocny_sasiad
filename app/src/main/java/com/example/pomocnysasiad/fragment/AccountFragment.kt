@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.pomocnysasiad.R
-import com.example.pomocnysasiad.activity.InNeedActivity
+import com.example.pomocnysasiad.activity.ChooseRoleActivity
 import com.example.pomocnysasiad.activity.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_account.*
@@ -34,6 +34,11 @@ class AccountFragment : Fragment() {
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             )
             requireActivity().finish()
+        }
+        accountChooseRoleBT.setOnClickListener {
+            startActivity(
+                    Intent(this.context, ChooseRoleActivity::class.java)
+            )
         }
     }
 }
