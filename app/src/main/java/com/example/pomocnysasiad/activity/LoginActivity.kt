@@ -37,18 +37,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PermissionChecker.PERMISSION_DENIED || ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PermissionChecker.PERMISSION_DENIED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 10)
-        }
-        LocationService.initialize(getSystemService(Context.LOCATION_SERVICE) as LocationManager)
-
         setContentView(R.layout.activity_login)
         Log.d("login", "onCreate")
         if (userVM.isLogoutUserOrNotVerified()) {

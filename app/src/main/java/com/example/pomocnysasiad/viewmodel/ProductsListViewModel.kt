@@ -20,6 +20,10 @@ class ProductsListViewModel : ViewModel() {
         products.value = list
     }
 
+    fun addProducts(products: List<Product>){
+        this.products.value = ArrayList(products)
+    }
+
     fun removeProduct(product: Product) {
         val list = products.value
         list?.remove(product)

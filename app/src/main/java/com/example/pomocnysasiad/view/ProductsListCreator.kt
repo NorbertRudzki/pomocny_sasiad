@@ -1,15 +1,11 @@
 package com.example.pomocnysasiad.view
 
 import android.app.Activity
-import android.content.Context
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.setMargins
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.model.Product
 import com.example.pomocnysasiad.viewmodel.ProductsListViewModel
@@ -21,7 +17,7 @@ class ProductsListCreator(
     private val productsVM: ProductsListViewModel
 ) : UnitSelector {
     var selectedNewProductUnit = ""
-    private lateinit var addNewproductRow: View
+    private lateinit var addNewProductRow: View
     private var isNewProductAdded = false
 init {
     val param = parent.layoutParams as ViewGroup.MarginLayoutParams
@@ -69,31 +65,31 @@ init {
         labelAddProduct.layoutParams = param
         parent.addView(labelAddProduct)
 
-        addNewproductRow = activity.layoutInflater.inflate(R.layout.product_row, null)
-        addNewproductRow.productBT.setImageResource(R.drawable.add)
-        addNewproductRow.productAmount.setText("1")
-        prepareUnitSelectorAdapter(addNewproductRow)
-        addNewproductRow.productUnit.onItemSelectedListener =
+        addNewProductRow = activity.layoutInflater.inflate(R.layout.product_row, null)
+        addNewProductRow.productBT.setImageResource(R.drawable.add)
+        addNewProductRow.productAmount.setText("1")
+        prepareUnitSelectorAdapter(addNewProductRow)
+        addNewProductRow.productUnit.onItemSelectedListener =
             ProductUnitAdapter(this, null)
-        addNewproductRow.productUnit.setSelection(0)
+        addNewProductRow.productUnit.setSelection(0)
 
-        addNewproductRow.productBT.setOnClickListener {
+        addNewProductRow.productBT.setOnClickListener {
             isNewProductAdded = true
-            if (addNewproductRow.productName.text.toString().isNotBlank()) {
-                val amount = if (addNewproductRow.productAmount.text.toString().isNotBlank())
-                    addNewproductRow.productAmount.text.toString().toDouble() else 0.0
+            if (addNewProductRow.productName.text.toString().isNotBlank()) {
+                val amount = if (addNewProductRow.productAmount.text.toString().isNotBlank())
+                    addNewProductRow.productAmount.text.toString().toDouble() else 0.0
                 productsVM.addProduct(
                     Product(
-                        name = addNewproductRow.productName.text.toString(),
+                        name = addNewProductRow.productName.text.toString(),
                         amount = amount,
                         unit = selectedNewProductUnit
                     )
                 )
             }
         }
-        parent.addView(addNewproductRow)
+        parent.addView(addNewProductRow)
         if (isNewProductAdded) {
-            addNewproductRow.requestFocus()
+            addNewProductRow.requestFocus()
             isNewProductAdded = false
         }
     }

@@ -22,7 +22,13 @@
         tools:layout="@layout/fragment_search_request" >
         <action
             android:id="@+id/action_searchRequestFragment2_to_requestDetails"
-            app:destination="@id/requestDetails" />
+            app:destination="@id/requestDetails"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right"
+            app:popUpTo="@id/searchRequestFragment2"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/requestDetails"
