@@ -159,12 +159,9 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun findLocationAndMoveCamera() {
-        Log.d("findLocationAndMoveCamera()","enter")
         locationLiveData = locationService.getLocation()
         locationLiveData.observe(viewLifecycleOwner) {
-            Log.d("findLocationAndMoveCamera()",it.toString())
             if (it != null && it.latitude != Location("").latitude && it.longitude != Location("").longitude) {
-                Log.d("findLocationAndMoveCamera()",it.toString())
                 preferences.setLocation(it)
                 mMap?.moveCamera(
                     CameraUpdateFactory.newLatLngZoom(
@@ -177,16 +174,10 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                 locationLiveData.removeObservers(viewLifecycleOwner)
             } else {
                 CoroutineScope(Dispatchers.Main).launch {
-                    Log.d("usuwam","obserwatora")
                     locationLiveData.removeObservers(viewLifecycleOwner)
-                    Log.d("czekam 2 sekundy", "start")
                     delay(2000)
-                    Log.d("czekam 2 sekundy", "stop")
-                    Log.d("try again", "start")
                     findLocationAndMoveCamera()
-                    Log.d("try again", "stop")
                 }
-                Log.d("UWAGA","NOWA LOKALIZACJA JEST NULLEM")
             }
         }
     }

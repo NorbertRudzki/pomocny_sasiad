@@ -1,13 +1,22 @@
 package com.example.pomocnysasiad.fragment
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -23,12 +32,15 @@ import com.example.pomocnysasiad.viewmodel.CreateRequestViewModel
 import com.example.pomocnysasiad.viewmodel.ProductsListViewModel
 import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.example.pomocnysasiad.viewmodel.UserViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.android.synthetic.main.fragment_create_request.*
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlin.math.floor
 import kotlin.random.Random
 
 
@@ -36,11 +48,14 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
     private val userVM by viewModels<UserViewModel>()
     private val requestVM by viewModels<RequestViewModel>()
     private val productsVM by viewModels<ProductsListViewModel>()
+    private lateinit var preferences: MyPreference
+    private lateinit var locationService: LocationService
     private lateinit var interfaceVM: CreateRequestViewModel
     private var currentUser: User? = null
     private var selectedCategory: String? = null
     private var productsListCreator: ProductsListCreator? = null
-    private var currentProductsList : List<Product>? = null
+    private var currentProductsList: List<Product>? = null
+    val LOCATION_PERMISSION = 30
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +72,9 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("created","view")
-        Log.d("viewmodel",interfaceVM.toString())
-
+        Log.d("created", "view")
+        Log.d("viewmodel", interfaceVM.toString())
+        preferences = MyPreference(requireContext())
 
         userVM.user.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -67,12 +82,12 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
             }
         }
         createRequestName.setOnFocusChangeListener { v, hasFocus ->
-            if(!hasFocus){
+            if (!hasFocus) {
                 interfaceVM.setTitle(createRequestName.text.toString())
             }
         }
         createRequestDescription.setOnFocusChangeListener { v, hasFocus ->
-            if(!hasFocus){
+            if (!hasFocus) {
                 interfaceVM.setDescription(createRequestDescription.text.toString())
             }
         }
@@ -82,29 +97,45 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
 
         interfaceVM.getShoppingList().value?.let { productsVM.addProducts(it) }
         setupRecycler(interfaceVM.getCategory().value)
-        if(interfaceVM.getCategory().value == 0){
+        if (interfaceVM.getCategory().value == 0) {
             onCategorySelected(0)
         }
         createRequestName.setText(interfaceVM.getTitle().value)
         createRequestDescription.setText(interfaceVM.getDescription().value)
 
         createRequestCreateBT.setOnClickListener {
-            currentUser?.let { user ->
-                if (user.tokens > 0) {
-                    val request = createRequest()
-                    request?.let { req ->
-                        requestVM.insertRequest(req)
-                        userVM.decreaseToken()
-                        interfaceVM.setTitle("")
-                        interfaceVM.setDescription("")
-                        currentProductsList?.let { list ->
-                            currentProductsList!!.forEach { it.listId = req.id}
-                            requestVM.insertShoppingListForRequest(req, ProductsListWrapper(list))
-                            interfaceVM.setShoppingList(null)
-                        }
-                    }
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                val locationManager =
+                    requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    Log.d("checkPermissionAndSetLocation", "brak GPS")
+                    AlertDialog.Builder(requireContext()).setTitle("Proszę włączyć GPS")
+                        .setPositiveButton("OK") { _: DialogInterface, _: Int ->
+                            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                        }.setNegativeButton("Anuluj") { dialogInterface: DialogInterface, i: Int ->
+                            dialogInterface.dismiss()
+                        }.create().show()
+                } else {
+                    locationService = LocationService(requireContext())
+                    findLocationAndSendRequest()
                 }
+            } else {
+                Log.d("checkPermissionAndSetLocation", "brak uprawnien")
+                requestPermissions(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ), LOCATION_PERMISSION
+                )
             }
+
         }
 
     }
@@ -115,16 +146,17 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
         setupRecycler(position)
         if (Category.categoryList[position]["name"].toString() == "Zakupy" && productsListCreator == null) {
             createRequestShoppingList.visibility = View.VISIBLE
-            productsListCreator = ProductsListCreator(createRequestShoppingList, requireActivity(), productsVM)
+            productsListCreator =
+                ProductsListCreator(createRequestShoppingList, requireActivity(), productsVM)
             productsListCreator!!.drawListOfProducts(emptyList())
-            productsVM.getProducts().observe(viewLifecycleOwner){
-                if(it != null) {
+            productsVM.getProducts().observe(viewLifecycleOwner) {
+                if (it != null) {
                     interfaceVM.setShoppingList(it)
                     currentProductsList = it
                     productsListCreator!!.drawListOfProducts(it)
                 }
             }
-        } else if(productsListCreator != null) {
+        } else if (productsListCreator != null) {
             productsVM.getProducts().removeObservers(viewLifecycleOwner)
             productsListCreator = null
             currentProductsList = null
@@ -147,15 +179,16 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
         }
     }
 
-    private fun createRequest(): Request? {
+    private fun createRequest(loc: Location): Request? {
         //todo upewnij sie, ze name zostalo ustawione w profilu
         val userId = currentUser!!.id
         val username = currentUser!!.name
         val title = createRequestName.text.toString()
         val description = createRequestDescription.text.toString()
         val category = selectedCategory
-        val location = GeoPoint(Random.nextDouble(51.69285, 51.82373), Random.nextDouble(19.36864,19.61723))
-        val longitudeZone = 20
+        val location =
+            GeoPoint(loc.latitude, loc.longitude)
+        val longitudeZone = floor(loc.longitude).toInt()
         when {
             category == null -> showAlert(resources.getString(R.string.empty_request_category))
             description.isBlank() -> showAlert(resources.getString(R.string.empty_request_description))
@@ -171,6 +204,71 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
             )
         }
         return null
+    }
+
+    fun findLocationAndSendRequest() {
+        val locationLiveData = locationService.getLocation()
+        locationLiveData.observe(viewLifecycleOwner) { location ->
+            if (location != null && location.latitude != Location("").latitude && location.longitude != Location(
+                    ""
+                ).longitude
+            ) {
+                Log.d("ustawiona lokalizacja", location.toString())
+                currentUser?.let { user ->
+                    if (user.tokens > 0) {
+                        val request = createRequest(location)
+                        request?.let { req ->
+                            requestVM.insertRequest(req)
+                            userVM.decreaseToken()
+                            interfaceVM.setTitle("")
+                            interfaceVM.setDescription("")
+                            currentProductsList?.let { list ->
+                                currentProductsList!!.forEach { it.listId = req.id }
+                                requestVM.insertShoppingListForRequest(
+                                    req,
+                                    ProductsListWrapper(list)
+                                )
+                                interfaceVM.setShoppingList(null)
+                            }
+                        }
+                    }
+                }
+
+                locationLiveData.removeObservers(viewLifecycleOwner)
+            } else {
+                CoroutineScope(Dispatchers.Main).launch {
+                    Log.d("nie znaleziono lokalizacji", "probuj jeszcze raz")
+                    locationLiveData.removeObservers(viewLifecycleOwner)
+                    delay(2000)
+                    findLocationAndSendRequest()
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+
+        if (requestCode == LOCATION_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                val locationManager =
+                    requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    AlertDialog.Builder(requireContext()).setTitle("Proszę włączyć GPS")
+                        .setPositiveButton("OK") { _: DialogInterface, _: Int ->
+                            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                        }.setNegativeButton("Anuluj") { dialogInterface: DialogInterface, i: Int ->
+                            dialogInterface.dismiss()
+                        }.create().show()
+                } else {
+                    locationService = LocationService(requireContext())
+                    findLocationAndSendRequest()
+                }
+            }
+        }
     }
 
     private fun showAlert(message: String) {
