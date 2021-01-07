@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".fragment.SearchRequestFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -36,8 +35,8 @@
             android:id="@+id/readLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
             android:text="Read location"
+            app:layout_constraintTop_toBottomOf="@+id/rangeSeekBar"
             app:layout_constraintBottom_toTopOf="@+id/locationDisplay"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -47,20 +46,38 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
 
-            app:layout_constraintBottom_toTopOf="@+id/readLocation"
+            app:layout_constraintBottom_toTopOf="@+id/rangeSeekBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4"
-            />
-       <!-- <fragment
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:id="@+id/mapView"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+        <SeekBar
+            android:id="@+id/rangeSeekBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:max="60"
+            android:progress="3"
+            android:layout_marginStart="10dp"
+            android:layout_marginVertical="10dp"
             app:layout_constraintBottom_toTopOf="@+id/readLocation"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/rangeTextView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" /> -->
+            app:layout_constraintTop_toBottomOf="@+id/mapView" />
+
+        <TextView
+            android:id="@+id/rangeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/rangeSeekBar"
+            app:layout_constraintBottom_toTopOf="@+id/readLocation"
+            app:layout_constraintTop_toBottomOf="@+id/mapView"
+
+             />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

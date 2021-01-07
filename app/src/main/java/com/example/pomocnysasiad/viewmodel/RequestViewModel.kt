@@ -1,13 +1,20 @@
 package com.example.pomocnysasiad.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.pomocnysasiad.model.FirebaseRepository
-import com.example.pomocnysasiad.model.Product
-import com.example.pomocnysasiad.model.ProductsListWrapper
-import com.example.pomocnysasiad.model.Request
+import androidx.lifecycle.switchMap
+import com.example.pomocnysasiad.model.*
 
 class RequestViewModel : ViewModel() {
     private val repository = FirebaseRepository()
+    private val filterRequest: MutableLiveData<Filter> by lazy {
+        MutableLiveData()
+    }
+
+    fun setFilter(filter: Filter){
+        filterRequest.postValue(filter)
+    }
+
 
     fun insertRequest(request: Request) {
         repository.insertRequest(request)
@@ -17,5 +24,8 @@ class RequestViewModel : ViewModel() {
         repository.insertShoppingListForRequest(request, list)
     }
 
-    fun getAllRequests() = repository.getAllRequests()
+    fun getNearbyRequests() = filterRequest.switchMap { filter ->
+        repository.getNearbyRequests(filter)
+    }
+
 }

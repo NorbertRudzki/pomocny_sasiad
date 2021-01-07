@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -60,6 +61,14 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         interfaceVM = ViewModelProvider(requireActivity()).get(CreateRequestViewModel::class.java)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (interfaceVM.isTriedToSend().value != null && interfaceVM.isTriedToSend().value!!) {
+            findLocationAndSendRequest()
+            interfaceVM.setTriedToSend(false)
+        }
     }
 
     override fun onCreateView(
@@ -104,40 +113,44 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
         createRequestDescription.setText(interfaceVM.getDescription().value)
 
         createRequestCreateBT.setOnClickListener {
-            if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                val locationManager =
-                    requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    Log.d("checkPermissionAndSetLocation", "brak GPS")
-                    AlertDialog.Builder(requireContext()).setTitle("Proszę włączyć GPS")
-                        .setPositiveButton("OK") { _: DialogInterface, _: Int ->
-                            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                        }.setNegativeButton("Anuluj") { dialogInterface: DialogInterface, i: Int ->
-                            dialogInterface.dismiss()
-                        }.create().show()
-                } else {
-                    locationService = LocationService(requireContext())
-                    findLocationAndSendRequest()
-                }
-            } else {
-                Log.d("checkPermissionAndSetLocation", "brak uprawnien")
-                requestPermissions(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ), LOCATION_PERMISSION
-                )
-            }
-
+            checkPermissionAndCreateRequest()
         }
 
+    }
+
+    private fun checkPermissionAndCreateRequest() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val locationManager =
+                requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                Log.d("checkPermissionAndSetLocation", "brak GPS")
+                AlertDialog.Builder(requireContext()).setTitle("Proszę włączyć GPS")
+                    .setPositiveButton("OK") { _: DialogInterface, _: Int ->
+                        interfaceVM.setTriedToSend(true)
+                        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    }.setNegativeButton("Anuluj") { dialogInterface: DialogInterface, i: Int ->
+                        dialogInterface.dismiss()
+                    }.create().show()
+            } else {
+                locationService = LocationService(requireContext())
+                findLocationAndSendRequest()
+            }
+        } else {
+            Log.d("checkPermissionAndSetLocation", "brak uprawnien")
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), LOCATION_PERMISSION
+            )
+        }
     }
 
     override fun onCategorySelected(position: Int) {
@@ -213,6 +226,7 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
                     ""
                 ).longitude
             ) {
+                interfaceVM.setTriedToSend(false)
                 Log.d("ustawiona lokalizacja", location.toString())
                 currentUser?.let { user ->
                     if (user.tokens > 0) {
@@ -230,6 +244,7 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
                                 )
                                 interfaceVM.setShoppingList(null)
                             }
+                            findNavController().navigate(CreateRequestFragmentDirections.actionCreateRequestFragmentToMyRequestsFragment().actionId)
                         }
                     }
                 }

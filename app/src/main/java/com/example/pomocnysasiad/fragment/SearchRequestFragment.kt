@@ -15,15 +15,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
+import com.example.pomocnysasiad.model.Filter
 import com.example.pomocnysasiad.model.LocationService
 import com.example.pomocnysasiad.model.MyPreference
 import com.example.pomocnysasiad.model.Request
@@ -32,8 +32,6 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.firestore.GeoPoint
 import kotlinx.android.synthetic.main.fragment_search_request.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -73,7 +71,7 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
         super.onViewCreated(view, savedInstanceState)
         Log.d("life","created")
         preferences = MyPreference(requireContext())
-        locationService = LocationService(requireContext())
+        locationService = LocationService(requireContext(),preferences.getLocation())
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
 
@@ -89,13 +87,31 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             checkPermissionAndSetLocation()
         }
 
-        requestViewModel.getAllRequests().observe(viewLifecycleOwner) {
+        requestViewModel.getNearbyRequests().observe(viewLifecycleOwner) {
+            Log.d("getNearbyRequests","observer")
             if (it != null) {
                 currentRequests = it
                 refreshMap()
             }
         }
 
+        rangeSeekBar.setOnSeekBarChangeListener(object  : SeekBar.OnSeekBarChangeListener{
+            var range: Double = 1.0
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                range = progress / 2.0
+                rangeTextView.text = "${range}km"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                Toast.makeText(requireContext(),range.toString(),Toast.LENGTH_LONG).show()
+                requestViewModel.setFilter(Filter(locationService.getLatZone(range), locationService.getLongZone(range)))
+            }
+
+        })
     }
     private fun checkPermissionAndSetLocation(){
         if (ActivityCompat.checkSelfPermission(
@@ -106,6 +122,7 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            mMap?.isMyLocationEnabled = true
             val locationManager =
                 requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -142,6 +159,17 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
 
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            mMap?.isMyLocationEnabled = true
+        }
+
         mMap?.setOnMarkerClickListener(this)
         Log.d("init location", preferences.getLocation().toString())
         mMap?.moveCamera(

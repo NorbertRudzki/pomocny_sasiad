@@ -22,6 +22,9 @@ class CreateRequestViewModel : ViewModel() {
     private val shoppingList: MutableLiveData<List<Product>?> by lazy {
         MutableLiveData()
     }
+    private val triedToSend: MutableLiveData<Boolean> by lazy {
+        MutableLiveData()
+    }
 
     fun setTitle(title: String) {
         this.title.value = title
@@ -39,6 +42,10 @@ class CreateRequestViewModel : ViewModel() {
         this.shoppingList.value = shoppingList
     }
 
+    fun setTriedToSend(tried: Boolean){
+        this.triedToSend.value = tried
+    }
+
     fun getTitle(): LiveData<String> = title
 
     fun getDescription(): LiveData<String> = description
@@ -46,5 +53,7 @@ class CreateRequestViewModel : ViewModel() {
     fun getCategory(): LiveData<Int> = category
 
     fun getShoppingList(): LiveData<List<Product>?> = shoppingList
+
+    fun isTriedToSend(): LiveData<Boolean> = triedToSend
 
 }

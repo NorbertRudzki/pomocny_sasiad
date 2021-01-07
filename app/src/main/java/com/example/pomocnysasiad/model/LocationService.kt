@@ -10,16 +10,18 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.core.content.ContextCompat
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
+import com.google.firebase.firestore.GeoPoint
 import kotlin.math.cos
 import kotlin.math.floor
 
-class LocationService( private val context: Context)  {
-    var myLocation: Location = Location("")
+class LocationService(private val context: Context, private var myLocation: Location = Location(""))  {
+
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
     init {
@@ -52,15 +54,29 @@ class LocationService( private val context: Context)  {
     }
 
     fun getLongZone(range: Double): ArrayList<Int> {
-        val zoneLength : Double = 40075.014 * cos(myLocation.latitude)
-        val rangeInDegrees = range / zoneLength;
+        Log.d("getLongZone", "enter")
+        Log.d("location", myLocation.toString())
+        val zoneLength : Double = 111.32 * cos(myLocation.latitude * 0.01745)
+        val rangeInDegrees = range / zoneLength
+        Log.d("rangeInDegrees",rangeInDegrees.toString())
         val position1 = floor(myLocation.longitude - rangeInDegrees).toInt()
         val position2 = floor(myLocation.longitude + rangeInDegrees).toInt()
         val array = ArrayList<Int>()
-        array.add(position1)
-        if(position2 != position1){
-            array.add(position2)
+        for(i in position1..position2){
+            array.add(i)
         }
+
+        Log.d("getLongZone", array.toString())
+        return array
+    }
+
+    fun getLatZone(range: Double): ArrayList<GeoPoint> {
+        Log.d("getLatZone", "enter")
+        val rangeInDegrees = range / 111.135
+        val array = ArrayList<GeoPoint>()
+        array.add(GeoPoint(myLocation.latitude - rangeInDegrees, myLocation.longitude))
+        array.add(GeoPoint(myLocation.latitude + rangeInDegrees, myLocation.longitude))
+        Log.d("getLatZone", array.toString())
         return array
     }
 

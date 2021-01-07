@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 
 class FirebaseRepository {
     private val auth = FirebaseAuth.getInstance()
@@ -28,10 +29,13 @@ class FirebaseRepository {
             .set(list)
     }
 
-    fun getAllRequests(): LiveData<List<Request>> {
-        //todo tylko testowo, pozniej tylko dla podanej lokalizacji
+    fun getNearbyRequests(filter: Filter): LiveData<List<Request>> {
         val requests = MutableLiveData<List<Request>>()
-        cloud.collection("requestsForHelp").addSnapshotListener { value, error ->
+        cloud.collection("requestsForHelp")
+            .whereGreaterThanOrEqualTo("location", filter.nearbyPoints[0])
+            .whereLessThanOrEqualTo("location", filter.nearbyPoints[1])
+            .whereIn("longitudeZone", filter.longZone)
+            .addSnapshotListener { value, error ->
             if (value != null && !value.isEmpty) {
                 val list = ArrayList<Request>()
                 for (req in value.documents) {
