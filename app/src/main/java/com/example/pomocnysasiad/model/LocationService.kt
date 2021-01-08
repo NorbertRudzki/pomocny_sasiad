@@ -70,6 +70,15 @@ class LocationService(private val context: Context, private var myLocation: Loca
         return array
     }
 
+    fun getLongNearbyPoints(range: Double): ArrayList<Double> {
+        val array = ArrayList<Double>()
+        val zoneLength : Double = 111.32 * cos(myLocation.latitude * 0.01745)
+        val rangeInDegrees = range / zoneLength
+        array.add( myLocation.longitude - rangeInDegrees)
+        array.add(myLocation.longitude + rangeInDegrees)
+        return array
+    }
+
     fun getLatZone(range: Double): ArrayList<GeoPoint> {
         Log.d("getLatZone", "enter")
         val rangeInDegrees = range / 111.135

@@ -90,12 +90,12 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
                 currentUser = it
             }
         }
-        createRequestName.setOnFocusChangeListener { v, hasFocus ->
+        createRequestName.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 interfaceVM.setTitle(createRequestName.text.toString())
             }
         }
-        createRequestDescription.setOnFocusChangeListener { v, hasFocus ->
+        createRequestDescription.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 interfaceVM.setDescription(createRequestDescription.text.toString())
             }
@@ -105,10 +105,12 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
         createRequestCategoryRecycler.setItemViewCacheSize(Category.categoryList.size)
 
         interfaceVM.getShoppingList().value?.let { productsVM.addProducts(it) }
+
         setupRecycler(interfaceVM.getCategory().value)
-        if (interfaceVM.getCategory().value == 0) {
-            onCategorySelected(0)
-        }
+        interfaceVM.getCategory().value?.let { onCategorySelected(it) }
+       // if (interfaceVM.getCategory().value == 0) {
+       //     onCategorySelected(0)
+       // }
         createRequestName.setText(interfaceVM.getTitle().value)
         createRequestDescription.setText(interfaceVM.getDescription().value)
 
@@ -135,7 +137,7 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
                     .setPositiveButton("OK") { _: DialogInterface, _: Int ->
                         interfaceVM.setTriedToSend(true)
                         startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                    }.setNegativeButton("Anuluj") { dialogInterface: DialogInterface, i: Int ->
+                    }.setNegativeButton("Anuluj") { dialogInterface: DialogInterface, _: Int ->
                         dialogInterface.dismiss()
                     }.create().show()
             } else {
@@ -219,7 +221,8 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
         return null
     }
 
-    fun findLocationAndSendRequest() {
+    private fun findLocationAndSendRequest() {
+        locationService = LocationService(requireContext())
         val locationLiveData = locationService.getLocation()
         locationLiveData.observe(viewLifecycleOwner) { location ->
             if (location != null && location.latitude != Location("").latitude && location.longitude != Location(
@@ -236,6 +239,7 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
                             userVM.decreaseToken()
                             interfaceVM.setTitle("")
                             interfaceVM.setDescription("")
+                            interfaceVM.setCategory(null)
                             currentProductsList?.let { list ->
                                 currentProductsList!!.forEach { it.listId = req.id }
                                 requestVM.insertShoppingListForRequest(

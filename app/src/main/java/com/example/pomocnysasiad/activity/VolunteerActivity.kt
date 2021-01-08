@@ -2,6 +2,7 @@ package com.example.pomocnysasiad.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -10,6 +11,14 @@ import com.example.pomocnysasiad.R
 import kotlinx.android.synthetic.main.activity_volunteer.*
 
 class VolunteerActivity : AppCompatActivity() {
+    override fun onResume() {
+        super.onResume()
+        val notificationId = intent.getIntExtra("notified",0)
+        if(notificationId != 0){
+            NotificationManagerCompat.from(applicationContext).cancel(notificationId)
+        }
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_volunteer)

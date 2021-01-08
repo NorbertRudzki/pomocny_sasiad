@@ -1,20 +1,23 @@
 package com.example.pomocnysasiad.model
 
-import android.text.BoringLayout
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class FirebaseRepository {
     private val auth = FirebaseAuth.getInstance()
     private val cloud = FirebaseFirestore.getInstance()
+    private var listenerAllRequestsRegistration: ListenerRegistration? = null
+    private var listenerNewRequestRegistration: ListenerRegistration? = null
 
     init {
         //todo raczej pobrac z locale, chyba, że target 100% polsza
         auth.setLanguageCode("pl")
+
     }
 
     //requests
@@ -31,22 +34,70 @@ class FirebaseRepository {
 
     fun getNearbyRequests(filter: Filter): LiveData<List<Request>> {
         val requests = MutableLiveData<List<Request>>()
-        cloud.collection("requestsForHelp")
+        listenerAllRequestsRegistration?.remove()
+        listenerAllRequestsRegistration = cloud.collection("requestsForHelp")
             .whereGreaterThanOrEqualTo("location", filter.nearbyPoints[0])
             .whereLessThanOrEqualTo("location", filter.nearbyPoints[1])
             .whereIn("longitudeZone", filter.longZone)
-            .addSnapshotListener { value, error ->
-            if (value != null && !value.isEmpty) {
-                val list = ArrayList<Request>()
-                for (req in value.documents) {
-                    val data = req.toObject(Request::class.java)
-                    data?.let { list.add(it) }
+            .addSnapshotListener { value, _ ->
+                if (value != null && !value.isEmpty) {
+                    Log.d("getNearbyRequests", "triggered nor empty")
+                    val list = ArrayList<Request>()
+                    for (req in value.documents) {
+                        val data = req.toObject(Request::class.java)
+                        data?.let { list.add(it) }
+                    }
+                    requests.postValue(list.filter { req ->
+                        req.location.longitude >= filter.longNearbyPoints[0]
+                                && req.location.longitude <= filter.longNearbyPoints[1]
+                    })
+
                 }
-                requests.postValue(list.toList())
             }
-        }
+
         return requests
     }
+
+    fun noticeNewRequest(filter: Filter): LiveData<Request> {
+        val request = MutableLiveData<Request>()
+        listenerNewRequestRegistration?.remove()
+        listenerNewRequestRegistration = cloud.collection("requestsForHelp")
+            .orderBy("id")
+            .limitToLast(2)
+            //.whereGreaterThanOrEqualTo("location", filter.nearbyPoints[0])
+            //.whereGreaterThanOrEqualTo("id", Calendar.getInstance().timeInMillis)
+            //.whereLessThanOrEqualTo("location", filter.nearbyPoints[1])
+            .whereIn("longitudeZone", filter.longZone)
+            .addSnapshotListener { value, _ ->
+                Log.d("noticeNewRequest", "triggered")
+                if (value != null && !value.isEmpty) {
+                    Log.d("noticeNewRequest", "triggered nor empty")
+                    val list = ArrayList<Request>()
+                    val listOfNew = ArrayList<Request>()
+                    for (req in value.documents) {
+                        val data = req.toObject(Request::class.java)
+                        data?.let { list.add(it) }
+                    }
+                    for (req in value.documentChanges) {
+                        if (req.type == DocumentChange.Type.ADDED) {
+                            val data = req.document.toObject(Request::class.java)
+                            listOfNew.add(data)
+                            Log.d("dodano", data.toString())
+                        }
+                    }
+                    Log.d("Nowe size", listOfNew.size.toString())
+                    Log.d("Wszystkie size", list.size.toString())
+
+                    if (listOfNew.size != list.size
+                        && listOfNew[0].location.longitude >= filter.longNearbyPoints[0]
+                        && listOfNew[0].location.longitude <= filter.longNearbyPoints[1]) {
+                        request.postValue(listOfNew[0])
+                    }
+                }
+            }
+        return request
+    }
+
     //users
     fun createNewUser() {
         cloud.collection("users").document(auth.currentUser!!.uid).set(

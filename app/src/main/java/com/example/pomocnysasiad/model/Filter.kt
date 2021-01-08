@@ -4,6 +4,6 @@ import com.google.firebase.firestore.GeoPoint
 
 data class Filter(
     val nearbyPoints: List<GeoPoint>,
-    val longZone: List<Int>
-    //todo zasieg do sprawdzania w szukanej longZone
+    val longZone: List<Int>,
+    val longNearbyPoints: List<Double>
 )

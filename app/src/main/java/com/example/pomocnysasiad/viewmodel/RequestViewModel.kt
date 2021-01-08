@@ -1,5 +1,6 @@
 package com.example.pomocnysasiad.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
@@ -27,5 +28,7 @@ class RequestViewModel : ViewModel() {
     fun getNearbyRequests() = filterRequest.switchMap { filter ->
         repository.getNearbyRequests(filter)
     }
+
+
 
 }

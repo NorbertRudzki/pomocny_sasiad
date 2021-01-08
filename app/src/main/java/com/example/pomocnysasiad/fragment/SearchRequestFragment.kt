@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -21,8 +22,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
+import com.example.pomocnysasiad.SearchRequestService
 import com.example.pomocnysasiad.model.Filter
 import com.example.pomocnysasiad.model.LocationService
 import com.example.pomocnysasiad.model.MyPreference
@@ -40,7 +43,7 @@ import kotlinx.coroutines.launch
 
 
 class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
-    private val requestViewModel by viewModels<RequestViewModel>()
+    private lateinit var requestViewModel: RequestViewModel
     private val markerRequestsMap = HashMap<Marker, Request>()
     private lateinit var preferences: MyPreference
     private lateinit var locationService: LocationService
@@ -59,22 +62,24 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
 
     override fun onResume() {
         super.onResume()
-        Log.d("life","resumed")
+        Log.d("life", "resumed")
         if (preferences.getLocation().latitude == Location("").latitude
             && preferences.getLocation().longitude == Location("").longitude
         ) {
-            Log.d("lokalizacja","brak zapisanej lokalizacji")
+            Log.d("lokalizacja", "brak zapisanej lokalizacji")
             checkPermissionAndSetLocation()
         }
+
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("life","created")
+        Log.d("life", "created")
         preferences = MyPreference(requireContext())
-        locationService = LocationService(requireContext(),preferences.getLocation())
+        locationService = LocationService(requireContext(), preferences.getLocation())
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
-
+        requestViewModel = ViewModelProvider(requireActivity()).get(RequestViewModel::class.java)
 
 
         Log.d("saved loc", (preferences.getLocation()).toString())
@@ -86,16 +91,31 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             refreshMap()
             checkPermissionAndSetLocation()
         }
-
-        requestViewModel.getNearbyRequests().observe(viewLifecycleOwner) {
-            Log.d("getNearbyRequests","observer")
-            if (it != null) {
-                currentRequests = it
-                refreshMap()
-            }
+        requestViewModel.getNearbyRequests().observe(viewLifecycleOwner){
+            Log.d("Wczytano we fragmencie", it.toString())
+            currentRequests = it
+            refreshMap()
         }
 
-        rangeSeekBar.setOnSeekBarChangeListener(object  : SeekBar.OnSeekBarChangeListener{
+        if (!SearchRequestService.isSearching) {
+            val intentService = Intent(requireContext(), SearchRequestService::class.java)
+            requireContext().startService(intentService)
+            //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //      requireContext().startForegroundService(intentService)
+            //  } else {
+            //      requireContext().startService(intentService)
+            //  }
+        }
+
+        requestViewModel.setFilter(
+            Filter(
+                locationService.getLatZone(preferences.getRange().toDouble()),
+                locationService.getLongZone(preferences.getRange().toDouble()),
+                locationService.getLongNearbyPoints(preferences.getRange().toDouble())
+            )
+        )
+
+        rangeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             var range: Double = 1.0
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 range = progress / 2.0
@@ -107,13 +127,25 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                Toast.makeText(requireContext(),range.toString(),Toast.LENGTH_LONG).show()
-                requestViewModel.setFilter(Filter(locationService.getLatZone(range), locationService.getLongZone(range)))
+                Toast.makeText(requireContext(), range.toString(), Toast.LENGTH_LONG).show()
+                requestViewModel.setFilter(
+                    Filter(
+                        locationService.getLatZone(range),
+                        locationService.getLongZone(range),
+                        locationService.getLongNearbyPoints(range)
+                    )
+                )
+                preferences.setRange(range.toFloat())
+                requireContext().stopService(Intent(requireContext(), SearchRequestService::class.java))
+                requireContext().startService(Intent(requireContext(), SearchRequestService::class.java))
             }
 
         })
+        rangeSeekBar.setProgress(preferences.getRange().toInt() * 2, true)
+        rangeTextView.text = "${preferences.getRange()}km"
     }
-    private fun checkPermissionAndSetLocation(){
+
+    private fun checkPermissionAndSetLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -126,7 +158,7 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             val locationManager =
                 requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                Log.d("checkPermissionAndSetLocation","brak GPS")
+                Log.d("checkPermissionAndSetLocation", "brak GPS")
                 AlertDialog.Builder(requireContext()).setTitle("Proszę włączyć GPS")
                     .setPositiveButton("OK") { _: DialogInterface, _: Int ->
                         startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
@@ -137,7 +169,7 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                 findLocationAndMoveCamera()
             }
         } else {
-            Log.d("checkPermissionAndSetLocation","brak uprawnien")
+            Log.d("checkPermissionAndSetLocation", "brak uprawnien")
             requestPermissions(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,

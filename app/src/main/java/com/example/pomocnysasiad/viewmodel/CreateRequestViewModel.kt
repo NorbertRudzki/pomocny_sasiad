@@ -16,7 +16,7 @@ class CreateRequestViewModel : ViewModel() {
     private val description: MutableLiveData<String> by lazy {
         MutableLiveData()
     }
-    private val category: MutableLiveData<Int> by lazy {
+    private val category: MutableLiveData<Int?> by lazy {
         MutableLiveData()
     }
     private val shoppingList: MutableLiveData<List<Product>?> by lazy {
@@ -34,7 +34,7 @@ class CreateRequestViewModel : ViewModel() {
         this.description.value = description
     }
 
-    fun setCategory(category: Int) {
+    fun setCategory(category: Int?) {
         this.category.value = category
     }
 
@@ -50,7 +50,7 @@ class CreateRequestViewModel : ViewModel() {
 
     fun getDescription(): LiveData<String> = description
 
-    fun getCategory(): LiveData<Int> = category
+    fun getCategory(): LiveData<Int?> = category
 
     fun getShoppingList(): LiveData<List<Product>?> = shoppingList
 
