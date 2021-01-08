@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.pomocnysasiad.R
+import com.example.pomocnysasiad.SearchRequestService
 import com.example.pomocnysasiad.activity.ChooseRoleActivity
 import com.example.pomocnysasiad.activity.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -28,6 +29,10 @@ class AccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
         accountSignOutBT.setOnClickListener {
+            if (SearchRequestService.isSearching) {
+                val intentService = Intent(requireContext(), SearchRequestService::class.java)
+                requireContext().stopService(intentService)
+            }
             auth.signOut()
             startActivity(
                 Intent(requireContext(), LoginActivity::class.java)
@@ -36,6 +41,10 @@ class AccountFragment : Fragment() {
             requireActivity().finish()
         }
         accountChooseRoleBT.setOnClickListener {
+            if (SearchRequestService.isSearching) {
+                val intentService = Intent(requireContext(), SearchRequestService::class.java)
+                requireContext().stopService(intentService)
+            }
             startActivity(
                     Intent(this.context, ChooseRoleActivity::class.java)
             )

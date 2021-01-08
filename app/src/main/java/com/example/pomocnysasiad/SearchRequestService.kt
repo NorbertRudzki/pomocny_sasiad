@@ -89,7 +89,7 @@ class SearchRequestService : LifecycleService() {
                 newRequestNotification.flags =
                     newRequestNotification.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
                 NotificationManagerCompat.from(applicationContext).notify(2002, newRequestNotification)
-                stopSelf(2001)
+                stopSelf()
             }
         }
         search.start()
@@ -112,7 +112,7 @@ class SearchRequestService : LifecycleService() {
     private fun createNotificationChannel(channelId: String, channelName: String): String {
         val chan = NotificationChannel(
             channelId,
-            channelName, NotificationManager.IMPORTANCE_DEFAULT
+            channelName, NotificationManager.IMPORTANCE_LOW
         )
         chan.lightColor = Color.BLUE
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
