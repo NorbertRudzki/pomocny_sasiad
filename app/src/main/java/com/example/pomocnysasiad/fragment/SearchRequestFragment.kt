@@ -6,6 +6,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -32,9 +35,7 @@ import com.example.pomocnysasiad.model.MyPreference
 import com.example.pomocnysasiad.model.Request
 import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.fragment_search_request.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,7 +81,6 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
         requestViewModel = ViewModelProvider(requireActivity()).get(RequestViewModel::class.java)
-
 
         Log.d("saved loc", (preferences.getLocation()).toString())
 
@@ -139,7 +139,6 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                 requireContext().stopService(Intent(requireContext(), SearchRequestService::class.java))
                 requireContext().startService(Intent(requireContext(), SearchRequestService::class.java))
             }
-
         })
         rangeSeekBar.setProgress(preferences.getRange().toInt() * 2, true)
         rangeTextView.text = "${preferences.getRange()}km"
@@ -183,7 +182,6 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
         mMap?.clear()
         locationDisplay.text =
             "current location:\nlatitude = ${preferences.getLocation().latitude} \nlongitude = ${preferences.getLocation().longitude}"
-
         currentRequests?.let {
             showPins(it)
         }
@@ -212,7 +210,6 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                 ), 11f
             )
         )
-
         currentRequests?.let {
             showPins(it)
         }
@@ -250,11 +247,35 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                     MarkerOptions()
                         .position(LatLng(req.location.latitude, req.location.longitude))
                         .title(req.title)
+                            .icon(choseIcon(req.category))
                 )
                 markerRequestsMap[marker] = req
             }
-
         }
+    }
+
+    private fun choseIcon(category: String): BitmapDescriptor {
+        val bitmap = when(category){
+            "Zakupy" -> {
+                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_shop)
+            }
+            "Zwierzeta" -> {
+                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_pet)
+            }
+            "Smieci" -> {
+                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_trash)
+            }
+            "Rozmowa" -> {
+                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_phone)
+            }
+            "Transport" -> {
+                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_transport)
+            }
+            else -> {
+                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_else)
+            }
+        }
+        return BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, 100, 100, false))
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
@@ -269,7 +290,6 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                 )
             )
         }
-
         return false
     }
 
@@ -278,7 +298,6 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-
         if (requestCode == LOCATION_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 val locationManager =
@@ -297,7 +316,4 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             }
         }
     }
-
 }
-
-
