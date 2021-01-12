@@ -29,10 +29,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.SearchRequestService
-import com.example.pomocnysasiad.model.Filter
-import com.example.pomocnysasiad.model.LocationService
-import com.example.pomocnysasiad.model.MyPreference
-import com.example.pomocnysasiad.model.Request
+import com.example.pomocnysasiad.model.*
 import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -254,27 +251,9 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
-    private fun choseIcon(category: String): BitmapDescriptor {
-        val bitmap = when(category){
-            "Zakupy" -> {
-                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_shop)
-            }
-            "Zwierzeta" -> {
-                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_pet)
-            }
-            "Smieci" -> {
-                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_trash)
-            }
-            "Rozmowa" -> {
-                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_phone)
-            }
-            "Transport" -> {
-                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_transport)
-            }
-            else -> {
-                BitmapFactory.decodeResource(context?.resources, R.drawable.pin_else)
-            }
-        }
+    private fun choseIcon(category: Int): BitmapDescriptor {
+        val bitmap = BitmapFactory.decodeResource(context?.resources, Category.categoryList[category]["icon"] as Int)
+
         return BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, 100, 100, false))
     }
 

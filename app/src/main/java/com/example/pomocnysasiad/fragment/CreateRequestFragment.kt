@@ -53,7 +53,7 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
     private lateinit var locationService: LocationService
     private lateinit var interfaceVM: CreateRequestViewModel
     private var currentUser: User? = null
-    private var selectedCategory: String? = null
+    private var selectedCategory: Int? = null
     private var productsListCreator: ProductsListCreator? = null
     private var currentProductsList: List<Product>? = null
     val LOCATION_PERMISSION = 30
@@ -157,9 +157,9 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
 
     override fun onCategorySelected(position: Int) {
         interfaceVM.setCategory(position)
-        selectedCategory = Category.categoryList[position]["name"] as String
+        selectedCategory = position
         setupRecycler(position)
-        if (Category.categoryList[position]["name"].toString() == "Zakupy" && productsListCreator == null) {
+        if (position == 0 && productsListCreator == null) {
             createRequestShoppingList.visibility = View.VISIBLE
             productsListCreator =
                 ProductsListCreator(createRequestShoppingList, requireActivity(), productsVM)

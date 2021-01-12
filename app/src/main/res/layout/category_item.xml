@@ -60,6 +60,7 @@
                 android:fontFamily="@font/courgette"
 
                 android:gravity="center"
+                android:foregroundGravity="center_horizontal"
                 android:text="placeholder"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/selectCategoryBT"

@@ -12,7 +12,7 @@ data class Request(
     val userInNeedName: String = "",
     val title: String = "",
     val description: String = "",
-    val category: String = "",
+    val category: Int = 0,
     val location: GeoPoint = GeoPoint(0.0, 0.0),
     val longitudeZone: Int = 0
     )
