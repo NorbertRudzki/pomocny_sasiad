@@ -10,5 +10,5 @@ data class ChatWithMessages(
         entityColumn = "chatId",
         entity = Message::class
     )
-    var message: List<Message> = emptyList()
+    var messages: List<Message> = emptyList()
 )

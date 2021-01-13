@@ -15,40 +15,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.model.*
 import com.example.pomocnysasiad.view.CategoryAdapter
 import com.example.pomocnysasiad.view.OnCategorySelected
 import com.example.pomocnysasiad.view.ProductsListCreator
-import com.example.pomocnysasiad.viewmodel.CreateRequestViewModel
-import com.example.pomocnysasiad.viewmodel.ProductsListViewModel
-import com.example.pomocnysasiad.viewmodel.RequestViewModel
-import com.example.pomocnysasiad.viewmodel.UserViewModel
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.pomocnysasiad.viewmodel.*
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.android.synthetic.main.fragment_create_request.*
 import kotlinx.coroutines.*
+import java.util.*
 import kotlin.math.floor
-import kotlin.random.Random
 
 
 class CreateRequestFragment : Fragment(), OnCategorySelected {
     private val userVM by viewModels<UserViewModel>()
     private val requestVM by viewModels<RequestViewModel>()
     private val productsVM by viewModels<ProductsListViewModel>()
+    private val chatVM by viewModels<ChatViewModel>()
     private lateinit var preferences: MyPreference
     private lateinit var locationService: LocationService
     private lateinit var interfaceVM: CreateRequestViewModel
@@ -108,9 +98,9 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
 
         setupRecycler(interfaceVM.getCategory().value)
         interfaceVM.getCategory().value?.let { onCategorySelected(it) }
-       // if (interfaceVM.getCategory().value == 0) {
-       //     onCategorySelected(0)
-       // }
+        // if (interfaceVM.getCategory().value == 0) {
+        //     onCategorySelected(0)
+        // }
         createRequestName.setText(interfaceVM.getTitle().value)
         createRequestDescription.setText(interfaceVM.getDescription().value)
 
@@ -209,6 +199,7 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
             description.isBlank() -> showAlert(resources.getString(R.string.empty_request_description))
             title.isBlank() -> showAlert(resources.getString(R.string.empty_request_title))
             else -> return Request(
+                id = Calendar.getInstance().timeInMillis,
                 userInNeedId = userId,
                 userInNeedName = username!!,
                 title = title,
@@ -235,14 +226,23 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
                     if (user.tokens > 0) {
                         val request = createRequest(location)
                         request?.let { req ->
-                            requestVM.insertRequest(req)
+                            requestVM.insertRequestCloud(req)
+                            val newChat = Chat(
+                                id = req.id,
+                                userInNeedId = user.id,
+                                userInNeedName = user.name!!,
+                            )
+                            requestVM.insertRequestLocal(req)
+                            chatVM.insertChat(newChat)
+                            chatVM.createChatCloud(newChat)
                             userVM.decreaseToken()
                             interfaceVM.setTitle("")
                             interfaceVM.setDescription("")
                             interfaceVM.setCategory(null)
                             currentProductsList?.let { list ->
                                 currentProductsList!!.forEach { it.listId = req.id }
-                                requestVM.insertShoppingListForRequest(
+                                requestVM.insertShoppingListForRequestLocal(list)
+                                requestVM.insertShoppingListForRequestCloud(
                                     req,
                                     ProductsListWrapper(list)
                                 )

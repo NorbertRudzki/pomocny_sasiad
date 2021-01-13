@@ -1,34 +1,56 @@
 package com.example.pomocnysasiad.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
+import android.app.Application
+import androidx.lifecycle.*
 import com.example.pomocnysasiad.model.*
 
-class RequestViewModel : ViewModel() {
-    private val repository = FirebaseRepository()
+class RequestViewModel(application: Application) : AndroidViewModel(application) {
+    private val firebaseRepository = FirebaseRepository()
+    private val localRepository = LocalRepository(application.applicationContext)
     private val filterRequest: MutableLiveData<Filter> by lazy {
         MutableLiveData()
     }
 
-    fun setFilter(filter: Filter){
+    fun setFilter(filter: Filter) {
         filterRequest.postValue(filter)
     }
 
 
-    fun insertRequest(request: Request) {
-        repository.insertRequest(request)
+    fun insertRequestCloud(request: Request) {
+        firebaseRepository.insertRequest(request)
     }
 
-    fun insertShoppingListForRequest(request: Request, list: ProductsListWrapper) {
-        repository.insertShoppingListForRequest(request, list)
+    fun insertShoppingListForRequestCloud(request: Request, list: ProductsListWrapper) {
+        firebaseRepository.insertShoppingListForRequest(request, list)
     }
 
     fun getNearbyRequests() = filterRequest.switchMap { filter ->
-        repository.getNearbyRequests(filter)
+        firebaseRepository.getNearbyRequests(filter)
     }
 
+    fun insertRequestLocal(request: Request) {
+        localRepository.insertRequest(request)
+    }
+
+    fun insertShoppingListForRequestLocal(products: List<Product>) {
+        localRepository.insertManyProducts(products)
+    }
+
+    fun deleteLocalRequest(request: Request) {
+        localRepository.deleteRequest(request)
+    }
+
+    fun deleteProductsByListId(id: Long) {
+        localRepository.deleteProductsByListId(id)
+    }
+
+    fun getAllAcceptedRequests() =
+        localRepository.getAllAcceptedRequest(firebaseRepository.getUserId())
+
+    fun getAllMyRequests() =
+        localRepository.getAllMyRequest(firebaseRepository.getUserId())
+
+    fun getShoppingList(id: Long): LiveData<List<Product>> = firebaseRepository.getShoppingList(id)
 
 
 }

@@ -33,6 +33,7 @@ import com.example.pomocnysasiad.model.*
 import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_search_request.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -225,6 +226,14 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                         ), 11f
                     )
                 )
+
+                requestViewModel.setFilter(
+                    Filter(
+                        locationService.getLatZone(preferences.getRange().toDouble()),
+                        locationService.getLongZone(preferences.getRange().toDouble()),
+                        locationService.getLongNearbyPoints(preferences.getRange().toDouble())
+                    )
+                )
                 locationLiveData.removeObservers(viewLifecycleOwner)
             } else {
                 CoroutineScope(Dispatchers.Main).launch {
@@ -263,9 +272,7 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             findNavController().navigate(
                 SearchRequestFragmentDirections.actionSearchRequestFragment2ToRequestDetails().actionId,
                 bundleOf(
-                    "title" to markerRequestsMap[marker]!!.title,
-                    "auth" to markerRequestsMap[marker]!!.userInNeedName,
-                    "desc" to markerRequestsMap[marker]!!.description
+                    "request" to Gson().toJson(markerRequestsMap[marker]!!),
                 )
             )
         }

@@ -26,4 +26,6 @@ class UserViewModel: ViewModel() {
     fun sendEmailVerif(){
         repository.sendEmailVerif()
     }
+
+    fun getUserName() = repository.getUserName()
 }

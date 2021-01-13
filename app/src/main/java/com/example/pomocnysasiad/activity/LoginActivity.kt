@@ -54,22 +54,25 @@ class LoginActivity : AppCompatActivity() {
             startActivityForResult(intent, SIGN_IN)
         } else {
             val myPreference = MyPreference(this)
-            val role = myPreference.getRole()
-            if(role == 1){
-                startActivity(
+            when (myPreference.getRole()) {
+                1 -> {
+                    startActivity(
                         Intent(applicationContext, VolunteerActivity::class.java)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                )
-            }else if (role == 2){
-                startActivity(
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    )
+                }
+                2 -> {
+                    startActivity(
                         Intent(applicationContext, InNeedActivity::class.java)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                )
-            }else{
-                startActivity(
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    )
+                }
+                else -> {
+                    startActivity(
                         Intent(applicationContext, ChooseRoleActivity::class.java)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                )
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    )
+                }
             }
 
         }

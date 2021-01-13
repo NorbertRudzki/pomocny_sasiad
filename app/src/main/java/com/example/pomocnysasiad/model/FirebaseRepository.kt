@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class FirebaseRepository {
     private val auth = FirebaseAuth.getInstance()
@@ -32,6 +33,10 @@ class FirebaseRepository {
             .set(list)
     }
 
+    fun getUserId() = auth.currentUser!!.uid
+
+    fun getUserName() = auth.currentUser!!.displayName
+
     fun getNearbyRequests(filter: Filter): LiveData<List<Request>> {
         val requests = MutableLiveData<List<Request>>()
         listenerAllRequestsRegistration?.remove()
@@ -50,6 +55,7 @@ class FirebaseRepository {
                     requests.postValue(list.filter { req ->
                         req.location.longitude >= filter.longNearbyPoints[0]
                                 && req.location.longitude <= filter.longNearbyPoints[1]
+                                && req.userInNeedId != getUserId()
                     })
 
                 }
@@ -59,6 +65,7 @@ class FirebaseRepository {
     }
 
     fun noticeNewRequest(filter: Filter): LiveData<Request> {
+        //todo może zapamietac gdzies ostatnie wczytane/ powiadomione i porownywac?
         val request = MutableLiveData<Request>()
         listenerNewRequestRegistration?.remove()
         listenerNewRequestRegistration = cloud.collection("requestsForHelp")
@@ -89,8 +96,11 @@ class FirebaseRepository {
                     Log.d("Wszystkie size", list.size.toString())
 
                     if (listOfNew.size != list.size
+                        && listOfNew.isNotEmpty()
                         && listOfNew[0].location.longitude >= filter.longNearbyPoints[0]
-                        && listOfNew[0].location.longitude <= filter.longNearbyPoints[1]) {
+                        && listOfNew[0].location.longitude <= filter.longNearbyPoints[1]
+                        && listOfNew[0].userInNeedId != getUserId()
+                    ) {
                         request.postValue(listOfNew[0])
                     }
                 }
@@ -143,5 +153,48 @@ class FirebaseRepository {
 
     fun sendEmailVerif() {
         auth.currentUser!!.sendEmailVerification()
+    }
+
+    //chat
+
+    fun createChat(chat: Chat) {
+        cloud.collection("chats").document(chat.id.toString()).set(ChatWithMessages(chat))
+    }
+
+    fun acceptRequestAndGetChat(request: Request): LiveData<Chat> {
+
+        val chatLiveData = MutableLiveData<Chat>()
+        cloud.collection("requestsForHelp").whereEqualTo("id", request.id).limit(1).get()
+            .addOnSuccessListener { req ->
+                Log.d("addOnSuccessListener", req.toString())
+                if (req != null && !req.isEmpty) {
+                    req.documents[0].reference.delete()
+                    cloud.collection("chats").document(request.id.toString()).update(
+                        "chat.volunteerId", auth.currentUser!!.uid,
+                        "chat.volunteerName", auth.currentUser!!.displayName!!
+                    ).addOnSuccessListener {
+                        cloud.collection("chats").document(request.id.toString()).get()
+                            .addOnSuccessListener {
+                                if (it != null && it.exists()) {
+                                    val data = it.toObject(ChatWithMessages::class.java)
+                                    data?.let { newChat -> chatLiveData.postValue(newChat.chat) }
+                                }
+                            }
+                    }
+                }
+            }
+        return chatLiveData
+    }
+
+    fun getShoppingList(id: Long): LiveData<List<Product>> {
+        val products = MutableLiveData<List<Product>>()
+        cloud.collection("requestsForHelp").document("shoppingLists").collection("shoppingLists")
+            .document(id.toString()).get().addOnSuccessListener { snapshot ->
+                if (snapshot != null && snapshot.exists()) {
+                    val data = snapshot.toObject(ProductsListWrapper::class.java)
+                    data?.let { products.postValue(it.list) }
+                }
+            }
+        return products
     }
 }

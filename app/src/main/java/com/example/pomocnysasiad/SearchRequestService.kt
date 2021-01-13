@@ -18,7 +18,6 @@ import com.example.pomocnysasiad.model.MyPreference
 import kotlinx.coroutines.*
 
 class SearchRequestService : LifecycleService() {
-    // private lateinit var requestViewModel: RequestViewModel
     private lateinit var search: Job
 
     companion object {
@@ -29,8 +28,6 @@ class SearchRequestService : LifecycleService() {
         super.onCreate()
         Log.d("Service", "create")
         isSearching = true
-        // requestViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        //     .create(RequestViewModel::class.java)
     }
 
 

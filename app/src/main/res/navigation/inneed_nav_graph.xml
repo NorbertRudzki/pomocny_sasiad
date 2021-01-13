@@ -9,7 +9,15 @@
         android:id="@+id/myRequestsFragment"
         android:name="com.example.pomocnysasiad.fragment.MyRequestsFragment"
         android:label="fragment_my_requests"
-        tools:layout="@layout/fragment_my_requests" />
+        tools:layout="@layout/fragment_my_requests" >
+        <action
+            android:id="@+id/action_myRequestsFragment_to_acceptedRequestDetailsFragment2"
+            app:destination="@id/acceptedRequestDetailsFragment2"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right" />
+    </fragment>
     <fragment
         android:id="@+id/accountFragment3"
         android:name="com.example.pomocnysasiad.fragment.AccountFragment"
@@ -28,4 +36,8 @@
             app:popEnterAnim="@anim/from_left"
             app:popExitAnim="@anim/from_right" />
     </fragment>
+    <fragment
+        android:id="@+id/acceptedRequestDetailsFragment2"
+        android:name="com.example.pomocnysasiad.fragment.AcceptedRequestDetailsFragment"
+        android:label="AcceptedRequestDetailsFragment" />
 </navigation>

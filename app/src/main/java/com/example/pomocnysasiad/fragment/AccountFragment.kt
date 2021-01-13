@@ -6,16 +6,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.SearchRequestService
 import com.example.pomocnysasiad.activity.ChooseRoleActivity
 import com.example.pomocnysasiad.activity.LoginActivity
+import com.example.pomocnysasiad.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_account.*
 
 
 class AccountFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
+    private val userVM by viewModels<UserViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,6 +30,7 @@ class AccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        accountUserName.text = userVM.getUserName()
         auth = FirebaseAuth.getInstance()
         accountSignOutBT.setOnClickListener {
             if (SearchRequestService.isSearching) {

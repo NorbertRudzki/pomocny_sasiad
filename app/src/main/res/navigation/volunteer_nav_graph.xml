@@ -9,7 +9,15 @@
         android:id="@+id/acceptedRequestsFragment2"
         android:name="com.example.pomocnysasiad.fragment.AcceptedRequestsFragment"
         android:label="fragment_accepted_requests"
-        tools:layout="@layout/fragment_accepted_requests" />
+        tools:layout="@layout/fragment_accepted_requests" >
+        <action
+            android:id="@+id/action_acceptedRequestsFragment2_to_acceptedRequestDetailsFragment"
+            app:destination="@id/acceptedRequestDetailsFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right" />
+    </fragment>
     <fragment
         android:id="@+id/accountFragment2"
         android:name="com.example.pomocnysasiad.fragment.AccountFragment"
@@ -34,5 +42,17 @@
         android:id="@+id/requestDetails"
         android:name="com.example.pomocnysasiad.fragment.RequestDetails"
         android:label="fragment_request_details"
-        tools:layout="@layout/fragment_request_details" />
+        tools:layout="@layout/fragment_request_details" >
+        <action
+            android:id="@+id/action_requestDetails_to_acceptedRequestsFragment2"
+            app:destination="@id/acceptedRequestsFragment2"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/acceptedRequestDetailsFragment"
+        android:name="com.example.pomocnysasiad.fragment.AcceptedRequestDetailsFragment"
+        android:label="AcceptedRequestDetailsFragment" />
 </navigation>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity=""
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/listReadOnlyProductName"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:hint="@string/product_name"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/listReadOnlyProductAmount"
+        android:fontFamily="@font/lobster"
+        app:drawableStartCompat="@drawable/point"
+        android:foregroundGravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/listReadOnlyProductAmount"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:textSize="20sp"
+        android:hint="@string/product_amount"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/listReadOnlyProductUnit"
+        app:layout_constraintStart_toEndOf="@id/listReadOnlyProductName"
+        android:fontFamily="@font/lobster"
+        android:foregroundGravity="center_vertical"
+        />
+
+    <TextView
+        android:id="@+id/listReadOnlyProductUnit"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/listReadOnlyProductAmount"
+        app:layout_constraintEnd_toStartOf="@id/listReadOnlyCheck"
+        android:foregroundGravity="center_vertical"
+        />
+
+    <CheckBox
+        android:id="@+id/listReadOnlyCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/listReadOnlyProductUnit"
+        android:layout_marginHorizontal="10dp"
+        android:foregroundGravity="center_vertical"/>
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="?android:attr/listDivider"
+        android:layout_marginHorizontal="20dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

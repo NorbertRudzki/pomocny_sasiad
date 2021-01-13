@@ -1,6 +1,5 @@
 package com.example.pomocnysasiad.fragment
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,14 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.model.Request
+import com.example.pomocnysasiad.viewmodel.ChatViewModel
+import com.example.pomocnysasiad.viewmodel.RequestViewModel
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_request_details.*
 
 
 class RequestDetails : Fragment() {
-
+    private val chatVM by viewModels<ChatViewModel>()
+    private val requestVM by viewModels<RequestViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val callback = object : OnBackPressedCallback(true) {
@@ -36,14 +40,33 @@ class RequestDetails : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val title = arguments?.get("title")
-        val auth = arguments?.get("auth")
-        val desc = arguments?.get("desc")
+        val requestJson = arguments?.getString("request")
+        val request: Request = Gson().fromJson(requestJson, Request::class.java)
 
-        detailsTitle.text = "tytul: ${title}"
-        detailsAuth.text = "Osoba potrzebujaca: ${auth}"
-        detailsDesc.text = "Opis: ${desc}"
+        Log.d("details", request.toString())
+        detailsTitle.text = "tytul: ${request.title}"
+        detailsAuth.text = "Osoba potrzebujaca: ${request.userInNeedName}"
+        detailsDesc.text = "Opis: ${request.description}"
 
-
+        detailsOfferToHelp.setOnClickListener {
+               val chatLiveData = chatVM.acceptRequestAndGetChat(request)
+                chatLiveData.observe(viewLifecycleOwner){
+                    if(it != null){
+                        chatVM.insertChat(it)
+                        requestVM.insertRequestLocal(request)
+                        if(request.category == 0){
+                            val shoppingListLiveData = requestVM.getShoppingList(request.id)
+                            shoppingListLiveData.observe(viewLifecycleOwner){ list ->
+                                if(!list.isNullOrEmpty()){
+                                    requestVM.insertShoppingListForRequestLocal(list)
+                                    findNavController().navigate(RequestDetailsDirections.actionRequestDetailsToAcceptedRequestsFragment2())
+                                }
+                            }
+                        }else{
+                            findNavController().navigate(RequestDetailsDirections.actionRequestDetailsToAcceptedRequestsFragment2())
+                        }
+                    }
+                }
+        }
     }
 }

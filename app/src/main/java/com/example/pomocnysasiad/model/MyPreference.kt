@@ -22,7 +22,7 @@ class MyPreference(context: Context) {
         editor.apply()
     }
 
-    fun getRange(): Float = preference.getFloat(PREF_RANGE, 1.0f)
+    fun getRange(): Float = preference.getFloat(PREF_RANGE, 5.0f)
 
     fun setRange(range: Float){
         editor.putFloat(PREF_RANGE, range)
