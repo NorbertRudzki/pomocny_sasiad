@@ -245,7 +245,7 @@ class FirebaseRepository {
         }
     }
 
-    fun deleteCode(userID: String){
+    fun deleteCode(userID: String) {
         cloud.collection("tokenCodes").whereEqualTo("userID", userID).get().addOnSuccessListener {
             if (it != null) {
                 if (it.documents.size > 0) {
@@ -253,6 +253,7 @@ class FirebaseRepository {
                 }
             }
         }
+    }
 
     fun getMyChatCloudUpdate(chatsId: List<Long>): LiveData<List<ChatWithMessages>> {
         Log.d("getMyChatCloudUpdate","enter")
