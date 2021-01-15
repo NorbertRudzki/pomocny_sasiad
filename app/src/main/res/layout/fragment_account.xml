@@ -31,9 +31,106 @@
         android:id="@+id/accountChooseRoleBT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="zmien role"
+        android:layout_marginTop="12dp"
+        android:text="zmień rolę"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/accountSignOutBT" />
+
+    <EditText
+        android:id="@+id/accountCodeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="kod"
+        app:layout_constraintBottom_toBottomOf="@+id/accountActivateCodeBtn"
+        app:layout_constraintEnd_toStartOf="@+id/accountActivateCodeBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/accountActivateCodeBtn" />
+
+    <Button
+        android:id="@+id/accountActivateCodeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="aktywuj kod"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accountChooseRoleBT" />
+
+    <TextView
+        android:id="@+id/accountCodeDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="codeDisplay"
+        android:textSize="30dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/accountCodeText"
+        app:layout_constraintTop_toBottomOf="@+id/accountActivateCodeBtn" />
+
+    <Button
+        android:id="@+id/accountDeleteCodeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="usun kod"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/accountActivateCodeBtn"
+        app:layout_constraintStart_toStartOf="@+id/accountActivateCodeBtn"
+        app:layout_constraintTop_toBottomOf="@+id/accountActivateCodeBtn" />
+
+    <Button
+        android:id="@+id/accountCreateCodeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="utwórz kod"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/accountActivateCodeBtn"
+        app:layout_constraintStart_toStartOf="@+id/accountActivateCodeBtn"
+        app:layout_constraintTop_toBottomOf="@+id/accountActivateCodeBtn" />
+
+    <TextView
+        android:id="@+id/accountTokenCountDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/accountCreateCodeBtn"
+        app:layout_constraintEnd_toStartOf="@+id/accountCreateCodeBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/accountCreateCodeBtn" />
+
+    <ImageView
+        android:id="@+id/accountAddTockenBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:src="@drawable/add"
+        app:layout_constraintBottom_toBottomOf="@+id/accountTokenCountDisplay"
+        app:layout_constraintStart_toEndOf="@+id/accountTokenCountDisplay"
+        app:layout_constraintTop_toTopOf="@+id/accountTokenCountDisplay" />
+
+    <ImageView
+        android:id="@+id/accountReduceTockenBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:src="@drawable/reduce"
+        app:layout_constraintBottom_toBottomOf="@+id/accountTokenCountDisplay"
+        app:layout_constraintEnd_toStartOf="@+id/accountTokenCountDisplay"
+        app:layout_constraintTop_toTopOf="@+id/accountTokenCountDisplay" />
+
+    <TextView
+        android:id="@+id/accountUserTokens"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/accountUserName"
+        app:layout_constraintStart_toStartOf="@+id/accountUserName"
+        app:layout_constraintTop_toBottomOf="@+id/accountUserName" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.example.pomocnysasiad.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.example.pomocnysasiad.model.Code
 import com.example.pomocnysasiad.model.FirebaseRepository
 
 class UserViewModel: ViewModel() {
@@ -16,9 +17,18 @@ class UserViewModel: ViewModel() {
         repository.increaseUsersToken()
     }
 
+    fun increaseToken(x: Long){
+        repository.increaseUsersToken(x)
+    }
+
     fun decreaseToken(){
         repository.decreaseUsersToken()
     }
+
+    fun decreaseToken(x: Long){
+        repository.decreaseUsersToken(x)
+    }
+
     fun isLogoutUserOrNotVerified() = repository.isLogoutUserOrNotVerified()
 
     fun isUserVerified() = repository.isUserVerified()
@@ -28,4 +38,12 @@ class UserViewModel: ViewModel() {
     }
 
     fun getUserName() = repository.getUserName()
+
+    fun createCode(code: Code) = repository.createCode(code)
+
+    fun getCode(codeID: Int) = repository.getCode(codeID)
+    fun getCode(userID: String) = repository.getCode(userID)
+
+    fun deleteCode(codeID: Int) = repository.deleteCode(codeID)
+    fun deleteCode(userID: String) = repository.deleteCode(userID)
 }
