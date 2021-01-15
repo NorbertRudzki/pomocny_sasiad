@@ -138,9 +138,19 @@ class FirebaseRepository {
             .update("tokens", FieldValue.increment(-1))
     }
 
+    fun decreaseUsersToken(x: Long) {
+        cloud.collection("users").document(auth.currentUser!!.uid)
+                .update("tokens", FieldValue.increment(-x))
+    }
+
     fun increaseUsersToken() {
         cloud.collection("users").document(auth.currentUser!!.uid)
             .update("tokens", FieldValue.increment(1))
+    }
+
+    fun increaseUsersToken(x: Long) {
+        cloud.collection("users").document(auth.currentUser!!.uid)
+                .update("tokens", FieldValue.increment(x))
     }
 
     fun isLogoutUserOrNotVerified() =
@@ -162,7 +172,6 @@ class FirebaseRepository {
     }
 
     fun acceptRequestAndGetChat(request: Request): LiveData<Chat> {
-
         val chatLiveData = MutableLiveData<Chat>()
         cloud.collection("requestsForHelp").whereEqualTo("id", request.id).limit(1).get()
             .addOnSuccessListener { req ->
@@ -196,5 +205,51 @@ class FirebaseRepository {
                 }
             }
         return products
+    }
+
+    fun createCode(code: Code){
+        cloud.collection("tokenCodes").add(code)
+    }
+
+    fun getCode(codeID: Int): LiveData<Code>{
+        val code = MutableLiveData<Code>()
+        cloud.collection("tokenCodes").whereEqualTo("codeID", codeID).get().addOnSuccessListener {
+            if (it.documents.size > 0) {
+                val data = it.documents[0].toObject(Code::class.java)
+                code.postValue(data)
+            }
+        }
+        return code
+    }
+
+    fun getCode(userID: String): LiveData<Code>{
+        val code = MutableLiveData<Code>()
+        cloud.collection("tokenCodes").whereEqualTo("userID", userID).get().addOnSuccessListener {
+            if (it.documents.size > 0) {
+                val data = it.documents[0].toObject(Code::class.java)
+                code.postValue(data)
+            }
+        }
+        return code
+    }
+
+    fun deleteCode(codeID: Int){
+        cloud.collection("tokenCodes").whereEqualTo("codeID", codeID).get().addOnSuccessListener {
+            if (it != null) {
+                if (it.documents.size > 0) {
+                    it.documents[0].reference.delete()
+                }
+            }
+        }
+    }
+
+    fun deleteCode(userID: String){
+        cloud.collection("tokenCodes").whereEqualTo("userID", userID).get().addOnSuccessListener {
+            if (it != null) {
+                if (it.documents.size > 0) {
+                    it.documents[0].reference.delete()
+                }
+            }
+        }
     }
 }
