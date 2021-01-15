@@ -30,7 +30,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.ChooseRoleActivity" />
-        <service android:name=".SearchRequestService"
+        <service android:name=".VolunteerRequestService"
+            android:exported="false"/>
+        <service android:name=".InNeedRequestService"
             android:exported="false"/>
     </application>
 

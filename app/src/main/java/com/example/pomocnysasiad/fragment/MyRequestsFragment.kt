@@ -41,13 +41,14 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
         super.onViewCreated(view, savedInstanceState)
 
         myRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
-        chatVM.getAllMyRequests().observe(viewLifecycleOwner){ requests ->
-            if(!requests.isNullOrEmpty()){
+        chatVM.getAllMyRequests().observe(viewLifecycleOwner) { requests ->
+            if (!requests.isNullOrEmpty()) {
                 allRequests = requests
-                chatVM.getAllInNeedChats().observe(viewLifecycleOwner){ chats ->
-                    if(!chats.isNullOrEmpty() && !allRequests.isNullOrEmpty()){
+                chatVM.getAllInNeedChats().observe(viewLifecycleOwner) { chats ->
+                    if (!chats.isNullOrEmpty() && !allRequests.isNullOrEmpty()) {
                         allChats = chats
-                        myRequestsRecycler.adapter = ChatRequestAdapter(prepareList(),this, requireContext())
+                        myRequestsRecycler.adapter =
+                            ChatRequestAdapter(prepareList(), this, requireContext())
                     }
                 }
             }
@@ -55,12 +56,19 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
 
     }
 
-    private fun prepareList():List<ChatRequestRecord>{
+    private fun prepareList(): List<ChatRequestRecord> {
         val list = ArrayList<ChatRequestRecord>()
         Log.d("requests size", allRequests!!.size.toString())
         Log.d("chats size", allChats!!.size.toString())
-        for((index, value) in allRequests!!.withIndex()){
-            list.add(ChatRequestRecord(value.id, allChats!![index].volunteerName, value.title, Category.categoryList[value.category]["icon"] as Int))
+        for ((index, value) in allRequests!!.withIndex()) {
+            list.add(
+                ChatRequestRecord(
+                    value.id,
+                    allChats!![index].volunteerName,
+                    value.title,
+                    Category.categoryList[value.category]["icon"] as Int
+                )
+            )
         }
         return list.toList()
     }
@@ -69,16 +77,16 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
         Log.d("detailsClicked", id.toString())
         findNavController().navigate(
             MyRequestsFragmentDirections.actionMyRequestsFragmentToAcceptedRequestDetailsFragment2().actionId,
-             bundleOf(
-                    "request" to Gson().toJson(allRequests!!.find { it.id == id }),
-        )
+            bundleOf(
+                "request" to Gson().toJson(allRequests!!.find { it.id == id }),
+            )
         )
 
     }
 
     override fun onChatClick(id: Long) {
-        Log.d("chatClicked", id.toString())
+        findNavController().navigate(MyRequestsFragmentDirections.actionMyRequestsFragmentToChatFragment().actionId,
+        bundleOf("id" to id))
     }
-
 
 }

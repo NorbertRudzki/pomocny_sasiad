@@ -11,13 +11,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import com.example.pomocnysasiad.activity.VolunteerActivity
-import com.example.pomocnysasiad.model.Filter
-import com.example.pomocnysasiad.model.FirebaseRepository
-import com.example.pomocnysasiad.model.LocationService
-import com.example.pomocnysasiad.model.MyPreference
+import com.example.pomocnysasiad.model.*
 import kotlinx.coroutines.*
 
-class SearchRequestService : LifecycleService() {
+class VolunteerRequestService : LifecycleService() {
     private lateinit var search: Job
 
     companion object {
@@ -43,7 +40,8 @@ class SearchRequestService : LifecycleService() {
                 // If earlier version channel ID is not used
                 ""
             }
-
+        val localRepository = LocalRepository(applicationContext)
+        val firebaseRepository = FirebaseRepository()
         val preferences = MyPreference(applicationContext)
         val locationService = LocationService(applicationContext, preferences.getLocation())
 
@@ -55,15 +53,17 @@ class SearchRequestService : LifecycleService() {
         )
 
         search = CoroutineScope(Dispatchers.Main).launch {
-            val repo = FirebaseRepository()
 
-            repo.noticeNewRequest(
+
+            val searchNewRequests = firebaseRepository.noticeNewRequest(
                 Filter(
                     locationService.getLatZone(preferences.getRange().toDouble()),
                     locationService.getLongZone(preferences.getRange().toDouble()),
                     locationService.getLongNearbyPoints(preferences.getRange().toDouble())
                 )
-            ).observe(this@SearchRequestService) {
+            )
+
+            searchNewRequests.observe(this@VolunteerRequestService) {
                 Log.d("DODANO, można myslec o powiadomieniu", it.toString())
                 val pendingIntentFound = PendingIntent.getActivity(
                     applicationContext,
@@ -74,7 +74,7 @@ class SearchRequestService : LifecycleService() {
 
 
                 val newRequestNotification: Notification = NotificationCompat.Builder(
-                    this@SearchRequestService,
+                    this@VolunteerRequestService,
                     searchChannelId
                 )
                     .setContentTitle("Znaleziono nowe zgłoszenie w okolicy!")
@@ -86,10 +86,26 @@ class SearchRequestService : LifecycleService() {
                 newRequestNotification.flags =
                     newRequestNotification.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
                 NotificationManagerCompat.from(applicationContext).notify(2002, newRequestNotification)
-                stopSelf()
+                isSearching = false
+                searchNewRequests.removeObservers(this@VolunteerRequestService)
+            }
+
+            localRepository.getAllAcceptedRequest(firebaseRepository.getUserId()).observe(this@VolunteerRequestService){ allLists ->
+                firebaseRepository.getMyChatCloudUpdate(allLists.map { it.id }).observe(this@VolunteerRequestService){ list ->
+                    Log.d("getVolunteerChatStatusCloudUpdate","triggered")
+                    if(!list.isNullOrEmpty()){
+                        localRepository.updateChats(list.map { it.chat })
+                        for(i in list){
+                            localRepository.insertMessages(i.messages)
+                            Log.d("getVolunteerChatStatusCloudUpdate",i.toString())
+                        }
+                    }
+                }
             }
         }
         search.start()
+
+
 
 
         val notification: Notification = NotificationCompat.Builder(this, searchChannelId)

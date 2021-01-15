@@ -7,13 +7,24 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.pomocnysasiad.R
+import com.example.pomocnysasiad.fragment.CreateRequestFragmentDirections
+import com.example.pomocnysasiad.fragment.MyRequestsFragment
 import kotlinx.android.synthetic.main.activity_in_need.*
 
 class InNeedActivity : AppCompatActivity() {
+    private lateinit var navController: NavController
+
+    override fun onResume() {
+        super.onResume()
+        if(intent.getBooleanExtra("searchClick", false)){
+            navController.navigate(CreateRequestFragmentDirections.actionCreateRequestFragmentToMyRequestsFragment())
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_in_need)
-        val navController: NavController
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentInNeed) as NavHostFragment
         navController = navHostFragment.navController

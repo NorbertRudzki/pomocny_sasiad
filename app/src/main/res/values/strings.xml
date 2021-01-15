@@ -21,6 +21,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="offer_to_help">Zaproponuj pomoc</string>
+    <string name="accept">Akceptuj</string>
+    <string name="reject">Odmów</string>
+    <string name="finish">Zakończ i oceń</string>
 
 
 </resources>

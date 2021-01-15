@@ -35,32 +35,41 @@ class AcceptedRequestsFragment : Fragment(), OnChatInteraction {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_accepted_requests, container, false)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         acceptedRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
-        chatVM.getAllAcceptedRequests().observe(viewLifecycleOwner){ requests ->
-            if(!requests.isNullOrEmpty()){
+        chatVM.getAllAcceptedRequests().observe(viewLifecycleOwner) { requests ->
+            if (!requests.isNullOrEmpty()) {
                 allRequests = requests
-                chatVM.getAllVolunteerChats().observe(viewLifecycleOwner){ chats ->
-                    if(!chats.isNullOrEmpty() && !allRequests.isNullOrEmpty()){
+                chatVM.getAllVolunteerChats().observe(viewLifecycleOwner) { chats ->
+                    if (!chats.isNullOrEmpty() && !allRequests.isNullOrEmpty()) {
                         allChats = chats
-                        acceptedRequestsRecycler.adapter = ChatRequestAdapter(prepareList(),this, requireContext())
+                        acceptedRequestsRecycler.adapter =
+                            ChatRequestAdapter(prepareList(), this, requireContext())
                     }
                 }
             }
         }
 
 
-
     }
-    private fun prepareList():List<ChatRequestRecord>{
+
+    private fun prepareList(): List<ChatRequestRecord> {
         val list = ArrayList<ChatRequestRecord>()
         Log.d("requests size", allRequests!!.size.toString())
         Log.d("chats size", allChats!!.size.toString())
-        for((index, value) in allRequests!!.withIndex()){
+        for ((index, value) in allRequests!!.withIndex()) {
             Log.d("All Requests read", value.toString())
-            list.add(ChatRequestRecord(value.id, allChats!![index].userInNeedName, value.title, Category.categoryList[value.category]["icon"] as Int))
+            list.add(
+                ChatRequestRecord(
+                    value.id,
+                    allChats!![index].userInNeedName,
+                    value.title,
+                    Category.categoryList[value.category]["icon"] as Int
+                )
+            )
         }
         return list.toList()
     }
@@ -77,7 +86,10 @@ class AcceptedRequestsFragment : Fragment(), OnChatInteraction {
     }
 
     override fun onChatClick(id: Long) {
-        TODO("Not yet implemented")
+        findNavController().navigate(
+            AcceptedRequestsFragmentDirections.actionAcceptedRequestsFragment2ToChatFragment2().actionId,
+            bundleOf("id" to id)
+        )
     }
 
 }
