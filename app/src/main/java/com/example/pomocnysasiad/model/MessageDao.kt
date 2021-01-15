@@ -1,8 +1,6 @@
 package com.example.pomocnysasiad.model
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface MessageDao {
@@ -11,5 +9,8 @@ interface MessageDao {
 
     @Query("DELETE FROM Message WHERE chatId = :id")
     fun deleteMessagesByChatId(id: Long)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertMessages(messages: List<Message>)
 
 }

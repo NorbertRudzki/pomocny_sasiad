@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.example.pomocnysasiad.R
-import com.example.pomocnysasiad.SearchRequestService
+import com.example.pomocnysasiad.VolunteerRequestService
 import com.example.pomocnysasiad.activity.ChooseRoleActivity
 import com.example.pomocnysasiad.activity.LoginActivity
 import com.example.pomocnysasiad.model.Code
@@ -50,8 +50,8 @@ class AccountFragment : Fragment() {
         }
 
         accountSignOutBT.setOnClickListener {
-            if (SearchRequestService.isSearching) {
-                val intentService = Intent(requireContext(), SearchRequestService::class.java)
+            if (VolunteerRequestService.isSearching) {
+                val intentService = Intent(requireContext(), VolunteerRequestService::class.java)
                 requireContext().stopService(intentService)
             }
             auth.signOut()
@@ -62,8 +62,8 @@ class AccountFragment : Fragment() {
             requireActivity().finish()
         }
         accountChooseRoleBT.setOnClickListener {
-            if (SearchRequestService.isSearching) {
-                val intentService = Intent(requireContext(), SearchRequestService::class.java)
+            if (VolunteerRequestService.isSearching) {
+                val intentService = Intent(requireContext(), VolunteerRequestService::class.java)
                 requireContext().stopService(intentService)
             }
             startActivity(

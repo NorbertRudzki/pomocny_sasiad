@@ -74,6 +74,11 @@ class LocalRepository(context: Context) {
             messageDao.insertMessage(message)
         }
 
+    fun insertMessages(messages: List<Message>) =
+        CoroutineScope(Dispatchers.IO).launch {
+            messageDao.insertMessages(messages)
+        }
+
     fun deleteMessagesByChatId(id: Long) =
         CoroutineScope(Dispatchers.IO).launch {
             messageDao.deleteMessagesByChatId(id)
@@ -92,6 +97,11 @@ class LocalRepository(context: Context) {
     fun updateChat(chat: Chat) =
         CoroutineScope(Dispatchers.IO).launch {
             chatDao.updateChat(chat)
+        }
+
+    fun updateChats(chats: List<Chat>) =
+        CoroutineScope(Dispatchers.IO).launch {
+            chatDao.updateChats(chats)
         }
 
     fun getChatById(id: Long):LiveData<ChatWithMessages> = chatDao.getChatById(id)

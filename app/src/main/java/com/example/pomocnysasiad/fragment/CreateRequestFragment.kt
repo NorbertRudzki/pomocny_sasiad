@@ -21,7 +21,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
+import com.example.pomocnysasiad.InNeedRequestService
 import com.example.pomocnysasiad.R
+import com.example.pomocnysasiad.VolunteerRequestService
 import com.example.pomocnysasiad.model.*
 import com.example.pomocnysasiad.view.CategoryAdapter
 import com.example.pomocnysasiad.view.OnCategorySelected
@@ -74,7 +76,11 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
         Log.d("created", "view")
         Log.d("viewmodel", interfaceVM.toString())
         preferences = MyPreference(requireContext())
-
+        if (!InNeedRequestService.isSearching) {
+            val intentService = Intent(requireContext(), InNeedRequestService::class.java)
+            requireContext().stopService(intentService)
+            requireContext().startService(intentService)
+        }
         userVM.user.observe(viewLifecycleOwner) {
             if (it != null) {
                 currentUser = it

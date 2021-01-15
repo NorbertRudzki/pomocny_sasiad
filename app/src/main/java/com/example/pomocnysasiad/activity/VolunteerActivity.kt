@@ -11,6 +11,7 @@ import com.example.pomocnysasiad.R
 import kotlinx.android.synthetic.main.activity_volunteer.*
 
 class VolunteerActivity : AppCompatActivity() {
+    private lateinit var navController: NavController
     override fun onResume() {
         super.onResume()
         val notificationId = intent.getIntExtra("notified",0)
@@ -22,7 +23,6 @@ class VolunteerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_volunteer)
-        val navController: NavController
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentVolunteer) as NavHostFragment
         navController = navHostFragment.navController

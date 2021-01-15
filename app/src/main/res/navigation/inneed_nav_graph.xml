@@ -17,6 +17,13 @@
             app:exitAnim="@anim/from_right"
             app:popEnterAnim="@anim/from_left"
             app:popExitAnim="@anim/from_right" />
+        <action
+            android:id="@+id/action_myRequestsFragment_to_chatFragment"
+            app:destination="@id/chatFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right" />
     </fragment>
     <fragment
         android:id="@+id/accountFragment3"
@@ -40,4 +47,9 @@
         android:id="@+id/acceptedRequestDetailsFragment2"
         android:name="com.example.pomocnysasiad.fragment.AcceptedRequestDetailsFragment"
         android:label="AcceptedRequestDetailsFragment" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.pomocnysasiad.fragment.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
 </navigation>

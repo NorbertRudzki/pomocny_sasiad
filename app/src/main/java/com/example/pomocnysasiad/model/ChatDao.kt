@@ -15,6 +15,9 @@ interface ChatDao {
     @Update
     fun updateChat(chat: Chat)
 
+    @Update
+    fun updateChats(chats: List<Chat>)
+
     @Transaction
     @Query("SELECT * FROM Chat WHERE id = :id")
     fun getChatById(id: Long):LiveData<ChatWithMessages>

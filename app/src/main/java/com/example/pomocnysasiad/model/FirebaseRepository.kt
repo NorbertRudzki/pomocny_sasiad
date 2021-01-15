@@ -14,6 +14,7 @@ class FirebaseRepository {
     private val cloud = FirebaseFirestore.getInstance()
     private var listenerAllRequestsRegistration: ListenerRegistration? = null
     private var listenerNewRequestRegistration: ListenerRegistration? = null
+    private var listenerChat: ListenerRegistration? = null
 
     init {
         //todo raczej pobrac z locale, chyba, że target 100% polsza
@@ -204,6 +205,7 @@ class FirebaseRepository {
                     data?.let { products.postValue(it.list) }
                 }
             }
+
         return products
     }
 
@@ -251,5 +253,26 @@ class FirebaseRepository {
                 }
             }
         }
+
+    fun getMyChatCloudUpdate(chatsId: List<Long>): LiveData<List<ChatWithMessages>> {
+        Log.d("getMyChatCloudUpdate","enter")
+        listenerChat?.remove()
+        val chatsLiveData = MutableLiveData<List<ChatWithMessages>>()
+        Log.d("chat ids",chatsId.toString())
+        listenerChat = cloud.collection("chats").whereIn("chat.id", chatsId).addSnapshotListener { value, _ ->
+            Log.d("getMyChatCloudUpdate","trigger")
+            if(value!= null && !value.isEmpty){
+                val array = ArrayList<ChatWithMessages>()
+                for(doc in value.documents){
+                    Log.d("getMyChatCloudUpdate document",doc.data.toString())
+                    val data = doc.toObject(ChatWithMessages::class.java)
+                    data?.let { array.add(it) }
+                }
+                chatsLiveData.postValue(array)
+            }
+        }
+
+        return chatsLiveData
+
     }
 }

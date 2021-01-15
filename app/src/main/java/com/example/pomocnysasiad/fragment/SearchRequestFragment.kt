@@ -8,10 +8,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -23,12 +21,11 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
-import com.example.pomocnysasiad.SearchRequestService
+import com.example.pomocnysasiad.VolunteerRequestService
 import com.example.pomocnysasiad.model.*
 import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.google.android.gms.maps.*
@@ -95,14 +92,10 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             refreshMap()
         }
 
-        if (!SearchRequestService.isSearching) {
-            val intentService = Intent(requireContext(), SearchRequestService::class.java)
+        if (!VolunteerRequestService.isSearching) {
+            val intentService = Intent(requireContext(), VolunteerRequestService::class.java)
+            requireContext().stopService(intentService)
             requireContext().startService(intentService)
-            //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //      requireContext().startForegroundService(intentService)
-            //  } else {
-            //      requireContext().startService(intentService)
-            //  }
         }
 
         requestViewModel.setFilter(
@@ -134,8 +127,8 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                     )
                 )
                 preferences.setRange(range.toFloat())
-                requireContext().stopService(Intent(requireContext(), SearchRequestService::class.java))
-                requireContext().startService(Intent(requireContext(), SearchRequestService::class.java))
+                requireContext().stopService(Intent(requireContext(), VolunteerRequestService::class.java))
+                requireContext().startService(Intent(requireContext(), VolunteerRequestService::class.java))
             }
         })
         rangeSeekBar.setProgress(preferences.getRange().toInt() * 2, true)
