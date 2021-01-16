@@ -93,8 +93,10 @@ class AccountFragment : Fragment() {
             accountTokenCountDisplay.text = tokenCounter.toString()
         }
         accountReduceTockenBtn.setOnClickListener {
-            tokenCounter -= 1
-            accountTokenCountDisplay.text = tokenCounter.toString()
+            if (tokenCounter > 1) {
+                tokenCounter -= 1
+                accountTokenCountDisplay.text = tokenCounter.toString()
+            }
         }
         accountCreateCodeBtn.setOnClickListener {
             currentUser?.let {
