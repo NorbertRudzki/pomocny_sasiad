@@ -260,16 +260,18 @@ class FirebaseRepository {
         listenerChat?.remove()
         val chatsLiveData = MutableLiveData<List<ChatWithMessages>>()
         Log.d("chat ids",chatsId.toString())
-        listenerChat = cloud.collection("chats").whereIn("chat.id", chatsId).addSnapshotListener { value, _ ->
-            Log.d("getMyChatCloudUpdate","trigger")
-            if(value!= null && !value.isEmpty){
-                val array = ArrayList<ChatWithMessages>()
-                for(doc in value.documents){
-                    Log.d("getMyChatCloudUpdate document",doc.data.toString())
-                    val data = doc.toObject(ChatWithMessages::class.java)
-                    data?.let { array.add(it) }
+        if(chatsId.isNotEmpty()){
+            listenerChat = cloud.collection("chats").whereIn("chat.id", chatsId).addSnapshotListener { value, _ ->
+                Log.d("getMyChatCloudUpdate","trigger")
+                if(value!= null && !value.isEmpty){
+                    val array = ArrayList<ChatWithMessages>()
+                    for(doc in value.documents){
+                        Log.d("getMyChatCloudUpdate document",doc.data.toString())
+                        val data = doc.toObject(ChatWithMessages::class.java)
+                        data?.let { array.add(it) }
+                    }
+                    chatsLiveData.postValue(array)
                 }
-                chatsLiveData.postValue(array)
             }
         }
 
