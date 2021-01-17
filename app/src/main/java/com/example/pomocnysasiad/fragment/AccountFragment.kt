@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.example.pomocnysasiad.R
-import com.example.pomocnysasiad.VolunteerRequestService
+import com.example.pomocnysasiad.service.VolunteerRequestService
 import com.example.pomocnysasiad.activity.ChooseRoleActivity
 import com.example.pomocnysasiad.activity.LoginActivity
 import com.example.pomocnysasiad.model.Code

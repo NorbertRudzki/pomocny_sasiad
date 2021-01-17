@@ -34,6 +34,12 @@ class FirebaseRepository {
             .set(list)
     }
 
+    fun deleteShoppingListForRequest(id: Long){
+        cloud.collection("requestsForHelp").document("shoppingLists")
+            .collection("shoppingLists")
+            .document(id.toString()).delete()
+    }
+
     fun getUserId() = auth.currentUser!!.uid
 
     fun getUserName() = auth.currentUser!!.displayName
@@ -141,7 +147,7 @@ class FirebaseRepository {
 
     fun decreaseUsersToken(x: Long) {
         cloud.collection("users").document(auth.currentUser!!.uid)
-                .update("tokens", FieldValue.increment(-x))
+            .update("tokens", FieldValue.increment(-x))
     }
 
     fun increaseUsersToken() {
@@ -151,7 +157,7 @@ class FirebaseRepository {
 
     fun increaseUsersToken(x: Long) {
         cloud.collection("users").document(auth.currentUser!!.uid)
-                .update("tokens", FieldValue.increment(x))
+            .update("tokens", FieldValue.increment(x))
     }
 
     fun isLogoutUserOrNotVerified() =
@@ -172,6 +178,19 @@ class FirebaseRepository {
         cloud.collection("chats").document(chat.id.toString()).set(ChatWithMessages(chat))
     }
 
+    fun clearChat(chat: Chat) {
+        cloud.collection("chats").document(chat.id.toString()).update(
+            "chat.status", 0,
+            "chat.volunteerId", "",
+            "chat.volunteerName", "",
+            "messages", FieldValue.delete()
+        )
+    }
+
+    fun deleteChat(chat: Chat) {
+        cloud.collection("chats").document(chat.id.toString()).delete()
+    }
+
     fun acceptRequestAndGetChat(request: Request): LiveData<Chat> {
         val chatLiveData = MutableLiveData<Chat>()
         cloud.collection("requestsForHelp").whereEqualTo("id", request.id).limit(1).get()
@@ -179,9 +198,11 @@ class FirebaseRepository {
                 Log.d("addOnSuccessListener", req.toString())
                 if (req != null && !req.isEmpty) {
                     req.documents[0].reference.delete()
+
                     cloud.collection("chats").document(request.id.toString()).update(
                         "chat.volunteerId", auth.currentUser!!.uid,
-                        "chat.volunteerName", auth.currentUser!!.displayName!!
+                        "chat.volunteerName", auth.currentUser!!.displayName!!,
+                        "chat.status", 1
                     ).addOnSuccessListener {
                         cloud.collection("chats").document(request.id.toString()).get()
                             .addOnSuccessListener {
@@ -209,11 +230,11 @@ class FirebaseRepository {
         return products
     }
 
-    fun createCode(code: Code){
+    fun createCode(code: Code) {
         cloud.collection("tokenCodes").add(code)
     }
 
-    fun getCode(codeID: Int): LiveData<Code>{
+    fun getCode(codeID: Int): LiveData<Code> {
         val code = MutableLiveData<Code>()
         cloud.collection("tokenCodes").whereEqualTo("codeID", codeID).get().addOnSuccessListener {
             if (it.documents.size > 0) {
@@ -224,7 +245,7 @@ class FirebaseRepository {
         return code
     }
 
-    fun getCode(userID: String): LiveData<Code>{
+    fun getCode(userID: String): LiveData<Code> {
         val code = MutableLiveData<Code>()
         cloud.collection("tokenCodes").whereEqualTo("userID", userID).get().addOnSuccessListener {
             if (it.documents.size > 0) {
@@ -235,7 +256,7 @@ class FirebaseRepository {
         return code
     }
 
-    fun deleteCode(codeID: Int){
+    fun deleteCode(codeID: Int) {
         cloud.collection("tokenCodes").whereEqualTo("codeID", codeID).get().addOnSuccessListener {
             if (it != null) {
                 if (it.documents.size > 0) {
@@ -256,26 +277,34 @@ class FirebaseRepository {
     }
 
     fun getMyChatCloudUpdate(chatsId: List<Long>): LiveData<List<ChatWithMessages>> {
-        Log.d("getMyChatCloudUpdate","enter")
+        Log.d("getMyChatCloudUpdate", "enter")
         listenerChat?.remove()
         val chatsLiveData = MutableLiveData<List<ChatWithMessages>>()
-        Log.d("chat ids",chatsId.toString())
-        if(chatsId.isNotEmpty()){
-            listenerChat = cloud.collection("chats").whereIn("chat.id", chatsId).addSnapshotListener { value, _ ->
-                Log.d("getMyChatCloudUpdate","trigger")
-                if(value!= null && !value.isEmpty){
-                    val array = ArrayList<ChatWithMessages>()
-                    for(doc in value.documents){
-                        Log.d("getMyChatCloudUpdate document",doc.data.toString())
-                        val data = doc.toObject(ChatWithMessages::class.java)
-                        data?.let { array.add(it) }
+        Log.d("chat ids", chatsId.toString())
+        if (chatsId.isNotEmpty()) {
+            listenerChat = cloud.collection("chats").whereIn("chat.id", chatsId)
+                .addSnapshotListener { value, _ ->
+                    Log.d("getMyChatCloudUpdate", "trigger")
+                    if (value != null && !value.isEmpty) {
+                        val array = ArrayList<ChatWithMessages>()
+                        for (doc in value.documents) {
+                            Log.d("getMyChatCloudUpdate document", doc.data.toString())
+                            val data = doc.toObject(ChatWithMessages::class.java)
+                            data?.let { array.add(it) }
+                        }
+                        chatsLiveData.postValue(array)
                     }
-                    chatsLiveData.postValue(array)
                 }
-            }
         }
-
         return chatsLiveData
+    }
 
+    fun setChatCloudStatus(id: Long, status: Int) {
+        cloud.collection("chats").document(id.toString()).update("chat.status", status)
+    }
+
+    fun sendMessage(id: Long, message: Message) {
+        cloud.collection("chats").document(id.toString())
+            .update("messages", FieldValue.arrayUnion(message))
     }
 }

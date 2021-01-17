@@ -1,4 +1,4 @@
-package com.example.pomocnysasiad
+package com.example.pomocnysasiad.service
 
 import android.app.*
 import android.content.Context
@@ -8,10 +8,9 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
+import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.activity.InNeedActivity
-import com.example.pomocnysasiad.activity.VolunteerActivity
 import com.example.pomocnysasiad.model.*
 import kotlinx.coroutines.*
 
@@ -73,6 +72,7 @@ class InNeedRequestService : LifecycleService() {
                         Log.d("getInNeedChatStatusCloudUpdate","triggered")
                         if(!list.isNullOrEmpty()){
                             localRepository.updateChats(list.map { it.chat })
+
                             for(i in list){
                                 localRepository.insertMessages(i.messages)
                                 Log.d("getInNeedChatStatusCloudUpdate",i.toString())

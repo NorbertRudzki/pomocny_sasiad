@@ -9,6 +9,8 @@ class UserViewModel: ViewModel() {
 
     val user = repository.getUser()
 
+    fun getUserId() = repository.getUserId()
+
     fun createUser(){
         repository.createNewUser()
     }

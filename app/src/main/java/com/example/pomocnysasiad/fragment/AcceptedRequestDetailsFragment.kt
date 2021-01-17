@@ -53,9 +53,9 @@ class AcceptedRequestDetailsFragment : Fragment() {
         acceptedDetailsDesc.text = "Opis: ${request.description}"
 
         if (request.category == 0) {
-            val shoppingListLiveData = requestVM.getShoppingList(request.id)
+            val shoppingListLiveData = requestVM.getShoppingListLocal(request.id)
             shoppingListLiveData.observe(viewLifecycleOwner) {
-                drawReadOnlyListOfProducts(it)
+                drawReadOnlyListOfProducts(it.list)
             }
         }
     }

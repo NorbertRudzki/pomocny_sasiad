@@ -21,9 +21,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
-import com.example.pomocnysasiad.InNeedRequestService
+import com.example.pomocnysasiad.service.InNeedRequestService
 import com.example.pomocnysasiad.R
-import com.example.pomocnysasiad.VolunteerRequestService
 import com.example.pomocnysasiad.model.*
 import com.example.pomocnysasiad.view.CategoryAdapter
 import com.example.pomocnysasiad.view.OnCategorySelected

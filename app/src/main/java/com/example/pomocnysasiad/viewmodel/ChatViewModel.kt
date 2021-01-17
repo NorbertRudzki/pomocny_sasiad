@@ -36,10 +36,35 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         localRepository.insertMessage(message)
     }
 
+    fun sendMessageCloud(id: Long, message: Message){
+        firebaseRepository.sendMessage(id, message)
+    }
+
     fun createChatCloud(chat: Chat){
         firebaseRepository.createChat(chat)
     }
 
+    fun setChatCloudStatus(id: Long, status: Int){
+        firebaseRepository.setChatCloudStatus(id, status)
+    }
+
+    fun deleteChatWithMessagesLocally(chatWithMessages: ChatWithMessages){
+        localRepository.deleteChat(chatWithMessages.chat)
+        localRepository.deleteMessagesByChatId(chatWithMessages.chat.id)
+        localRepository.deleteRequestById(chatWithMessages.chat.id)
+        localRepository.deleteProductsByListId(chatWithMessages.chat.id)
+    }
+
+    fun deleteMessagesByChatId(id: Long){
+        localRepository.deleteMessagesByChatId(id)
+    }
+
+    fun deleteChatCloud(chatWithMessages: ChatWithMessages){
+        firebaseRepository.deleteChat(chatWithMessages.chat)
+    }
+    fun clearChatCloud(chat: Chat){
+        firebaseRepository.clearChat(chat)
+    }
 
     fun acceptRequestAndGetChat(request: Request):LiveData<Chat> = firebaseRepository.acceptRequestAndGetChat(request)
 

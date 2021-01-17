@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/hello_blank_fragment"
-        app:layout_constraintBottom_toTopOf="@id/chatRecycler"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -52,35 +52,47 @@
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_menu_send" />
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chatNewMessageTIL"
+        app:layout_constraintBottom_toTopOf="@id/chatFinish"
+        android:background="?android:attr/listDivider" />
+
     <Button
         android:id="@+id/chatAccept"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/chatReject"
-        app:layout_constraintTop_toBottomOf="@id/chatNewMessageTIL"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/accept" />
+        android:background="#4CAF50"
+        android:text="@string/accept"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/chatReject"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chatNewMessageTIL" />
 
     <Button
         android:id="@+id/chatReject"
-        app:layout_constraintTop_toBottomOf="@id/chatNewMessageTIL"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/chatAccept"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/reject" />
+        android:background="#B71C1C"
+        android:text="@string/reject"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/chatAccept"
+        app:layout_constraintTop_toBottomOf="@id/chatNewMessageTIL" />
 
     <Button
         android:id="@+id/chatFinish"
-        app:layout_constraintTop_toBottomOf="@id/chatNewMessageTIL"
+        app:layout_constraintTop_toBottomOf="@id/divider"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/chatAccept"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+android:visibility="gone"
         android:text="@string/finish" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

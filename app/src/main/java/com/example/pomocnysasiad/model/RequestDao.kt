@@ -22,7 +22,10 @@ interface RequestDao {
     @Query("SELECT * FROM Request WHERE userInNeedId LIKE :uid")
     fun getAllMyRequest(uid: String): LiveData<List<Request>>
 
+    @Query("DELETE FROM Request WHERE id = :id")
+    fun deleteRequestById(id: Long)
+
     @Transaction
     @Query("SELECT * FROM Request WHERE id = :uid")
-    fun getRequestWithShoppingListById(uid: Long): LiveData<List<RequestWithShoppingList>>
+    fun getRequestWithShoppingListById(uid: Long): LiveData<RequestWithShoppingList>
 }

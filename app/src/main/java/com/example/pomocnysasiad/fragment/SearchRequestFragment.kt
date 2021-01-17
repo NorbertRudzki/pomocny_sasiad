@@ -25,7 +25,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
-import com.example.pomocnysasiad.VolunteerRequestService
+import com.example.pomocnysasiad.service.VolunteerRequestService
 import com.example.pomocnysasiad.model.*
 import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.google.android.gms.maps.*

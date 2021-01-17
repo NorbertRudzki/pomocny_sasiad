@@ -36,6 +36,10 @@ class RequestViewModel(application: Application) : AndroidViewModel(application)
         localRepository.insertManyProducts(products)
     }
 
+    fun deleteShoppingListForRequestCloud(id: Long){
+        firebaseRepository.deleteShoppingListForRequest(id)
+    }
+
     fun deleteLocalRequest(request: Request) {
         localRepository.deleteRequest(request)
     }
@@ -51,6 +55,10 @@ class RequestViewModel(application: Application) : AndroidViewModel(application)
         localRepository.getAllMyRequest(firebaseRepository.getUserId())
 
     fun getShoppingList(id: Long): LiveData<List<Product>> = firebaseRepository.getShoppingList(id)
+
+    fun getShoppingListLocal(id: Long) = localRepository.getRequestWithShoppingListById(id)
+
+    fun getRequestWithShoppingListById(uid: Long) = localRepository.getRequestWithShoppingListById(uid)
 
 
 }

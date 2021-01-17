@@ -1,4 +1,4 @@
-package com.example.pomocnysasiad
+package com.example.pomocnysasiad.service
 
 import android.app.*
 import android.content.Context
@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
+import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.activity.VolunteerActivity
 import com.example.pomocnysasiad.model.*
 import kotlinx.coroutines.*
