@@ -64,5 +64,13 @@
         android:id="@+id/assessFragment"
         android:name="com.example.pomocnysasiad.fragment.AssessFragment"
         android:label="fragment_assess"
-        tools:layout="@layout/fragment_assess" />
+        tools:layout="@layout/fragment_assess" >
+        <action
+            android:id="@+id/action_assessFragment_to_myRequestsFragment"
+            app:destination="@id/myRequestsFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right" />
+    </fragment>
 </navigation>

@@ -3,6 +3,7 @@ package com.example.pomocnysasiad.fragment
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,8 @@ class ChatFragment : Fragment() {
     private val requestVM by viewModels<RequestViewModel>()
     private var currentChat: ChatWithMessages? = null
     private var role: Int? = null //1 = volunteer   2 = in need
+    private lateinit var preference: MyPreference
+    private var id: Long = 0
 
     /*
     status
@@ -52,6 +55,10 @@ class ChatFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
+    override fun onResume() {
+        super.onResume()
+        preference.setOpenChat(id)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,11 +69,12 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = arguments?.getLong("id")
-        val preference = MyPreference(requireContext())
+        id = arguments?.getLong("id")!!
+        preference = MyPreference(requireContext())
+
         chatRecycler.layoutManager = LinearLayoutManager(requireContext())
         role = preference.getRole()
-        chatVM.getChatById(id!!).observe(viewLifecycleOwner) {
+        chatVM.getChatById(id).observe(viewLifecycleOwner) {
             if (it != null) {
                 currentChat = it
                 if (currentChat!!.chat.status == 5) {
@@ -88,12 +96,10 @@ class ChatFragment : Fragment() {
         }
 
         chatReject.setOnClickListener {
-            //todo usun lokalnie i przywroc request do puli
             rejectMakeSureDialog(currentChat!!)
         }
 
         chatFinish.setOnClickListener {
-            //todo przejscie do oceny
             if (role == 1 && (currentChat!!.chat.status == 4 || currentChat!!.chat.status == 7)) {
                 chatVM.setChatCloudStatus(id, currentChat!!.chat.status + 2)
                 currentChat!!.chat.status += 2
@@ -260,6 +266,12 @@ class ChatFragment : Fragment() {
                 requestLiveData.removeObservers(viewLifecycleOwner)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("Chat", "onDestroyView")
+        preference.setOpenChat(0L)
     }
 
 }

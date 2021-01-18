@@ -46,6 +46,7 @@ class InNeedRequestService : LifecycleService() {
             }
         val localRepository = LocalRepository(applicationContext)
         val firebaseRepository = FirebaseRepository()
+        val preferences = MyPreference(applicationContext)
 
         val pendingIntentSearch = PendingIntent.getActivity(
             applicationContext,
@@ -87,13 +88,15 @@ class InNeedRequestService : LifecycleService() {
                                         if (startNotify) {
                                             var currentStatus = value.chat.status
                                             var previousStatus = previousState[index].chat.status
+                                            var currentMessages = value.messages.size
+                                            var previousMessages = previousState[index].messages.size
                                             if (currentStatus != previousStatus
                                                 && !(currentStatus == 4 && previousStatus == 2)
                                                 && currentStatus != 3
                                                 && currentStatus != 7
                                             ) {
                                                 if(!(currentStatus == 9 && previousStatus == 6)){
-                                                    createNotification(value.chat)
+                                                    createNotificationStatus(value.chat)
                                                 }
                                                 if(currentStatus == 9){
                                                     localRepository.deleteRequestById(value.chat.id)
@@ -101,6 +104,9 @@ class InNeedRequestService : LifecycleService() {
                                                     localRepository.deleteChat(value.chat)
                                                     localRepository.deleteMessagesByChatId(value.chat.id)
                                                 }
+                                            }
+                                            if (currentMessages != previousMessages && value.messages.last().userId != firebaseRepository.getUserId() && preferences.getOpenChat() != value.chat.id) {
+                                                createNotificationNewMessage(value)
                                             }
                                         }
                                         localRepository.insertMessages(value.messages)
@@ -121,7 +127,7 @@ class InNeedRequestService : LifecycleService() {
         return START_STICKY
     }
 
-    private fun createNotification(chat: Chat) {
+    private fun createNotificationStatus(chat: Chat) {
         val pendingIntentFound = PendingIntent.getActivity(
             applicationContext,
             0,
@@ -151,6 +157,31 @@ class InNeedRequestService : LifecycleService() {
         chatStatusChanged.flags =
             chatStatusChanged.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
         NotificationManagerCompat.from(applicationContext).notify(3002, chatStatusChanged)
+    }
+
+    private fun createNotificationNewMessage(chatWithMessages: ChatWithMessages) {
+        val pendingIntentFound = PendingIntent.getActivity(
+            applicationContext,
+            0,
+            Intent(applicationContext, InNeedActivity::class.java).putExtra(
+                "statusChanged",
+                chatWithMessages.chat.id
+            ),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val chatStatusChanged: Notification = NotificationCompat.Builder(
+            this@InNeedRequestService,
+            channel
+        )
+            .setContentTitle("Nowa wiadomość od ${chatWithMessages.chat.volunteerName}")
+            .setContentText(chatWithMessages.messages.last().content)
+            .setSmallIcon(R.drawable.ic_baseline_live_help_24)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntentFound)
+            .build()
+        chatStatusChanged.flags =
+            chatStatusChanged.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
+        NotificationManagerCompat.from(applicationContext).notify(3003, chatStatusChanged)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

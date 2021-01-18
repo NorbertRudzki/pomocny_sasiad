@@ -11,7 +11,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import com.example.pomocnysasiad.R
-import com.example.pomocnysasiad.activity.InNeedActivity
 import com.example.pomocnysasiad.activity.VolunteerActivity
 import com.example.pomocnysasiad.model.*
 import kotlinx.coroutines.*
@@ -110,16 +109,18 @@ class VolunteerRequestService : LifecycleService() {
                                     if (startNotify) {
                                         var currentStatus = value.chat.status
                                         var previousStatus = previousState[index].chat.status
+                                        var currentMessages = value.messages.size
+                                        var previousMessages = previousState[index].messages.size
                                         if (currentStatus != previousStatus
                                             && !(currentStatus == 4 && previousStatus == 3)
                                             && currentStatus != 1
                                             && currentStatus != 2
                                             && currentStatus != 6
                                         ) {
-                                            if(!(currentStatus == 9 && previousStatus == 7)){
-                                                createNotification(value.chat)
+                                            if (!(currentStatus == 9 && previousStatus == 7)) {
+                                                createNotificationStatus(value.chat)
                                             }
-                                            if(currentStatus == 9){
+                                            if (currentStatus == 9) {
                                                 firebaseRepository.increaseUsersToken()
                                                 firebaseRepository.deleteChat(value.chat)
                                                 localRepository.deleteRequestById(value.chat.id)
@@ -128,6 +129,9 @@ class VolunteerRequestService : LifecycleService() {
                                                 localRepository.deleteMessagesByChatId(value.chat.id)
 
                                             }
+                                        }
+                                        if (currentMessages != previousMessages && value.messages.last().userId != firebaseRepository.getUserId() && preferences.getOpenChat() != value.chat.id) {
+                                            createNotificationNewMessage(value)
                                         }
                                     }
                                     localRepository.insertMessages(value.messages)
@@ -157,7 +161,7 @@ class VolunteerRequestService : LifecycleService() {
         return START_STICKY
     }
 
-    private fun createNotification(chat: Chat) {
+    private fun createNotificationStatus(chat: Chat) {
         val pendingIntentFound = PendingIntent.getActivity(
             applicationContext,
             0,
@@ -186,6 +190,31 @@ class VolunteerRequestService : LifecycleService() {
         chatStatusChanged.flags =
             chatStatusChanged.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
         NotificationManagerCompat.from(applicationContext).notify(3002, chatStatusChanged)
+    }
+
+    private fun createNotificationNewMessage(chatWithMessages: ChatWithMessages) {
+        val pendingIntentFound = PendingIntent.getActivity(
+            applicationContext,
+            0,
+            Intent(applicationContext, VolunteerActivity::class.java).putExtra(
+                "statusChanged",
+                chatWithMessages.chat.id
+            ),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val chatStatusChanged: Notification = NotificationCompat.Builder(
+            this@VolunteerRequestService,
+            channel
+        )
+            .setContentTitle("Nowa wiadomość od ${chatWithMessages.chat.userInNeedName}")
+            .setContentText(chatWithMessages.messages.last().content)
+            .setSmallIcon(R.drawable.ic_baseline_live_help_24)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntentFound)
+            .build()
+        chatStatusChanged.flags =
+            chatStatusChanged.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
+        NotificationManagerCompat.from(applicationContext).notify(3003, chatStatusChanged)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

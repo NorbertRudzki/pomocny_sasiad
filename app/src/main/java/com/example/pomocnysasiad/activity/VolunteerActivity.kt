@@ -11,6 +11,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.fragment.CreateRequestFragmentDirections
 import com.example.pomocnysasiad.fragment.SearchRequestFragmentDirections
+import com.example.pomocnysasiad.model.MyPreference
 import kotlinx.android.synthetic.main.activity_volunteer.*
 
 class VolunteerActivity : AppCompatActivity() {
@@ -21,6 +22,12 @@ class VolunteerActivity : AppCompatActivity() {
         if(notificationId != 0){
             NotificationManagerCompat.from(applicationContext).cancel(notificationId)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val preference = MyPreference(applicationContext)
+        preference.setOpenChat(0L)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

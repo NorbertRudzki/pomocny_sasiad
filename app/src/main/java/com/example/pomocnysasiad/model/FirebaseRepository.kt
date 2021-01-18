@@ -5,9 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class FirebaseRepository {
     private val auth = FirebaseAuth.getInstance()
@@ -34,7 +32,7 @@ class FirebaseRepository {
             .set(list)
     }
 
-    fun deleteShoppingListForRequest(id: Long){
+    fun deleteShoppingListForRequest(id: Long) {
         cloud.collection("requestsForHelp").document("shoppingLists")
             .collection("shoppingLists")
             .document(id.toString()).delete()
@@ -122,7 +120,9 @@ class FirebaseRepository {
                 "id" to auth.currentUser!!.uid,
                 "name" to auth.currentUser!!.displayName,
                 "tokens" to 5,
-                "score" to 0
+                "score" to 0,
+                "helpCounter" to 0,
+                "opinionList" to emptyList<String>()
             )
         )
     }
@@ -306,5 +306,20 @@ class FirebaseRepository {
     fun sendMessage(id: Long, message: Message) {
         cloud.collection("chats").document(id.toString())
             .update("messages", FieldValue.arrayUnion(message))
+    }
+
+    fun assessUser(userId: String, opinion: String, score: Float) {
+        cloud.collection("users").document(userId).get().addOnSuccessListener {
+            if (it != null && it.exists()) {
+                val user = it.toObject(User::class.java)!!
+                val newScore =
+                    ((user.score * user.helpCounter) + score) / (user.helpCounter + 1).toFloat()
+                cloud.collection("users").document(userId).update(
+                    "helpCounter", FieldValue.increment(1),
+                    "opinionList", FieldValue.arrayUnion(opinion),
+                    "score", newScore
+                )
+            }
+        }
     }
 }

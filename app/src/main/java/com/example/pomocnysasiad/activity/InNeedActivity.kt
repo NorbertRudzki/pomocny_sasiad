@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.fragment.CreateRequestFragmentDirections
 import com.example.pomocnysasiad.fragment.MyRequestsFragment
+import com.example.pomocnysasiad.model.MyPreference
 import kotlinx.android.synthetic.main.activity_in_need.*
 
 class InNeedActivity : AppCompatActivity() {
@@ -20,6 +21,12 @@ class InNeedActivity : AppCompatActivity() {
         if (intent.getBooleanExtra("searchClick", false)) {
             navController.navigate(CreateRequestFragmentDirections.actionCreateRequestFragmentToMyRequestsFragment())
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+       val preference = MyPreference(applicationContext)
+        preference.setOpenChat(0L)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
