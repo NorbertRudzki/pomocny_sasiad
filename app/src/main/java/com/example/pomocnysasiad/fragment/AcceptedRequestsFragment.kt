@@ -1,5 +1,6 @@
 package com.example.pomocnysasiad.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -15,6 +16,8 @@ import com.example.pomocnysasiad.model.Category
 import com.example.pomocnysasiad.model.Chat
 import com.example.pomocnysasiad.model.ChatRequestRecord
 import com.example.pomocnysasiad.model.Request
+import com.example.pomocnysasiad.service.InNeedRequestService
+import com.example.pomocnysasiad.service.VolunteerRequestService
 import com.example.pomocnysasiad.view.ChatRequestAdapter
 import com.example.pomocnysasiad.view.OnChatInteraction
 import com.example.pomocnysasiad.viewmodel.ChatViewModel
@@ -38,6 +41,17 @@ class AcceptedRequestsFragment : Fragment(), OnChatInteraction {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (!VolunteerRequestService.isSearching) {
+            val intentService = Intent(requireContext(), VolunteerRequestService::class.java)
+            requireContext().stopService(intentService)
+            requireContext().startService(intentService)
+        }
+
+        val notificationId = arguments?.getLong("notification")
+        if (notificationId != null && notificationId != 0L) {
+            onChatClick(notificationId)
+        }
 
         acceptedRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
         chatVM.getAllAcceptedRequests().observe(viewLifecycleOwner) { requests ->

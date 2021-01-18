@@ -8,14 +8,18 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.activity.InNeedActivity
+import com.example.pomocnysasiad.activity.VolunteerActivity
 import com.example.pomocnysasiad.model.*
 import kotlinx.coroutines.*
 
 class InNeedRequestService : LifecycleService() {
     private lateinit var search: Job
+    private lateinit var channel: String
+    private lateinit var previousState: List<ChatWithMessages>
 
     companion object {
         var isSearching = false
@@ -33,7 +37,7 @@ class InNeedRequestService : LifecycleService() {
         Log.d("InNeedRequestService", "onStartCommand")
         super.onStartCommand(intent, flags, startId)
         isSearching = true
-        val searchChannelId =
+        channel =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 createNotificationChannel("inNeed", "Sprawdzanie stanu aktywnych zgłoszeń")
             } else {
@@ -46,47 +50,107 @@ class InNeedRequestService : LifecycleService() {
         val pendingIntentSearch = PendingIntent.getActivity(
             applicationContext,
             0,
-            Intent(applicationContext, InNeedActivity::class.java).putExtra("searchClick",true),
+            Intent(applicationContext, InNeedActivity::class.java).putExtra("searchClick", true),
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         search = CoroutineScope(Dispatchers.Main).launch {
 
-            localRepository.getAllMyRequest(firebaseRepository.getUserId()).observe(this@InNeedRequestService){ allLists ->
-                Log.d("getAllMyRequest","trigger")
-                if(allLists != null){
-                    if(allLists.isEmpty()){
-                        Log.d("getAllMyRequest","empty")
-                        stopSelf()
-                    }
-                    Log.d("getAllMyRequest","notempty")
-                    val notification: Notification = NotificationCompat.Builder(this@InNeedRequestService, searchChannelId)
-                        .setContentTitle("Sprawdzam stan aktywnych zgłoszeń")
-                        .setContentText("${allLists.size} zgłoszeń")
-                        .setSmallIcon(R.drawable.ic_baseline_search_24)
-                        .setContentIntent(pendingIntentSearch)
-                        .build()
-                    startForeground(3001, notification)
-
-                    firebaseRepository.getMyChatCloudUpdate(allLists.map { it.id }).observe(this@InNeedRequestService){ list ->
-                        Log.d("getInNeedChatStatusCloudUpdate","triggered")
-                        if(!list.isNullOrEmpty()){
-                            localRepository.updateChats(list.map { it.chat })
-
-                            for(i in list){
-                                localRepository.insertMessages(i.messages)
-                                Log.d("getInNeedChatStatusCloudUpdate",i.toString())
-                            }
+            previousState = emptyList()
+            localRepository.getAllMyRequest(firebaseRepository.getUserId())
+                .observe(this@InNeedRequestService) { allLists ->
+                    var startNotify = false
+                    Log.d("getAllMyRequest", "trigger")
+                    if (allLists != null) {
+                        if (allLists.isEmpty()) {
+                            Log.d("getAllMyRequest", "empty")
+                            stopSelf()
                         }
-                    }
+                        Log.d("getAllMyRequest", "notempty")
+                        val notification: Notification =
+                            NotificationCompat.Builder(this@InNeedRequestService, channel)
+                                .setContentTitle("Sprawdzam stan aktywnych zgłoszeń")
+                                .setContentText("${allLists.size} zgłoszeń")
+                                .setSmallIcon(R.drawable.ic_baseline_search_24)
+                                .setContentIntent(pendingIntentSearch)
+                                .build()
+                        startForeground(3001, notification)
 
+                        firebaseRepository.getMyChatCloudUpdate(allLists.map { it.id })
+                            .observe(this@InNeedRequestService) { list ->
+                                Log.d("getInNeedChatStatusCloudUpdate", "triggered")
+                                if (!list.isNullOrEmpty()) {
+
+                                    localRepository.updateChats(list.map { it.chat })
+
+                                    for ((index, value) in list.withIndex()) {
+                                        if (startNotify) {
+                                            var currentStatus = value.chat.status
+                                            var previousStatus = previousState[index].chat.status
+                                            if (currentStatus != previousStatus
+                                                && !(currentStatus == 4 && previousStatus == 2)
+                                                && currentStatus != 3
+                                                && currentStatus != 7
+                                            ) {
+                                                if(!(currentStatus == 9 && previousStatus == 6)){
+                                                    createNotification(value.chat)
+                                                }
+                                                if(currentStatus == 9){
+                                                    localRepository.deleteRequestById(value.chat.id)
+                                                    localRepository.deleteProductsByListId(value.chat.id)
+                                                    localRepository.deleteChat(value.chat)
+                                                    localRepository.deleteMessagesByChatId(value.chat.id)
+                                                }
+                                            }
+                                        }
+                                        localRepository.insertMessages(value.messages)
+                                        Log.d("getInNeedChatStatusCloudUpdate", value.toString())
+                                    }
+                                    previousState = list
+                                    if (!startNotify) {
+                                        startNotify = true
+                                    }
+                                }
+                            }
+                    }
                 }
-            }
         }
         search.start()
 
 
         return START_STICKY
+    }
+
+    private fun createNotification(chat: Chat) {
+        val pendingIntentFound = PendingIntent.getActivity(
+            applicationContext,
+            0,
+            Intent(applicationContext, InNeedActivity::class.java).putExtra(
+                "statusChanged",
+                chat.id
+            ),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val contentText = when (chat.status) {
+            1 -> "${chat.volunteerName} zaproponował pomoc!"
+            2, 4 -> "${chat.volunteerName} potwierdził, że chce pomóc!"
+            5 -> "${chat.volunteerName} zrezygnował z pomocy"
+            6, 9 -> "${chat.volunteerName} potwierdził zakończenie zgłoszenia"
+            else -> ""
+        }
+        val chatStatusChanged: Notification = NotificationCompat.Builder(
+            this@InNeedRequestService,
+            channel
+        )
+            .setContentTitle("Zmiana stanu zgłoszenia!")
+            .setContentText(contentText)
+            .setSmallIcon(R.drawable.ic_baseline_live_help_24)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntentFound)
+            .build()
+        chatStatusChanged.flags =
+            chatStatusChanged.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
+        NotificationManagerCompat.from(applicationContext).notify(3002, chatStatusChanged)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

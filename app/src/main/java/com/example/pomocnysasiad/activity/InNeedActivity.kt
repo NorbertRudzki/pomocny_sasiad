@@ -2,6 +2,7 @@ package com.example.pomocnysasiad.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,7 +17,7 @@ class InNeedActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(intent.getBooleanExtra("searchClick", false)){
+        if (intent.getBooleanExtra("searchClick", false)) {
             navController.navigate(CreateRequestFragmentDirections.actionCreateRequestFragmentToMyRequestsFragment())
         }
     }
@@ -37,5 +38,13 @@ class InNeedActivity : AppCompatActivity() {
             )
         )
         inNeedBottomNavigationView.setupWithNavController(navController)
+
+        val chatId = intent.getLongExtra("statusChanged", 0L)
+        if (chatId != 0L) {
+            navController.navigate(
+                CreateRequestFragmentDirections.actionCreateRequestFragmentToMyRequestsFragment().actionId,
+                bundleOf("notification" to chatId)
+            )
+        }
     }
 }

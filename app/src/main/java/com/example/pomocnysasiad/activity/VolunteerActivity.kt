@@ -3,11 +3,14 @@ package com.example.pomocnysasiad.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.pomocnysasiad.R
+import com.example.pomocnysasiad.fragment.CreateRequestFragmentDirections
+import com.example.pomocnysasiad.fragment.SearchRequestFragmentDirections
 import kotlinx.android.synthetic.main.activity_volunteer.*
 
 class VolunteerActivity : AppCompatActivity() {
@@ -18,7 +21,6 @@ class VolunteerActivity : AppCompatActivity() {
         if(notificationId != 0){
             NotificationManagerCompat.from(applicationContext).cancel(notificationId)
         }
-
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,5 +37,13 @@ class VolunteerActivity : AppCompatActivity() {
             )
         )
         volunteerBottomNavigationView.setupWithNavController(navController)
+
+        val chatId = intent.getLongExtra("statusChanged", 0L)
+        if (chatId != 0L) {
+            navController.navigate(
+                SearchRequestFragmentDirections.actionSearchRequestFragment2ToAcceptedRequestsFragment2().actionId,
+                bundleOf("notification" to chatId)
+            )
+        }
     }
 }

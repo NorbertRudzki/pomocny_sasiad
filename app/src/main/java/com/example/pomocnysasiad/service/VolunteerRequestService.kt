@@ -11,12 +11,15 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import com.example.pomocnysasiad.R
+import com.example.pomocnysasiad.activity.InNeedActivity
 import com.example.pomocnysasiad.activity.VolunteerActivity
 import com.example.pomocnysasiad.model.*
 import kotlinx.coroutines.*
 
 class VolunteerRequestService : LifecycleService() {
     private lateinit var search: Job
+    private lateinit var channel: String
+    private lateinit var previousState: List<ChatWithMessages>
 
     companion object {
         var isSearching = false
@@ -34,7 +37,7 @@ class VolunteerRequestService : LifecycleService() {
         Log.d("SearchRequestService", "onStartCommand")
         super.onStartCommand(intent, flags, startId)
         isSearching = true
-        val searchChannelId =
+        channel =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 createNotificationChannel("searching", "Szukanie nowego zgłoszenia")
             } else {
@@ -66,17 +69,19 @@ class VolunteerRequestService : LifecycleService() {
 
             searchNewRequests.observe(this@VolunteerRequestService) {
                 Log.d("DODANO, można myslec o powiadomieniu", it.toString())
+
                 val pendingIntentFound = PendingIntent.getActivity(
                     applicationContext,
                     0,
-                    Intent(applicationContext, VolunteerActivity::class.java).putExtra("notified",2002),
+                    Intent(applicationContext, VolunteerActivity::class.java).putExtra(
+                        "notified",
+                        2002
+                    ),
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
-
-
                 val newRequestNotification: Notification = NotificationCompat.Builder(
                     this@VolunteerRequestService,
-                    searchChannelId
+                    channel
                 )
                     .setContentTitle("Znaleziono nowe zgłoszenie w okolicy!")
                     .setContentText("${it.userInNeedName} potrzebuje Twojej pomocy")
@@ -86,30 +91,60 @@ class VolunteerRequestService : LifecycleService() {
                     .build()
                 newRequestNotification.flags =
                     newRequestNotification.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
-                NotificationManagerCompat.from(applicationContext).notify(2002, newRequestNotification)
+                NotificationManagerCompat.from(applicationContext)
+                    .notify(2002, newRequestNotification)
                 isSearching = false
                 searchNewRequests.removeObservers(this@VolunteerRequestService)
             }
 
-            localRepository.getAllAcceptedRequest(firebaseRepository.getUserId()).observe(this@VolunteerRequestService){ allLists ->
-                firebaseRepository.getMyChatCloudUpdate(allLists.map { it.id }).observe(this@VolunteerRequestService){ list ->
-                    Log.d("getVolunteerChatStatusCloudUpdate","triggered")
-                    if(!list.isNullOrEmpty()){
-                        localRepository.updateChats(list.map { it.chat })
-                        for(i in list){
-                            localRepository.insertMessages(i.messages)
-                            Log.d("getVolunteerChatStatusCloudUpdate",i.toString())
+            localRepository.getAllAcceptedRequest(firebaseRepository.getUserId())
+                .observe(this@VolunteerRequestService) { allLists ->
+                    previousState = emptyList()
+                    var startNotify = false
+                    firebaseRepository.getMyChatCloudUpdate(allLists.map { it.id })
+                        .observe(this@VolunteerRequestService) { list ->
+                            Log.d("getVolunteerChatStatusCloudUpdate", "triggered")
+                            if (!list.isNullOrEmpty()) {
+                                localRepository.updateChats(list.map { it.chat })
+                                for ((index, value) in list.withIndex()) {
+                                    if (startNotify) {
+                                        var currentStatus = value.chat.status
+                                        var previousStatus = previousState[index].chat.status
+                                        if (currentStatus != previousStatus
+                                            && !(currentStatus == 4 && previousStatus == 3)
+                                            && currentStatus != 1
+                                            && currentStatus != 2
+                                            && currentStatus != 6
+                                        ) {
+                                            if(!(currentStatus == 9 && previousStatus == 7)){
+                                                createNotification(value.chat)
+                                            }
+                                            if(currentStatus == 9){
+                                                firebaseRepository.increaseUsersToken()
+                                                firebaseRepository.deleteChat(value.chat)
+                                                localRepository.deleteRequestById(value.chat.id)
+                                                localRepository.deleteProductsByListId(value.chat.id)
+                                                localRepository.deleteChat(value.chat)
+                                                localRepository.deleteMessagesByChatId(value.chat.id)
+
+                                            }
+                                        }
+                                    }
+                                    localRepository.insertMessages(value.messages)
+                                    Log.d("getVolunteerChatStatusCloudUpdate", value.toString())
+                                }
+                                previousState = list
+                                if (!startNotify) {
+                                    startNotify = true
+                                }
+                            }
                         }
-                    }
                 }
-            }
         }
         search.start()
 
 
-
-
-        val notification: Notification = NotificationCompat.Builder(this, searchChannelId)
+        val notification: Notification = NotificationCompat.Builder(this, channel)
             .setContentTitle("Sprawdzam, czy ktoś potrzebuje pomocy")
             .setContentText("zasięg poszukiwań: ${preferences.getRange()}km")
             .setSmallIcon(R.drawable.ic_baseline_search_24)
@@ -120,6 +155,37 @@ class VolunteerRequestService : LifecycleService() {
 
 
         return START_STICKY
+    }
+
+    private fun createNotification(chat: Chat) {
+        val pendingIntentFound = PendingIntent.getActivity(
+            applicationContext,
+            0,
+            Intent(applicationContext, VolunteerActivity::class.java).putExtra(
+                "statusChanged",
+                chat.id
+            ),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val contentText = when (chat.status) {
+            3, 4 -> "${chat.userInNeedName} zgodził się na Twoją pomoc"
+            5 -> "${chat.userInNeedName} zrezygnował z pomocy"
+            7, 9 -> "${chat.userInNeedName} potwierdził zakończenie zgłoszenia"
+            else -> ""
+        }
+        val chatStatusChanged: Notification = NotificationCompat.Builder(
+            this@VolunteerRequestService,
+            channel
+        )
+            .setContentTitle("Zmiana stanu zgłoszenia!")
+            .setContentText(contentText)
+            .setSmallIcon(R.drawable.ic_baseline_live_help_24)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntentFound)
+            .build()
+        chatStatusChanged.flags =
+            chatStatusChanged.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
+        NotificationManagerCompat.from(applicationContext).notify(3002, chatStatusChanged)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

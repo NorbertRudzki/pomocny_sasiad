@@ -44,6 +44,13 @@
             app:popExitAnim="@anim/from_right"
             app:popUpTo="@id/searchRequestFragment2"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_searchRequestFragment2_to_acceptedRequestsFragment2"
+            app:destination="@id/acceptedRequestsFragment2"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right" />
     </fragment>
     <fragment
         android:id="@+id/requestDetails"

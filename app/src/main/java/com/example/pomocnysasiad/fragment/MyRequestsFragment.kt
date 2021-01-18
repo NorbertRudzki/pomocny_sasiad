@@ -46,6 +46,11 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
             requireContext().stopService(intentService)
             requireContext().startService(intentService)
         }
+        val notificationId = arguments?.getLong("notification")
+        if (notificationId != null && notificationId != 0L) {
+            onChatClick(notificationId)
+        }
+
 
         myRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
         chatVM.getAllMyRequests().observe(viewLifecycleOwner) { requests ->
@@ -92,8 +97,10 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
     }
 
     override fun onChatClick(id: Long) {
-        findNavController().navigate(MyRequestsFragmentDirections.actionMyRequestsFragmentToChatFragment().actionId,
-        bundleOf("id" to id))
+        findNavController().navigate(
+            MyRequestsFragmentDirections.actionMyRequestsFragmentToChatFragment().actionId,
+            bundleOf("id" to id)
+        )
     }
 
 }

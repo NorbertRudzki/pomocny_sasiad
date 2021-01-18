@@ -97,9 +97,23 @@ class ChatFragment : Fragment() {
             if (role == 1 && (currentChat!!.chat.status == 4 || currentChat!!.chat.status == 7)) {
                 chatVM.setChatCloudStatus(id, currentChat!!.chat.status + 2)
                 currentChat!!.chat.status += 2
+                findNavController().navigate(
+                    ChatFragmentDirections.actionChatFragment2ToAssessFragment2().actionId,
+                    bundleOf(
+                        "userName" to currentChat!!.chat.userInNeedName,
+                        "userId" to currentChat!!.chat.userInNeedId
+                    )
+                )
             } else if (role == 2 && (currentChat!!.chat.status == 4 || currentChat!!.chat.status == 6)) {
                 chatVM.setChatCloudStatus(id, currentChat!!.chat.status + 3)
                 currentChat!!.chat.status += 3
+                findNavController().navigate(
+                    ChatFragmentDirections.actionChatFragment2ToAssessFragment2().actionId,
+                    bundleOf(
+                        "userName" to currentChat!!.chat.volunteerName,
+                        "userId" to currentChat!!.chat.volunteerId
+                    )
+                )
             }
         }
 
@@ -155,7 +169,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun rejectAssessDialog(chatWithMessages: ChatWithMessages) {
-        if(role == 2){
+        if (role == 2) {
             reCreateRequestCloud(chatWithMessages)
         }
         chatVM.deleteChatWithMessagesLocally(chatWithMessages)
@@ -183,7 +197,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun informAboutRejected(chatWithMessages: ChatWithMessages) {
-        if(role == 2){
+        if (role == 2) {
             reCreateRequestCloud(chatWithMessages)
         } else {
             chatVM.deleteChatWithMessagesLocally(chatWithMessages)
@@ -220,7 +234,7 @@ class ChatFragment : Fragment() {
                 var newRequest = it
                 newRequest.request.id = Calendar.getInstance().timeInMillis
                 requestVM.insertRequestCloud(newRequest.request)
-                if(role == 2){
+                if (role == 2) {
                     requestVM.insertRequestLocal(newRequest.request)
                     val newChat = Chat(
                         id = newRequest.request.id,
@@ -238,7 +252,7 @@ class ChatFragment : Fragment() {
                         newRequest.request,
                         ProductsListWrapper(newRequest.list)
                     )
-                    if(role == 2){
+                    if (role == 2) {
                         requestVM.insertShoppingListForRequestLocal(newRequest.list)
                     }
                 }
