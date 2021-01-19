@@ -7,75 +7,118 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragment.AccountFragment"
-    android:layout_marginBottom="?attr/actionBarSize">
+    android:layout_marginBottom="?attr/actionBarSize"
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/accountUserNameLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        app:layout_constraintStart_toEndOf="parent"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center">
-
-        <ImageView
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:background="@drawable/ic_person_icon"
-            android:backgroundTint="@color/secondary"
-            />
+        app:layout_constraintBottom_toTopOf="@+id/accountControllersLayout"
+        android:gravity="center_horizontal"
+        android:background="@drawable/ic_bg_account"
+        android:layout_marginBottom="-20dp">
 
         <TextView
             android:id="@+id/accountUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_bold"
-            android:textColor="@color/pDark"
-            android:text="TextView"
+            android:fontFamily="@font/montserrat_medium"
             android:padding="10dp"
-            android:textSize="34sp" />
+            android:text="Jan Kowalski"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+
+        <RatingBar
+            style="@style/RatingTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5" />
 
         <Button
-            android:id="@+id/opinionBtn"
+            android:id="@+id/opinionsBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:fontFamily="@font/montserrat_semibold"
-            android:textColor="@color/white"
-            android:text="Opinia o użytkowniku"
-            android:backgroundTint="@color/primary"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/tokensLayout"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accountUserNameLayout"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/accountUserTokens"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/secondary"
-            android:textSize="96sp"
-            android:layout_marginTop="-20dp"
-            android:layout_marginBottom="-20dp"
-            android:text="0" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10sp"
-            android:textColor="@color/pDark"
-            android:textSize="14sp"
+            android:text="Opinie o mnie"
             android:fontFamily="@font/montserrat_regular"
-            android:text="ŻETONY"
-            />
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/sLight"
+            android:padding="10dp"
+             />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/tokensLayout"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginRight="20dp">
+                <TextView
+                    android:id="@+id/accountUserTokens"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="48sp"
+                    android:layout_marginTop="-10dp"
+                    android:layout_marginBottom="-10dp"
+                    android:text="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8sp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="ŻETONY"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/opinionsLayout"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/accountUserNameLayout"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/accountUserOpinions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="48sp"
+                    android:layout_marginTop="-10dp"
+                    android:layout_marginBottom="-10dp"
+                    android:text="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:padding="8sp"
+                    android:text="OPINIE"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 
@@ -83,13 +126,11 @@
         android:id="@+id/accountControllersLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tokensLayout"
+        app:layout_constraintTop_toBottomOf="@id/accountUserNameLayout"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:padding="10dp">
-
 
             <Button
                 android:id="@+id/accountSignOutBT"
@@ -99,19 +140,20 @@
                 android:fontFamily="@font/montserrat_regular"
                 android:textColor="@color/white"
                 android:text="wyloguj się"
-                android:background="@color/secondary"
-                android:layout_marginRight="5dp"/>
+                android:background="@drawable/button"
+                android:backgroundTint="@color/sLight" />
 
             <Button
                 android:id="@+id/accountChooseRoleBT"
                 android:layout_width="0dip"
                 android:layout_weight="0.5"
                 android:layout_height="wrap_content"
-                android:background="@color/secondary"
+                android:background="@drawable/button"
+                android:backgroundTint="@color/sLight"
                 android:fontFamily="@font/montserrat_regular"
                 android:textColor="@color/white"
                 android:text="zmień rolę"
-                android:layout_marginLeft="5dp"/>
+                android:layout_marginStart="10dp"/>
 
     </LinearLayout>
 
@@ -120,8 +162,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp"
-        app:layout_constraintTop_toBottomOf="@id/accountControllersLayout">
+        android:padding="20dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/shadow_card"
+        android:elevation="5dp"
+        app:layout_constraintTop_toBottomOf="@id/accountControllersLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -139,19 +186,37 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp">
 
-            <EditText
-                android:id="@+id/accountCodeText"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
                 android:layout_weight="0.6"
-                android:backgroundTint="@color/sDark"
-                android:fontFamily="@font/montserrat_regular"
-                android:hint="Kod"
-                android:inputType="textPersonName"
-                android:textColor="@color/sDark"
-                android:textColorHint="@color/sLight"
-                android:textColorLink="@color/sLight" />
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/accountCodeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Kod"
+                    android:textColorHint="@color/sLight"
+                    android:textColor="@color/sDark"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:backgroundTint="@color/sDark"
+                    android:inputType="number"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            <EditText-->
+<!--                android:id="@+id/accountCodeText"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginRight="5dp"-->
+<!--                android:layout_weight="0.6"-->
+<!--                android:backgroundTint="@color/sDark"-->
+<!--                android:fontFamily="@font/montserrat_regular"-->
+<!--                android:hint="Kod"-->
+<!--                android:inputType="textPersonName"-->
+<!--                android:textColor="@color/sDark"-->
+<!--                android:textColorHint="@color/sLight"-->
+<!--                android:textColorLink="@color/sLight" />-->
 
             <Button
                 android:id="@+id/accountActivateCodeBtn"
@@ -161,13 +226,12 @@
                 android:fontFamily="@font/montserrat_regular"
                 android:textColor="@color/white"
                 android:text="aktywuj kod"
-                android:layout_marginLeft="5dp"
-                android:background="@color/pDark" />
+                android:layout_marginStart="10dp"
+                android:background="@drawable/button"
+                android:backgroundTint="@color/pDark"
+                android:padding="10dp"/>
 
         </LinearLayout>
-
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -199,8 +263,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/codeDisplayDeleteLayout"
-        android:padding="10dp">
+        android:layout_margin="10dp"
+        android:padding="20dp"
+        android:background="@drawable/shadow_card"
+        android:elevation="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/codeDisplayDeleteLayout">
 
         <TextView
             android:layout_width="wrap_content"
@@ -220,7 +287,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="0.6"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
                 android:gravity="center">
 
                 <LinearLayout
@@ -274,10 +340,12 @@
                 android:layout_weight="0.4"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_regular"
+                android:background="@drawable/button"
                 android:backgroundTint="@color/pDark"
                 android:textColor="@color/white"
                 android:text="utwórz kod"
-                android:layout_marginLeft="5dp"/>
+                android:padding="10dp"
+                android:layout_marginStart="10dp"/>
 
         </LinearLayout>
 

@@ -78,6 +78,25 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="RatingTheme" parent="Widget.AppCompat.RatingBar.Small">
+        <item name="android:progressDrawable">@drawable/rating</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:maxHeight">48dp</item>
+        <item name="android:isIndicator">true</item>
+        <item name="android:progressTint">@color/white</item>
+        <item name="android:progressBackgroundTint">@color/white</item>
+        <item name="android:secondaryProgressTint">@color/white</item>
+        <item name="android:scaleX">0.5</item>
+        <item name="android:scaleY">0.5</item>
+    </style>
 
+    <style name="buttonStyle">
+
+    </style>
+
+    <style name="buttonStyleSecondary" parent="@style/buttonStyle">
+        <item name="android:background">@drawable/button</item>
+        <item name="elevation">3dp</item>
+    </style>
 
 </resources>
