@@ -22,15 +22,16 @@ class CategoryAdapter(
     private val selectedOne: Int?
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
-    inner class CategoryViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    inner class CategoryViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
         val image: ImageView = v.findViewById(R.id.categoryListRowImage)
         val name: TextView = v.findViewById(R.id.categoryRowName)
-        private val selectButton: Button = v.findViewById(R.id.selectCategoryBT)
         val layout: ConstraintLayout = v.findViewById(R.id.categoryRowLinear)
         init {
-            selectButton.setOnClickListener {
-                onCategorySelected.onCategorySelected(adapterPosition)
-            }
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            onCategorySelected.onCategorySelected(adapterPosition)
         }
     }
 
