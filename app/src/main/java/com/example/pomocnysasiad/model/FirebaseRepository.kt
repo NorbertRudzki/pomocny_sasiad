@@ -120,7 +120,7 @@ class FirebaseRepository {
                 "id" to auth.currentUser!!.uid,
                 "name" to auth.currentUser!!.displayName,
                 "tokens" to 5,
-                "score" to 0,
+                "score" to 0F,
                 "helpCounter" to 0,
                 "opinionList" to emptyList<String>()
             )
@@ -131,6 +131,19 @@ class FirebaseRepository {
         val user = MutableLiveData<User>()
         if (auth.currentUser != null) {
             cloud.collection("users").document(auth.currentUser!!.uid)
+                .addSnapshotListener { value, _ ->
+                    if (value != null && value.exists()) {
+                        user.postValue(value.toObject(User::class.java))
+                    }
+                }
+        }
+        return user
+    }
+
+    fun getUser(id: String): LiveData<User> {
+        val user = MutableLiveData<User>()
+        if (auth.currentUser != null) {
+            cloud.collection("users").document(id)
                 .addSnapshotListener { value, _ ->
                     if (value != null && value.exists()) {
                         user.postValue(value.toObject(User::class.java))
@@ -316,7 +329,7 @@ class FirebaseRepository {
                     ((user.score * user.helpCounter) + score) / (user.helpCounter + 1).toFloat()
                 cloud.collection("users").document(userId).update(
                     "helpCounter", FieldValue.increment(1),
-                    "opinionList", FieldValue.arrayUnion(opinion),
+                    "opinionList", FieldValue.arrayUnion(Opinion(auth.currentUser!!.displayName!!, opinion)),
                     "score", newScore
                 )
             }

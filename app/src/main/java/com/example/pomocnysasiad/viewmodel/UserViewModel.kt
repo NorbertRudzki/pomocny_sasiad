@@ -11,6 +11,8 @@ class UserViewModel: ViewModel() {
 
     fun getUserId() = repository.getUserId()
 
+    fun getUser(id: String) = repository.getUser(id)
+
     fun createUser(){
         repository.createNewUser()
     }

@@ -28,6 +28,7 @@
     <string name="finished">Zakończono</string>
     <string name="send">Wyślij</string>
     <string name="assess_question">Jak oceniasz współpracę z użytkownikiem </string>
+    <string name="check_account">Sprawdź profil</string>
 
 
 </resources>

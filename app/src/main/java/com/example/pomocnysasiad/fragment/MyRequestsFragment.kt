@@ -72,13 +72,13 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
         val list = ArrayList<ChatRequestRecord>()
         Log.d("requests size", allRequests!!.size.toString())
         Log.d("chats size", allChats!!.size.toString())
-        for ((index, value) in allRequests!!.withIndex()) {
+        for ((index, value) in allChats!!.withIndex()) {
             list.add(
                 ChatRequestRecord(
                     value.id,
-                    allChats!![index].volunteerName,
-                    value.title,
-                    Category.categoryList[value.category]["icon"] as Int
+                    value.volunteerName,
+                    allRequests!![index].title,
+                    Category.categoryList[allRequests!![index].category]["icon"] as Int
                 )
             )
         }

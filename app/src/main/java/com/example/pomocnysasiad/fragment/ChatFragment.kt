@@ -59,6 +59,7 @@ class ChatFragment : Fragment() {
         super.onResume()
         preference.setOpenChat(id)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -77,6 +78,23 @@ class ChatFragment : Fragment() {
         chatVM.getChatById(id).observe(viewLifecycleOwner) {
             if (it != null) {
                 currentChat = it
+                if (preference.getRole() == 1) {
+                    chatUserName.text = currentChat!!.chat.userInNeedName
+                    chatCheckAccount.setOnClickListener {
+                        findNavController().navigate(
+                            R.id.action_chatFragment2_to_accountReputationFragment,
+                            bundleOf("userId" to currentChat!!.chat.userInNeedId)
+                        )
+                    }
+                } else {
+                    chatUserName.text = currentChat!!.chat.volunteerName
+                    chatCheckAccount.setOnClickListener {
+                        findNavController().navigate(
+                            R.id.action_chatFragment_to_accountReputationFragment2,
+                            bundleOf("userId" to currentChat!!.chat.volunteerId)
+                        )
+                    }
+                }
                 if (currentChat!!.chat.status == 5) {
                     informAboutRejected(currentChat!!)
                 }

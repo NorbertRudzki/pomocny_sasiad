@@ -81,6 +81,11 @@
             app:exitAnim="@anim/from_right"
             app:popEnterAnim="@anim/from_left"
             app:popExitAnim="@anim/from_right" />
+        <action
+            android:id="@+id/action_chatFragment2_to_accountReputationFragment"
+            app:destination="@id/accountReputationFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/from_right" />
     </fragment>
     <fragment
         android:id="@+id/assessFragment2"
@@ -95,4 +100,8 @@
             app:popEnterAnim="@anim/from_left"
             app:popExitAnim="@anim/from_right" />
     </fragment>
+    <fragment
+        android:id="@+id/accountReputationFragment"
+        android:name="com.example.pomocnysasiad.fragment.AccountReputationFragment"
+        android:label="AccountReputationFragment" />
 </navigation>
