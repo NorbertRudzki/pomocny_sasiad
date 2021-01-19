@@ -8,7 +8,7 @@ import java.util.*
 
 @Entity
 data class Request(
-    @PrimaryKey val id: Long = 0L,
+    @PrimaryKey var id: Long = 0L,
     val userInNeedId: String ="",
     val userInNeedName: String = "",
     val title: String = "",

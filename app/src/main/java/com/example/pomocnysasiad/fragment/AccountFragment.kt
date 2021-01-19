@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.example.pomocnysasiad.R
-import com.example.pomocnysasiad.VolunteerRequestService
+import com.example.pomocnysasiad.service.VolunteerRequestService
 import com.example.pomocnysasiad.activity.ChooseRoleActivity
 import com.example.pomocnysasiad.activity.LoginActivity
 import com.example.pomocnysasiad.model.Code
@@ -93,8 +93,10 @@ class AccountFragment : Fragment() {
             accountTokenCountDisplay.text = tokenCounter.toString()
         }
         accountReduceTockenBtn.setOnClickListener {
-            tokenCounter -= 1
-            accountTokenCountDisplay.text = tokenCounter.toString()
+            if (tokenCounter > 1) {
+                tokenCounter -= 1
+                accountTokenCountDisplay.text = tokenCounter.toString()
+            }
         }
         accountCreateCodeBtn.setOnClickListener {
             currentUser?.let {

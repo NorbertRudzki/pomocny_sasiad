@@ -1,5 +1,6 @@
 package com.example.pomocnysasiad.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +11,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pomocnysasiad.service.InNeedRequestService
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.model.Category
 import com.example.pomocnysasiad.model.Chat
@@ -18,7 +20,6 @@ import com.example.pomocnysasiad.model.Request
 import com.example.pomocnysasiad.view.ChatRequestAdapter
 import com.example.pomocnysasiad.view.OnChatInteraction
 import com.example.pomocnysasiad.viewmodel.ChatViewModel
-import com.example.pomocnysasiad.viewmodel.RequestViewModel
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_my_requests.*
 
@@ -40,6 +41,17 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (!InNeedRequestService.isSearching) {
+            val intentService = Intent(requireContext(), InNeedRequestService::class.java)
+            requireContext().stopService(intentService)
+            requireContext().startService(intentService)
+        }
+        val notificationId = arguments?.getLong("notification")
+        if (notificationId != null && notificationId != 0L) {
+            onChatClick(notificationId)
+        }
+
+
         myRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
         chatVM.getAllMyRequests().observe(viewLifecycleOwner) { requests ->
             if (!requests.isNullOrEmpty()) {
@@ -60,13 +72,13 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
         val list = ArrayList<ChatRequestRecord>()
         Log.d("requests size", allRequests!!.size.toString())
         Log.d("chats size", allChats!!.size.toString())
-        for ((index, value) in allRequests!!.withIndex()) {
+        for ((index, value) in allChats!!.withIndex()) {
             list.add(
                 ChatRequestRecord(
                     value.id,
-                    allChats!![index].volunteerName,
-                    value.title,
-                    Category.categoryList[value.category]["icon"] as Int
+                    value.volunteerName,
+                    allRequests!![index].title,
+                    Category.categoryList[allRequests!![index].category]["icon"] as Int
                 )
             )
         }
@@ -85,8 +97,10 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
     }
 
     override fun onChatClick(id: Long) {
-        findNavController().navigate(MyRequestsFragmentDirections.actionMyRequestsFragmentToChatFragment().actionId,
-        bundleOf("id" to id))
+        findNavController().navigate(
+            MyRequestsFragmentDirections.actionMyRequestsFragmentToChatFragment().actionId,
+            bundleOf("id" to id)
+        )
     }
 
 }

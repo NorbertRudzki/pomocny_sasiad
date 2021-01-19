@@ -9,6 +9,7 @@ class MyPreference(context: Context) {
     val PREF_LATITUDE = "latitude"
     val PREF_LONGITUDE = "longitude"
     val PREF_RANGE = "range"
+    val PREF_OPENED_CHAT = "chat"
 
     val preference = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
     val editor = preference.edit()
@@ -41,6 +42,13 @@ class MyPreference(context: Context) {
     fun setLocation(location : Location){
         editor.putFloat(PREF_LATITUDE, location.latitude.toFloat())
         editor.putFloat(PREF_LONGITUDE, location.longitude.toFloat())
+        editor.apply()
+    }
+
+    fun getOpenChat(): Long = preference.getLong(PREF_OPENED_CHAT, 0)
+
+    fun setOpenChat(id: Long){
+        editor.putLong(PREF_OPENED_CHAT, id)
         editor.apply()
     }
 }

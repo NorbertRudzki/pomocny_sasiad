@@ -55,6 +55,11 @@ class LocalRepository(context: Context) {
             requestDao.deleteRequest(request)
         }
 
+    fun deleteRequestById(id: Long) =
+        CoroutineScope(Dispatchers.IO).launch {
+            requestDao.deleteRequestById(id)
+        }
+
     fun updateRequest(request: Request) =
         CoroutineScope(Dispatchers.IO).launch {
             requestDao.updateRequest(request)
@@ -66,7 +71,7 @@ class LocalRepository(context: Context) {
     fun getAllMyRequest(uid: String): LiveData<List<Request>> =
         requestDao.getAllMyRequest(uid)
 
-    fun getRequestWithShoppingListById(uid: Long): LiveData<List<RequestWithShoppingList>> =
+    fun getRequestWithShoppingListById(uid: Long): LiveData<RequestWithShoppingList> =
         requestDao.getRequestWithShoppingListById(uid)
 
     fun insertMessage(message: Message) =
@@ -104,9 +109,9 @@ class LocalRepository(context: Context) {
             chatDao.updateChats(chats)
         }
 
-    fun getChatById(id: Long):LiveData<ChatWithMessages> = chatDao.getChatById(id)
+    fun getChatById(id: Long): LiveData<ChatWithMessages> = chatDao.getChatById(id)
 
-    fun getAllVolunteerChats(id: String):LiveData<List<Chat>> = chatDao.getAllVolunteerChats(id)
+    fun getAllVolunteerChats(id: String): LiveData<List<Chat>> = chatDao.getAllVolunteerChats(id)
 
-    fun getAllInNeedChats(id: String):LiveData<List<Chat>> = chatDao.getAllInNeedChats(id)
+    fun getAllInNeedChats(id: String): LiveData<List<Chat>> = chatDao.getAllInNeedChats(id)
 }

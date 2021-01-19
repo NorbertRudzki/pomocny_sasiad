@@ -59,6 +59,7 @@ class RequestDetails : Fragment() {
                             shoppingListLiveData.observe(viewLifecycleOwner){ list ->
                                 if(!list.isNullOrEmpty()){
                                     requestVM.insertShoppingListForRequestLocal(list)
+                                    requestVM.deleteShoppingListForRequestCloud(request.id)
                                     findNavController().navigate(RequestDetailsDirections.actionRequestDetailsToAcceptedRequestsFragment2())
                                 }
                             }

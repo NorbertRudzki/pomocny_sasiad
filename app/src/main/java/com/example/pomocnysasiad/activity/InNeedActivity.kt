@@ -2,6 +2,7 @@ package com.example.pomocnysasiad.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -10,6 +11,7 @@ import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.fragment.CreateRequestFragmentDirections
 import com.example.pomocnysasiad.fragment.MyRequestsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.pomocnysasiad.model.MyPreference
 import kotlinx.android.synthetic.main.activity_in_need.*
 
 class InNeedActivity : AppCompatActivity() {
@@ -17,9 +19,15 @@ class InNeedActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(intent.getBooleanExtra("searchClick", false)){
+        if (intent.getBooleanExtra("searchClick", false)) {
             navController.navigate(CreateRequestFragmentDirections.actionCreateRequestFragmentToMyRequestsFragment())
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+       val preference = MyPreference(applicationContext)
+        preference.setOpenChat(0L)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,5 +46,13 @@ class InNeedActivity : AppCompatActivity() {
             )
         )
         inNeedBottomNavigationView.setupWithNavController(navController)
+
+        val chatId = intent.getLongExtra("statusChanged", 0L)
+        if (chatId != 0L) {
+            navController.navigate(
+                CreateRequestFragmentDirections.actionCreateRequestFragmentToMyRequestsFragment().actionId,
+                bundleOf("notification" to chatId)
+            )
+        }
     }
 }
