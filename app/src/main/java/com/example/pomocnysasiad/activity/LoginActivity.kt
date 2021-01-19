@@ -49,7 +49,8 @@ class LoginActivity : AppCompatActivity() {
             val intent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setTheme(R.style.AppTheme)
+                .setLogo(R.drawable.ic_logo)
+                .setTheme(R.style.LoginTheme)
                 .build()
             startActivityForResult(intent, SIGN_IN)
         } else {

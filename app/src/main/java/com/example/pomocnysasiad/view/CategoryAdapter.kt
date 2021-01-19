@@ -1,13 +1,14 @@
 package com.example.pomocnysasiad.view
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -25,10 +26,10 @@ class CategoryAdapter(
     inner class CategoryViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val image: ImageView = v.findViewById(R.id.categoryListRowImage)
         val name: TextView = v.findViewById(R.id.categoryRowName)
-        private val selectButton: Button = v.findViewById(R.id.selectCategoryBT)
-        val layout: ConstraintLayout = v.findViewById(R.id.categoryRowLinear)
+//        private val selectButton: CardView = v.findViewById(R.id.selectCategoryBT)
+        val layout: LinearLayout = v.findViewById(R.id.selectCategoryBT)
         init {
-            selectButton.setOnClickListener {
+            layout.setOnClickListener {
                 onCategorySelected.onCategorySelected(adapterPosition)
             }
         }
@@ -41,12 +42,15 @@ class CategoryAdapter(
     }
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
+        holder.image.setImageResource(list[position]["image"] as Int)
+        holder.image.setColorFilter(ContextCompat.getColor(context, R.color.pDark))
         holder.name.text = list[position]["name"] as CharSequence
-        Glide.with(context).load(list[position]["image"]).centerCrop().fitCenter()
-            .into(holder.image)
+//        Glide.with(context).load(list[position]["image"]).centerCrop().fitCenter()
+//            .into(holder.image)
         selectedOne?.let {
             if(position==selectedOne) {
-                holder.layout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+//                holder.layout.setBackgroundColor(ContextCompat.getColor(context, R.color.primary))
+                holder.image.setColorFilter(ContextCompat.getColor(context,R.color.secondary))
             }
         }
     }

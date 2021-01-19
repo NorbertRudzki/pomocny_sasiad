@@ -26,6 +26,7 @@
         app:menu="@menu/inneed_nav_menu"
         app:itemTextColor="@color/bottom_nav_color"
         app:itemIconTint="@color/bottom_nav_color"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/primary"
+        android:theme="@style/BottomNav"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

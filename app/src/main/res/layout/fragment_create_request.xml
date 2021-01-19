@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginHorizontal="10dp">
+        android:layout_margin="10dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -23,16 +23,22 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:hint="@string/title"
-                android:imeOptions="actionNext"/>
+                android:imeOptions="actionNext"
+                android:fontFamily="@font/montserrat_regular"
+                android:textColor="@color/sDark"
+                android:textColorHint="@color/sLight"
+                android:textSize="24sp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/category"
-            android:fontFamily="@font/courgette"
-            android:textSize="16sp"
-            />
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/pLight"
+            android:textSize="14sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/createRequestCategoryRecycler"
@@ -41,24 +47,37 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
+<!--        <TextView-->
+<!--            android:id="@+id/selectedCategoryTV"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textSize="16sp"-->
+<!--            android:fontFamily="@font/courgette"/>-->
+
         <TextView
-            android:id="@+id/selectedCategoryTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:fontFamily="@font/courgette"/>
+            android:text="Detale zlecenia"
+            android:textSize="14sp"
+            android:textColor="@color/pLight"
+            android:fontFamily="@font/montserrat_medium"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:minHeight="80dp">
+            android:layout_height="match_parent" >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/createRequestDescription"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="textMultiLine"
                 android:hint="@string/description"
-                android:imeOptions="actionNext"/>
+                android:imeOptions="actionNext"
+                android:fontFamily="@font/montserrat_regular"
+                android:textColor="@color/sDark"
+                android:textColorHint="@color/sLight"
+                android:textSize="20sp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout

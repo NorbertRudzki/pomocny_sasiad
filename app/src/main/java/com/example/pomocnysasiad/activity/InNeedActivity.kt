@@ -9,6 +9,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.fragment.CreateRequestFragmentDirections
 import com.example.pomocnysasiad.fragment.MyRequestsFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_in_need.*
 
 class InNeedActivity : AppCompatActivity() {
