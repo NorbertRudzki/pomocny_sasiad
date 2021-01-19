@@ -18,9 +18,15 @@ interface RequestDao {
     @Query("SELECT * FROM Request WHERE userInNeedId NOT LIKE :uid")
     fun getAllAcceptedRequest(uid: String): LiveData<List<Request>>
 
+    @Query("SELECT COUNT(*) FROM Request WHERE userInNeedId NOT LIKE :uid")
+    fun getCountOfVolunteerRequests(uid: String): LiveData<Int>
+
     //inNeed
     @Query("SELECT * FROM Request WHERE userInNeedId LIKE :uid")
     fun getAllMyRequest(uid: String): LiveData<List<Request>>
+
+    @Query("SELECT COUNT(*) FROM Request WHERE userInNeedId LIKE :uid")
+    fun getCountOfInNeedRequests(uid: String): LiveData<Int>
 
     @Query("DELETE FROM Request WHERE id = :id")
     fun deleteRequestById(id: Long)
@@ -28,4 +34,6 @@ interface RequestDao {
     @Transaction
     @Query("SELECT * FROM Request WHERE id = :uid")
     fun getRequestWithShoppingListById(uid: Long): LiveData<RequestWithShoppingList>
+
+
 }

@@ -85,7 +85,7 @@ class InNeedRequestService : LifecycleService() {
                                     localRepository.updateChats(list.map { it.chat })
 
                                     for ((index, value) in list.withIndex()) {
-                                        if (startNotify) {
+                                        if (startNotify && previousState.isNotEmpty()) {
                                             var currentStatus = value.chat.status
                                             var previousStatus = previousState[index].chat.status
                                             var currentMessages = value.messages.size

@@ -60,5 +60,9 @@ class RequestViewModel(application: Application) : AndroidViewModel(application)
 
     fun getRequestWithShoppingListById(uid: Long) = localRepository.getRequestWithShoppingListById(uid)
 
+    fun getCountOfVolunteerRequests() = localRepository.getCountOfVolunteerRequests(firebaseRepository.getUserId())
+
+    fun getCountOfInNeedRequests() = localRepository.getCountOfInNeedRequests(firebaseRepository.getUserId())
+
 
 }

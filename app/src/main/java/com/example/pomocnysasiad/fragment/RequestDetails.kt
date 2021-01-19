@@ -49,25 +49,33 @@ class RequestDetails : Fragment() {
         detailsDesc.text = "Opis: ${request.description}"
 
         detailsOfferToHelp.setOnClickListener {
-               val chatLiveData = chatVM.acceptRequestAndGetChat(request)
-                chatLiveData.observe(viewLifecycleOwner){
-                    if(it != null){
-                        chatVM.insertChat(it)
-                        requestVM.insertRequestLocal(request)
-                        if(request.category == 0){
-                            val shoppingListLiveData = requestVM.getShoppingList(request.id)
-                            shoppingListLiveData.observe(viewLifecycleOwner){ list ->
-                                if(!list.isNullOrEmpty()){
-                                    requestVM.insertShoppingListForRequestLocal(list)
-                                    requestVM.deleteShoppingListForRequestCloud(request.id)
-                                    findNavController().navigate(RequestDetailsDirections.actionRequestDetailsToAcceptedRequestsFragment2())
+
+            val requestCounter = requestVM.getCountOfVolunteerRequests()
+            requestCounter.observe(viewLifecycleOwner){ counter ->
+                Log.d("requestCounter",counter.toString())
+                if(counter < 10){
+                    val chatLiveData = chatVM.acceptRequestAndGetChat(request)
+                    chatLiveData.observe(viewLifecycleOwner){
+                        if(it != null){
+                            chatVM.insertChat(it)
+                            requestVM.insertRequestLocal(request)
+                            if(request.category == 0){
+                                val shoppingListLiveData = requestVM.getShoppingList(request.id)
+                                shoppingListLiveData.observe(viewLifecycleOwner){ list ->
+                                    if(!list.isNullOrEmpty()){
+                                        requestVM.insertShoppingListForRequestLocal(list)
+                                        requestVM.deleteShoppingListForRequestCloud(request.id)
+                                        findNavController().navigate(RequestDetailsDirections.actionRequestDetailsToAcceptedRequestsFragment2())
+                                    }
                                 }
+                            }else{
+                                findNavController().navigate(RequestDetailsDirections.actionRequestDetailsToAcceptedRequestsFragment2())
                             }
-                        }else{
-                            findNavController().navigate(RequestDetailsDirections.actionRequestDetailsToAcceptedRequestsFragment2())
                         }
                     }
                 }
+                requestCounter.removeObservers(viewLifecycleOwner)
+            }
         }
     }
 }

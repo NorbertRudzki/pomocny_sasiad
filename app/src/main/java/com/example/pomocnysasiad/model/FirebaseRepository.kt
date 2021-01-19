@@ -74,39 +74,23 @@ class FirebaseRepository {
         val request = MutableLiveData<Request>()
         listenerNewRequestRegistration?.remove()
         listenerNewRequestRegistration = cloud.collection("requestsForHelp")
-            .orderBy("id")
-            .limitToLast(2)
-            //.whereGreaterThanOrEqualTo("location", filter.nearbyPoints[0])
-            //.whereGreaterThanOrEqualTo("id", Calendar.getInstance().timeInMillis)
-            //.whereLessThanOrEqualTo("location", filter.nearbyPoints[1])
             .whereIn("longitudeZone", filter.longZone)
+            .orderBy("id", Query.Direction.DESCENDING)
+            .limit(1)
             .addSnapshotListener { value, _ ->
                 Log.d("noticeNewRequest", "triggered")
                 if (value != null && !value.isEmpty) {
                     Log.d("noticeNewRequest", "triggered nor empty")
-                    val list = ArrayList<Request>()
-                    val listOfNew = ArrayList<Request>()
-                    for (req in value.documents) {
-                        val data = req.toObject(Request::class.java)
-                        data?.let { list.add(it) }
-                    }
-                    for (req in value.documentChanges) {
-                        if (req.type == DocumentChange.Type.ADDED) {
-                            val data = req.document.toObject(Request::class.java)
-                            listOfNew.add(data)
-                            Log.d("dodano", data.toString())
+                    Log.d("value.documentChanges[0]", value.documentChanges[0].document.toString())
+                    Log.d("value.documentChanges size", value.documentChanges.size.toString())
+                    if(value.documentChanges.last().type == DocumentChange.Type.ADDED){
+                        val data = value.documentChanges.last().document.toObject(Request::class.java)
+                        Log.d("ADDED", data.toString())
+                        if(data.location.longitude >= filter.longNearbyPoints[0]
+                            && data.location.longitude <= filter.longNearbyPoints[1]
+                            && data.userInNeedId != getUserId()){
+                            request.postValue(data)
                         }
-                    }
-                    Log.d("Nowe size", listOfNew.size.toString())
-                    Log.d("Wszystkie size", list.size.toString())
-
-                    if (listOfNew.size != list.size
-                        && listOfNew.isNotEmpty()
-                        && listOfNew[0].location.longitude >= filter.longNearbyPoints[0]
-                        && listOfNew[0].location.longitude <= filter.longNearbyPoints[1]
-                        && listOfNew[0].userInNeedId != getUserId()
-                    ) {
-                        request.postValue(listOfNew[0])
                     }
                 }
             }
@@ -329,7 +313,7 @@ class FirebaseRepository {
                     ((user.score * user.helpCounter) + score) / (user.helpCounter + 1).toFloat()
                 cloud.collection("users").document(userId).update(
                     "helpCounter", FieldValue.increment(1),
-                    "opinionList", FieldValue.arrayUnion(Opinion(auth.currentUser!!.displayName!!, opinion)),
+                    "opinionList", FieldValue.arrayUnion(Opinion(auth.currentUser!!.displayName!!, opinion, score)),
                     "score", newScore
                 )
             }

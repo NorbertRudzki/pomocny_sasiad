@@ -76,14 +76,16 @@ class AcceptedRequestsFragment : Fragment(), OnChatInteraction {
         Log.d("chats size", allChats!!.size.toString())
         for ((index, value) in allChats!!.withIndex()) {
             Log.d("All Requests read", value.toString())
-            list.add(
-                ChatRequestRecord(
-                    value.id,
-                    value.userInNeedName,
-                    allRequests!![index].title,
-                    Category.categoryList[allRequests!![index].category]["icon"] as Int
+            if(index < allRequests!!.size){
+                list.add(
+                    ChatRequestRecord(
+                        value.id,
+                        value.userInNeedName,
+                        allRequests!![index].title,
+                        Category.categoryList[allRequests!![index].category]["icon"] as Int
+                    )
                 )
-            )
+            }
         }
         return list.toList()
     }

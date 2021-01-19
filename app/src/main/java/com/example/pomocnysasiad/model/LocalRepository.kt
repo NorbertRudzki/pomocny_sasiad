@@ -114,4 +114,8 @@ class LocalRepository(context: Context) {
     fun getAllVolunteerChats(id: String): LiveData<List<Chat>> = chatDao.getAllVolunteerChats(id)
 
     fun getAllInNeedChats(id: String): LiveData<List<Chat>> = chatDao.getAllInNeedChats(id)
+
+    fun getCountOfVolunteerRequests(uid: String) = requestDao.getCountOfVolunteerRequests(uid)
+
+    fun getCountOfInNeedRequests(uid: String) = requestDao.getCountOfInNeedRequests(uid)
 }

@@ -110,7 +110,14 @@ class CreateRequestFragment : Fragment(), OnCategorySelected {
         createRequestDescription.setText(interfaceVM.getDescription().value)
 
         createRequestCreateBT.setOnClickListener {
-            checkPermissionAndCreateRequest()
+            val requestCount = requestVM.getCountOfInNeedRequests()
+            requestCount.observe(viewLifecycleOwner){ counter ->
+                Log.d("requestCount",counter.toString())
+                if(counter < 10){
+                    checkPermissionAndCreateRequest()
+                }
+                requestCount.removeObservers(viewLifecycleOwner)
+            }
         }
 
     }

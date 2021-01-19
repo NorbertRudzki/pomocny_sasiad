@@ -65,35 +65,42 @@ class VolunteerRequestService : LifecycleService() {
                     locationService.getLongNearbyPoints(preferences.getRange().toDouble())
                 )
             )
-
+            var isReadyForNotify = false
+            var lastKnownId = 0L
             searchNewRequests.observe(this@VolunteerRequestService) {
                 Log.d("DODANO, można myslec o powiadomieniu", it.toString())
+                if(isReadyForNotify && lastKnownId != it.id){
+                    lastKnownId = it.id
+                    val pendingIntentFound = PendingIntent.getActivity(
+                        applicationContext,
+                        0,
+                        Intent(applicationContext, VolunteerActivity::class.java).putExtra(
+                            "notified",
+                            2002
+                        ),
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                    val newRequestNotification: Notification = NotificationCompat.Builder(
+                        this@VolunteerRequestService,
+                        channel
+                    )
+                        .setContentTitle("Znaleziono nowe zgłoszenie w okolicy!")
+                        .setContentText("${it.userInNeedName} potrzebuje Twojej pomocy")
+                        .setSmallIcon(R.drawable.ic_baseline_live_help_24)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntentFound)
+                        .build()
+                    newRequestNotification.flags =
+                        newRequestNotification.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
+                    NotificationManagerCompat.from(applicationContext)
+                        .notify(2002, newRequestNotification)
+                    isSearching = false
+                    searchNewRequests.removeObservers(this@VolunteerRequestService)
+                } else {
+                    isReadyForNotify = true
+                    lastKnownId = it.id
+                }
 
-                val pendingIntentFound = PendingIntent.getActivity(
-                    applicationContext,
-                    0,
-                    Intent(applicationContext, VolunteerActivity::class.java).putExtra(
-                        "notified",
-                        2002
-                    ),
-                    PendingIntent.FLAG_UPDATE_CURRENT
-                )
-                val newRequestNotification: Notification = NotificationCompat.Builder(
-                    this@VolunteerRequestService,
-                    channel
-                )
-                    .setContentTitle("Znaleziono nowe zgłoszenie w okolicy!")
-                    .setContentText("${it.userInNeedName} potrzebuje Twojej pomocy")
-                    .setSmallIcon(R.drawable.ic_baseline_live_help_24)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntentFound)
-                    .build()
-                newRequestNotification.flags =
-                    newRequestNotification.flags or (Notification.FLAG_AUTO_CANCEL or Notification.DEFAULT_LIGHTS)
-                NotificationManagerCompat.from(applicationContext)
-                    .notify(2002, newRequestNotification)
-                isSearching = false
-                searchNewRequests.removeObservers(this@VolunteerRequestService)
             }
 
             localRepository.getAllAcceptedRequest(firebaseRepository.getUserId())
@@ -106,7 +113,7 @@ class VolunteerRequestService : LifecycleService() {
                             if (!list.isNullOrEmpty()) {
                                 localRepository.updateChats(list.map { it.chat })
                                 for ((index, value) in list.withIndex()) {
-                                    if (startNotify) {
+                                    if (startNotify && previousState.isNotEmpty()) {
                                         var currentStatus = value.chat.status
                                         var previousStatus = previousState[index].chat.status
                                         var currentMessages = value.messages.size
