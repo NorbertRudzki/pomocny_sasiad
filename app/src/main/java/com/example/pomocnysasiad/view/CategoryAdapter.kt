@@ -26,7 +26,6 @@ class CategoryAdapter(
     inner class CategoryViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
         val image: ImageView = v.findViewById(R.id.categoryListRowImage)
         val name: TextView = v.findViewById(R.id.categoryRowName)
-        val layout: ConstraintLayout = v.findViewById(R.id.categoryRowLinear)
         init {
             itemView.setOnClickListener(this)
         }

@@ -6,7 +6,8 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.AccountFragment">
+    tools:context=".fragment.AccountFragment"
+    android:layout_marginBottom="?attr/actionBarSize">
 
     <LinearLayout
         android:id="@+id/accountUserNameLayout"
