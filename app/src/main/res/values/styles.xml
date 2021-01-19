@@ -4,9 +4,33 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/pDark</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorAccent">@color/secondary</item>
+    </style>
+
+    <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/pDark</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorAccent">@color/secondary</item>
+        <item name="android:windowBackground">@drawable/ic_bg</item>
+    </style>
+
+    <style name="SpinnerTheme">
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+    </style>
+    
+    <style name="BottomNav" parent="Widget.Design.BottomNavigationView">
+        <item name="fontFamily">@font/montserrat_semibold</item>
+    </style>
+
+    <style name="PersonIcon">
+        <item name="android:background">@drawable/ic_person_icon</item>
+        <item name="android:fillColor">@color/secondary</item>
     </style>
 
     <!--designs for login and register-->

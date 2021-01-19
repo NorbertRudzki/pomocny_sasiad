@@ -1,13 +1,14 @@
 package com.example.pomocnysasiad.view
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,7 @@ class CategoryAdapter(
 
         override fun onClick(v: View?) {
             onCategorySelected.onCategorySelected(adapterPosition)
+
         }
     }
 
@@ -42,12 +44,15 @@ class CategoryAdapter(
     }
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
+        holder.image.setImageResource(list[position]["image"] as Int)
+        holder.image.setColorFilter(ContextCompat.getColor(context, R.color.pDark))
         holder.name.text = list[position]["name"] as CharSequence
-        Glide.with(context).load(list[position]["image"]).centerCrop().fitCenter()
-            .into(holder.image)
+//        Glide.with(context).load(list[position]["image"]).centerCrop().fitCenter()
+//            .into(holder.image)
         selectedOne?.let {
             if(position==selectedOne) {
-                holder.layout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+//                holder.layout.setBackgroundColor(ContextCompat.getColor(context, R.color.primary))
+                holder.image.setColorFilter(ContextCompat.getColor(context,R.color.secondary))
             }
         }
     }

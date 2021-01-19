@@ -44,7 +44,7 @@ class AccountFragment : Fragment() {
         userVM.user.observe(viewLifecycleOwner) {
             if (it != null) {
                 currentUser = it
-                accountUserTokens.text = "zetony: ${it.tokens.toString()}"
+                accountUserTokens.text = it.tokens.toString()
                 checkMyCode()
             }
         }
