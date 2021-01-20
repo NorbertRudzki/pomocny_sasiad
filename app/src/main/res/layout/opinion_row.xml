@@ -11,10 +11,11 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="15dp"
+        app:cardCornerRadius="20dp"
+        android:elevation="5dp"
         android:layout_marginHorizontal="15dp"
         android:layout_marginVertical="5dp"
-        app:contentPadding="10dp">
+        app:contentPadding="20dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -24,8 +25,10 @@
                 android:id="@+id/opinion_row_user"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="5dp"
                 android:text="TextView"
+                android:fontFamily="@font/montserrat_light"
+                android:textSize="10sp"
                 app:layout_constraintBottom_toTopOf="@+id/opinion_row_content"
                 app:layout_constraintEnd_toStartOf="@id/opinion_row_ratingBar"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +51,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="TextView"
-                android:textSize="18sp"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toTopOf="@+id/divider3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"

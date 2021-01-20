@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragment.RequestDetails">
+    tools:context=".fragment.RequestDetails"
+    android:padding="10dp">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
