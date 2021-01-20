@@ -7,17 +7,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.service.VolunteerRequestService
 import com.example.pomocnysasiad.activity.ChooseRoleActivity
 import com.example.pomocnysasiad.activity.LoginActivity
 import com.example.pomocnysasiad.model.Code
+import com.example.pomocnysasiad.model.MyPreference
 import com.example.pomocnysasiad.model.User
 import com.example.pomocnysasiad.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_account.*
 import kotlin.random.Random
 
@@ -45,6 +49,8 @@ class AccountFragment : Fragment() {
             if (it != null) {
                 currentUser = it
                 accountUserTokens.text = it.tokens.toString()
+                accountRatingBar.rating = it.score
+                accountUserOpinions.text = it.helpCounter.toString()
                 checkMyCode()
             }
         }
@@ -56,8 +62,8 @@ class AccountFragment : Fragment() {
             }
             auth.signOut()
             startActivity(
-                    Intent(requireContext(), LoginActivity::class.java)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                Intent(requireContext(), LoginActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             )
             requireActivity().finish()
         }
@@ -67,19 +73,20 @@ class AccountFragment : Fragment() {
                 requireContext().stopService(intentService)
             }
             startActivity(
-                    Intent(this.context, ChooseRoleActivity::class.java)
+                Intent(this.context, ChooseRoleActivity::class.java)
             )
         }
         accountActivateCodeBtn.setOnClickListener {
             try {
                 val data = userVM.getCode(accountCodeText.text.toString().toInt())
-                data.observe(viewLifecycleOwner, object: Observer<Code?> {
+                data.observe(viewLifecycleOwner, object : Observer<Code?> {
                     override fun onChanged(code: Code?) {
                         if (code != null) {
                             userVM.deleteCode(code.codeID)
                             userVM.increaseToken(code.tokenNum.toLong())
                         } else {
-                            Toast.makeText(context, "Podany kod nie istnieje", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Podany kod nie istnieje", Toast.LENGTH_SHORT)
+                                .show()
                         }
                         data.removeObserver(this)
                     }
@@ -109,13 +116,14 @@ class AccountFragment : Fragment() {
                     userVM.createCode(Code(codeID, it.id, tokenCounter))
                     userVM.decreaseToken(tokenCounter.toLong())
                 } else {
-                    Toast.makeText(context, "Nie masz wystarczająco tokenów", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Nie masz wystarczająco tokenów", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
         accountDeleteCodeBtn.setOnClickListener {
             val data = userVM.getCode(accountCodeDisplay.text.toString().toInt())
-            data.observe(viewLifecycleOwner, object: Observer<Code?> {
+            data.observe(viewLifecycleOwner, object : Observer<Code?> {
                 override fun onChanged(code: Code?) {
                     if (code != null) {
                         userVM.deleteCode(code.codeID)
@@ -125,12 +133,27 @@ class AccountFragment : Fragment() {
                 }
             })
         }
+        accountOpinionsBtn.setOnClickListener {
+            val preferences = MyPreference(requireContext())
+            if (preferences.getRole() == 1) {
+                findNavController().navigate(
+                    R.id.action_accountFragment2_to_accountReputationFragment,
+                    bundleOf("user" to Gson().toJson(currentUser!!))
+                )
+            } else {
+                findNavController().navigate(
+                    R.id.action_accountFragment3_to_accountReputationFragment2,
+                    bundleOf("user" to Gson().toJson(currentUser!!))
+                )
+            }
+
+        }
     }
 
     private fun checkMyCode() {
         if (currentUser != null) {
             val data = userVM.getCode(currentUser!!.id)
-            data.observe(viewLifecycleOwner, object: Observer<Code?> {
+            data.observe(viewLifecycleOwner, object : Observer<Code?> {
                 override fun onChanged(code: Code?) {
                     if (code != null) {
                         accountReduceTockenBtn.visibility = View.GONE

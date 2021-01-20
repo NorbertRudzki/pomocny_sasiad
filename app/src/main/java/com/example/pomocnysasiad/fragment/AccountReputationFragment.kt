@@ -13,6 +13,7 @@ import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.view.OpinionAdapter
 import com.example.pomocnysasiad.viewmodel.UserViewModel
 import com.firebase.ui.auth.data.model.User
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_account_reputation.*
 
 class AccountReputationFragment : Fragment() {
@@ -39,15 +40,20 @@ class AccountReputationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         reputationOpinionRecycler.layoutManager = LinearLayoutManager(requireContext())
-        val userId = arguments?.getString("userId")!!
-        val userLiveData = userVM.getUser(userId)
-        userLiveData.observe(viewLifecycleOwner){
-            if(it != null){
-                display(it)
-                userLiveData.removeObservers(viewLifecycleOwner)
+        val userId = arguments?.getString("userId")
+        val userJson = arguments?.getString("user")
+        if(!userJson.isNullOrBlank()){
+            val user = Gson().fromJson(userJson, com.example.pomocnysasiad.model.User::class.java)
+            display(user)
+        } else {
+            val userLiveData = userVM.getUser(userId!!)
+            userLiveData.observe(viewLifecycleOwner){
+                if(it != null){
+                    display(it)
+                    userLiveData.removeObservers(viewLifecycleOwner)
+                }
             }
         }
-
     }
 
     private fun display(user: com.example.pomocnysasiad.model.User){
