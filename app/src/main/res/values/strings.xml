@@ -30,6 +30,6 @@
     <string name="assess_question">Jak oceniasz współpracę z użytkownikiem </string>
     <string name="check_account">Sprawdź profil</string>
     <string name="chatHint">Wpisz wiadomość</string>
-
+    <string name="writeYourOpinion">Wpisz swoją opinię</string>
 
 </resources>
