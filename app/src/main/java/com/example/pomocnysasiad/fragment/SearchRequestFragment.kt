@@ -86,6 +86,7 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             refreshMap()
             checkPermissionAndSetLocation()
         }
+
         requestViewModel.getNearbyRequests().observe(viewLifecycleOwner){
             Log.d("Wczytano we fragmencie", it.toString())
             currentRequests = it
@@ -171,8 +172,8 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private fun refreshMap() {
         mMap?.clear()
-        locationDisplay.text =
-            "current location:\nlatitude = ${preferences.getLocation().latitude} \nlongitude = ${preferences.getLocation().longitude}"
+//        locationDisplay.text =
+//            "current location:\nlatitude = ${preferences.getLocation().latitude} \nlongitude = ${preferences.getLocation().longitude}"
         currentRequests?.let {
             showPins(it)
         }

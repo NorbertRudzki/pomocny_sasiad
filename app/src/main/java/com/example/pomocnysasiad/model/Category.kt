@@ -11,12 +11,12 @@ object Category {
             "icon" to R.drawable.pin_shop
         ),
         hashMapOf(
-            "name" to "Opieka nad\nzwierzętami",
+            "name" to "Zwięrzeta",
             "image" to R.drawable.ic_pet_icon,
             "icon" to R.drawable.pin_pet
         ),
         hashMapOf(
-            "name" to "Wyniesienie\nśmieci",
+            "name" to "Śmieci",
             "image" to R.drawable.ic_garbage_icon,
             "icon" to R.drawable.pin_trash
         ),

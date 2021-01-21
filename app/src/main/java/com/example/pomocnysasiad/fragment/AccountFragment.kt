@@ -148,6 +148,10 @@ class AccountFragment : Fragment() {
             }
 
         }
+        accountDeleteCodeBtn.setOnClickListener {
+            createCodeLayout.visibility = View.VISIBLE
+            codeDisplayDeleteLayout.visibility = View.GONE
+        }
     }
 
     private fun checkMyCode() {
@@ -156,20 +160,25 @@ class AccountFragment : Fragment() {
             data.observe(viewLifecycleOwner, object : Observer<Code?> {
                 override fun onChanged(code: Code?) {
                     if (code != null) {
-                        accountReduceTockenBtn.visibility = View.GONE
-                        accountAddTockenBtn.visibility = View.GONE
-                        accountTokenCountDisplay.visibility = View.GONE
-                        accountCreateCodeBtn.visibility = View.GONE
-                        accountCodeDisplay.visibility = View.VISIBLE
-                        accountDeleteCodeBtn.visibility = View.VISIBLE
+                        createCodeLayout.visibility = View.GONE
+                        codeDisplayDeleteLayout.visibility = View.VISIBLE
+//                        accountReduceTockenBtn.visibility = View.GONE
+//                        accountAddTockenBtn.visibility = View.GONE
+//                        accountTokenCountDisplay.visibility = View.GONE
+//                        accountCreateCodeBtn.visibility = View.GONE
+//                        accountCodeDisplay.visibility = View.VISIBLE
+//                        accountDeleteCodeBtn.visibility = View.VISIBLE
                         accountCodeDisplay.text = code.codeID.toString()
                     } else {
-                        accountReduceTockenBtn.visibility = View.VISIBLE
-                        accountAddTockenBtn.visibility = View.VISIBLE
-                        accountTokenCountDisplay.visibility = View.VISIBLE
-                        accountCreateCodeBtn.visibility = View.VISIBLE
-                        accountCodeDisplay.visibility = View.GONE
-                        accountDeleteCodeBtn.visibility = View.GONE
+                        createCodeLayout.visibility = View.VISIBLE
+                        codeDisplayDeleteLayout.visibility = View.GONE
+
+//                        accountReduceTockenBtn.visibility = View.VISIBLE
+//                        accountAddTockenBtn.visibility = View.VISIBLE
+//                        accountTokenCountDisplay.visibility = View.VISIBLE
+//                        accountCreateCodeBtn.visibility = View.VISIBLE
+//                        accountCodeDisplay.visibility = View.GONE
+//                        accountDeleteCodeBtn.visibility = View.GONE
                     }
                     data.removeObserver(this)
                 }

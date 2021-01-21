@@ -58,7 +58,7 @@ class AccountReputationFragment : Fragment() {
 
     private fun display(user: com.example.pomocnysasiad.model.User){
         reputationUser.text = user.name
-        reputationHelpCounter.text = "${user.helpCounter} ocen"
+        reputationHelpCounter.text = "${user.helpCounter}"
         reputationRatingBar.rating = user.score
         reputationOpinionRecycler.adapter = OpinionAdapter(user.opinionList)
     }
