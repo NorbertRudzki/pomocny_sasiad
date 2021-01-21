@@ -36,15 +36,16 @@
                 android:fontFamily="@font/montserrat_regular"
                 android:text="autor"
                 android:textColor="@color/white"
-                android:textSize="24sp" />
-
+                android:textSize="24sp"
+                android:layout_marginBottom="15dp"/>
+<!--
             <RatingBar
                 android:id="@+id/inNeedRating"
                 style="@style/RatingTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:numStars="5" />
-
+-->
             <Button
                 android:id="@+id/goToInNeedProfileBtn"
                 android:layout_width="wrap_content"

@@ -25,7 +25,7 @@
             android:id="@+id/readLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Odswierz lokalizację"
+            android:text="Odswież lokalizację"
             android:background="@drawable/button"
             android:backgroundTint="@color/sDark"
             android:layout_margin="10dp"

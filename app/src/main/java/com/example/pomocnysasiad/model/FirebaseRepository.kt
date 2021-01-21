@@ -50,11 +50,13 @@ class FirebaseRepository {
             .whereLessThanOrEqualTo("location", filter.nearbyPoints[1])
             .whereIn("longitudeZone", filter.longZone)
             .addSnapshotListener { value, _ ->
-                if (value != null && !value.isEmpty) {
+                if (value != null) {
+               // if (value != null && !value.isEmpty) {
                     Log.d("getNearbyRequests", "triggered nor empty")
                     val list = ArrayList<Request>()
                     for (req in value.documents) {
                         val data = req.toObject(Request::class.java)
+                        Log.d("getNearbyRequests", data.toString())
                         data?.let { list.add(it) }
                     }
                     requests.postValue(list.filter { req ->
@@ -244,10 +246,18 @@ class FirebaseRepository {
 
     fun getCode(userID: String): LiveData<Code> {
         val code = MutableLiveData<Code>()
-        cloud.collection("tokenCodes").whereEqualTo("userID", userID).get().addOnSuccessListener {
-            if (it.documents.size > 0) {
-                val data = it.documents[0].toObject(Code::class.java)
-                code.postValue(data)
+        cloud.collection("tokenCodes").whereEqualTo("userID", userID)
+            .addSnapshotListener { value, _ ->
+                Log.d("getCode firebase","triggered")
+            if (value != null) {
+                Log.d("getCode firebase","not null")
+                if(value.isEmpty){
+                    Log.d("getCode firebase","empty")
+                    code.postValue(null)
+                } else {
+                    Log.d("getCode firebase","not empty")
+                    code.postValue(value.documents[0].toObject(Code::class.java))
+                }
             }
         }
         return code
@@ -255,8 +265,13 @@ class FirebaseRepository {
 
     fun deleteCode(codeID: Int) {
         cloud.collection("tokenCodes").whereEqualTo("codeID", codeID).get().addOnSuccessListener {
+            Log.d("deleteCode","trigger")
             if (it != null) {
+                Log.d("deleteCode","not null")
                 if (it.documents.size > 0) {
+                    Log.d("deleteCode","not empty")
+                    val code = it.documents[0].toObject(Code::class.java)
+                    increaseUsersToken(code!!.tokenNum.toLong())
                     it.documents[0].reference.delete()
                 }
             }

@@ -2,6 +2,7 @@ package com.example.pomocnysasiad.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -122,16 +123,21 @@ class AccountFragment : Fragment() {
             }
         }
         accountDeleteCodeBtn.setOnClickListener {
-            val data = userVM.getCode(accountCodeDisplay.text.toString().toInt())
-            data.observe(viewLifecycleOwner, object : Observer<Code?> {
-                override fun onChanged(code: Code?) {
-                    if (code != null) {
-                        userVM.deleteCode(code.codeID)
-                        userVM.increaseToken(code.tokenNum.toLong())
-                    }
-                    data.removeObserver(this)
-                }
-            })
+            Log.d("accountDeleteCodeBtn","click")
+            userVM.deleteCode(accountCodeDisplay.text.toString().toInt())
+            createCodeLayout.visibility = View.VISIBLE
+            codeDisplayDeleteLayout.visibility = View.GONE
+        //    val data = userVM.getCode(accountCodeDisplay.text.toString().toInt())
+        //    data.observe(viewLifecycleOwner, object : Observer<Code?> {
+        //        override fun onChanged(code: Code?) {
+        //            if (code != null) {
+        //                userVM.deleteCode(code.codeID)
+        //                userVM.increaseToken(code.tokenNum.toLong())
+        //                data.removeObserver(this)
+        //            }
+//
+        //        }
+        //    })
         }
         accountOpinionsBtn.setOnClickListener {
             val preferences = MyPreference(requireContext())
@@ -148,41 +154,38 @@ class AccountFragment : Fragment() {
             }
 
         }
-        accountDeleteCodeBtn.setOnClickListener {
-            createCodeLayout.visibility = View.VISIBLE
-            codeDisplayDeleteLayout.visibility = View.GONE
-        }
+
     }
 
     private fun checkMyCode() {
         if (currentUser != null) {
             val data = userVM.getCode(currentUser!!.id)
-            data.observe(viewLifecycleOwner, object : Observer<Code?> {
-                override fun onChanged(code: Code?) {
+            data.observe(viewLifecycleOwner,
+                { code ->
+                    Log.d("checkMyCode","triggered $code")
                     if (code != null) {
                         createCodeLayout.visibility = View.GONE
                         codeDisplayDeleteLayout.visibility = View.VISIBLE
-//                        accountReduceTockenBtn.visibility = View.GONE
-//                        accountAddTockenBtn.visibility = View.GONE
-//                        accountTokenCountDisplay.visibility = View.GONE
-//                        accountCreateCodeBtn.visibility = View.GONE
-//                        accountCodeDisplay.visibility = View.VISIBLE
-//                        accountDeleteCodeBtn.visibility = View.VISIBLE
+                        //                        accountReduceTockenBtn.visibility = View.GONE
+                        //                        accountAddTockenBtn.visibility = View.GONE
+                        //                        accountTokenCountDisplay.visibility = View.GONE
+                        //                        accountCreateCodeBtn.visibility = View.GONE
+                        //                        accountCodeDisplay.visibility = View.VISIBLE
+                        //                        accountDeleteCodeBtn.visibility = View.VISIBLE
                         accountCodeDisplay.text = code.codeID.toString()
                     } else {
                         createCodeLayout.visibility = View.VISIBLE
                         codeDisplayDeleteLayout.visibility = View.GONE
 
-//                        accountReduceTockenBtn.visibility = View.VISIBLE
-//                        accountAddTockenBtn.visibility = View.VISIBLE
-//                        accountTokenCountDisplay.visibility = View.VISIBLE
-//                        accountCreateCodeBtn.visibility = View.VISIBLE
-//                        accountCodeDisplay.visibility = View.GONE
-//                        accountDeleteCodeBtn.visibility = View.GONE
+                        //                        accountReduceTockenBtn.visibility = View.VISIBLE
+                        //                        accountAddTockenBtn.visibility = View.VISIBLE
+                        //                        accountTokenCountDisplay.visibility = View.VISIBLE
+                        //                        accountCreateCodeBtn.visibility = View.VISIBLE
+                        //                        accountCodeDisplay.visibility = View.GONE
+                        //                        accountDeleteCodeBtn.visibility = View.GONE
                     }
-                    data.removeObserver(this)
-                }
-            })
+                    //data.removeObserver(this)
+                })
         }
     }
 }

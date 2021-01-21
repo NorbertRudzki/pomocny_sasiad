@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
@@ -20,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_request_details.*
 class RequestDetails : Fragment() {
     private val chatVM by viewModels<ChatViewModel>()
     private val requestVM by viewModels<RequestViewModel>()
+    lateinit var request: Request
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val callback = object : OnBackPressedCallback(true) {
@@ -41,7 +43,7 @@ class RequestDetails : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val requestJson = arguments?.getString("request")
-        val request: Request = Gson().fromJson(requestJson, Request::class.java)
+        request = Gson().fromJson(requestJson, Request::class.java)
 
         Log.d("details", request.toString())
         detailsTitle.text = "${request.title}"
@@ -51,24 +53,24 @@ class RequestDetails : Fragment() {
         detailsOfferToHelp.setOnClickListener {
 
             val requestCounter = requestVM.getCountOfVolunteerRequests()
-            requestCounter.observe(viewLifecycleOwner){ counter ->
-                Log.d("requestCounter",counter.toString())
-                if(counter < 10){
+            requestCounter.observe(viewLifecycleOwner) { counter ->
+                Log.d("requestCounter", counter.toString())
+                if (counter < 10) {
                     val chatLiveData = chatVM.acceptRequestAndGetChat(request)
-                    chatLiveData.observe(viewLifecycleOwner){
-                        if(it != null){
+                    chatLiveData.observe(viewLifecycleOwner) {
+                        if (it != null) {
                             chatVM.insertChat(it)
                             requestVM.insertRequestLocal(request)
-                            if(request.category == 0){
+                            if (request.category == 0) {
                                 val shoppingListLiveData = requestVM.getShoppingList(request.id)
-                                shoppingListLiveData.observe(viewLifecycleOwner){ list ->
-                                    if(!list.isNullOrEmpty()){
+                                shoppingListLiveData.observe(viewLifecycleOwner) { list ->
+                                    if (!list.isNullOrEmpty()) {
                                         requestVM.insertShoppingListForRequestLocal(list)
                                         requestVM.deleteShoppingListForRequestCloud(request.id)
                                         findNavController().navigate(RequestDetailsDirections.actionRequestDetailsToAcceptedRequestsFragment2())
                                     }
                                 }
-                            }else{
+                            } else {
                                 findNavController().navigate(RequestDetailsDirections.actionRequestDetailsToAcceptedRequestsFragment2())
                             }
                         }
@@ -76,6 +78,12 @@ class RequestDetails : Fragment() {
                 }
                 requestCounter.removeObservers(viewLifecycleOwner)
             }
+        }
+        goToInNeedProfileBtn.setOnClickListener {
+            findNavController().navigate(
+                RequestDetailsDirections.actionRequestDetailsToAccountReputationFragment().actionId,
+                bundleOf("userId" to request.userInNeedId)
+            )
         }
     }
 }
