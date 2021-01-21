@@ -5,7 +5,10 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_marginHorizontal="10dp">
+    android:layout_margin="10dp"
+    android:padding="20dp"
+    android:background="@drawable/shadow_card"
+    android:elevation="5dp">
 
 <!--    <androidx.cardview.widget.CardView-->
 <!--        android:id="@+id/selectCategoryBT"-->
@@ -27,7 +30,7 @@
             <ImageView
                 android:id="@+id/categoryListRowImage"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="60dp"
                 android:adjustViewBounds="true"
                 android:cropToPadding="true"
 
@@ -41,7 +44,7 @@
                 android:gravity="center"
                 android:foregroundGravity="center_horizontal"
                 android:text="placeholder"
-                android:textSize="18sp"
+                android:textSize="14sp"
                  />
 
 </LinearLayout>

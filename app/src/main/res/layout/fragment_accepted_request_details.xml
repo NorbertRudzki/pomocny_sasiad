@@ -10,26 +10,71 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
-        <TextView
-            android:id="@+id/acceptedDetailsTitle"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/acceptedDetailsAuth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_bg_account"
+                android:layout_alignStart="@+id/acceptedAuthDetails"
+                android:layout_alignEnd="@+id/acceptedAuthDetails"
+                android:layout_alignTop="@+id/acceptedAuthDetails"
+                android:layout_alignBottom="@+id/acceptedAuthDetails"/>
 
-        <TextView
-            android:id="@+id/acceptedDetailsDesc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <LinearLayout
+                android:id="@+id/acceptedAuthDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="30dp">
+
+                <TextView
+                    android:id="@+id/acceptedDetailsAuth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="author"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/acceptedDetailsShoppingList"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:background="@drawable/shadow_card"
+            android:elevation="5dp"
+            android:layout_margin="10dp"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/acceptedDetailsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:fontFamily="@font/montserrat_medium" />
+
+            <TextView
+                android:id="@+id/acceptedDetailsDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:fontFamily="@font/montserrat_regular" />
+
+            <LinearLayout
+                android:id="@+id/acceptedDetailsShoppingList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+
+
     </LinearLayout>
 </ScrollView>

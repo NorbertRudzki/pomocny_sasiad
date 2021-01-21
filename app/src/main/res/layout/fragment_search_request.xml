@@ -6,77 +6,120 @@
     android:layout_height="match_parent"
     tools:context=".fragment.SearchRequestFragment">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="?attr/actionBarSize">
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="search requests"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/locationDisplay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="120dp"
-            android:text="test GPS"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true" />
 
         <Button
             android:id="@+id/readLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Read location"
-            app:layout_constraintTop_toBottomOf="@+id/rangeSeekBar"
-            app:layout_constraintBottom_toTopOf="@+id/locationDisplay"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:text="Odswierz lokalizację"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/sDark"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textSize="10sp"/>
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-
-            app:layout_constraintBottom_toTopOf="@+id/rangeSeekBar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-        <SeekBar
-            android:id="@+id/rangeSeekBar"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="60"
-            android:layout_marginStart="10dp"
-            android:layout_marginVertical="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/readLocation"
-            app:layout_constraintEnd_toStartOf="@id/rangeTextView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mapView" />
+            android:layout_above="@+id/rangeSeekBarLayout"
+            android:layout_margin="10dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/shadow_card"
+            android:padding="10dp">
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_shopping_cart_icon"
+                app:tint="@color/secondary"
+                />
 
-        <TextView
-            android:id="@+id/rangeTextView"
-            android:layout_width="wrap_content"
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_pet_icon"
+                app:tint="@color/primary"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_garbage_icon"
+                app:tint="@color/primary"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_phone_icon"
+                app:tint="@color/primary"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_car_icon"
+                app:tint="@color/primary"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_other_icon"
+                app:tint="@color/primary"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rangeSeekBarLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/rangeSeekBar"
-            app:layout_constraintBottom_toTopOf="@+id/readLocation"
-            app:layout_constraintTop_toBottomOf="@+id/mapView"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="30dp"
+            android:padding="10dp"
+            android:background="@drawable/shadow_card">
 
-             />
+            <SeekBar
+                android:id="@+id/rangeSeekBar"
+                style="@style/Widget.AppCompat.SeekBar"
+                android:progressBackgroundTint="@color/pDark"
+                android:thumb="@drawable/seek_thumb"
+                android:layout_width="0dp"
+                android:layout_weight="0.8"
+                android:layout_height="match_parent"
+                android:max="60" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/rangeTextView"
+                android:layout_width="0dp"
+                android:layout_weight="0.2"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:layout_marginEnd="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/pDark"
+                android:fontFamily="@font/montserrat_semibold"
+                android:textAlignment="center"/>
+        </LinearLayout>
+    </RelativeLayout>
 
 </FrameLayout>

@@ -44,9 +44,9 @@ class RequestDetails : Fragment() {
         val request: Request = Gson().fromJson(requestJson, Request::class.java)
 
         Log.d("details", request.toString())
-        detailsTitle.text = "tytul: ${request.title}"
-        detailsAuth.text = "Osoba potrzebujaca: ${request.userInNeedName}"
-        detailsDesc.text = "Opis: ${request.description}"
+        detailsTitle.text = "${request.title}"
+        detailsAuth.text = "${request.userInNeedName}"
+        detailsDesc.text = "${request.description}"
 
         detailsOfferToHelp.setOnClickListener {
 

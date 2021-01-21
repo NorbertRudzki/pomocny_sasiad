@@ -48,9 +48,9 @@ class AcceptedRequestDetailsFragment : Fragment() {
         val request: Request = Gson().fromJson(requestJson, Request::class.java)
         Log.d("AcceptedRequestDetailsFragment", request.toString())
         Log.d("AcceptedRequestDetailsFragment", requestJson)
-        acceptedDetailsTitle.text = "tytul: ${request.title}"
-        acceptedDetailsAuth.text = "Osoba potrzebujaca: ${request.userInNeedName}"
-        acceptedDetailsDesc.text = "Opis: ${request.description}"
+        acceptedDetailsTitle.text = "${request.title}"
+        acceptedDetailsAuth.text = "${request.userInNeedName}"
+        acceptedDetailsDesc.text = "${request.description}"
 
         if (request.category == 0) {
             val shoppingListLiveData = requestVM.getShoppingListLocal(request.id)
