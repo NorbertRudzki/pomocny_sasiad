@@ -171,11 +171,11 @@ class ChatFragment : Fragment() {
             }
         }
         if ((role == 1 && currentChat!!.chat.status == 2) || (role == 2 && currentChat!!.chat.status == 3)) {
-            chatAccept.setBackgroundColor(Color.GRAY)
+//            chatAccept.setBackgroundColor(Color.GRAY)
             chatAccept.text = resources.getString(R.string.accepted)
         }
         if ((role == 1 && currentChat!!.chat.status == 6) || (role == 2 && currentChat!!.chat.status == 7)) {
-            chatFinish.setBackgroundColor(Color.GRAY)
+//            chatFinish.setBackgroundColor(Color.GRAY)
             chatFinish.text = resources.getString(R.string.finished)
         }
     }
