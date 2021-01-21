@@ -7,103 +7,156 @@
     android:layout_marginBottom="?attr/actionBarSize"
     tools:context=".fragment.ChatFragment">
 
-    <TextView
-        android:id="@+id/chatUserName"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/chatHeaderLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
-        android:textSize="22sp"
-        app:layout_constraintEnd_toStartOf="@id/chatCheckAccount"
+        android:orientation="horizontal"
+        android:background="@drawable/shadow_header"
+        android:elevation="5dp"
+        android:padding="10dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/chatRecycler"/>
-
-    <Button
-        android:id="@+id/chatCheckAccount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/check_account"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/chatUserName"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/chatRecycler"/>
+        app:layout_constraintBottom_toTopOf="@+id/chatRecycler">
+
+        <TextView
+            android:id="@+id/chatUserName"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/hello_blank_fragment"
+            android:textSize="24sp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:textColor="@color/sDark"
+             />
+
+        <Button
+            android:id="@+id/chatCheckAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_account"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/secondary"
+            android:padding="10dp"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_regular" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/chatNewMessageTIL"
+        app:layout_constraintBottom_toTopOf="@id/writeMessageLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chatCheckAccount" />
+        app:layout_constraintTop_toBottomOf="@id/chatHeaderLayout"
+        android:layout_margin="10dp"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/chatNewMessageTIL"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/chatAccept"
-        app:layout_constraintEnd_toStartOf="@id/chatSendMessage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chatRecycler">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/chatNewMessageChatET"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="hint" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <ImageButton
-        android:id="@+id/chatSendMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_send"
-        app:layout_constraintBottom_toTopOf="@id/chatReject"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/chatNewMessageTIL"
-        app:layout_constraintTop_toBottomOf="@id/chatRecycler" />
-
-    <View
-        android:id="@+id/divider"
+    <LinearLayout
+        android:id="@+id/writeMessageLayout"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@id/chatFinish"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chatNewMessageTIL" />
-
-    <Button
-        android:id="@+id/chatAccept"
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#4CAF50"
-        android:text="@string/accept"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/chatReject"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chatNewMessageTIL" />
+        android:background="@drawable/shadow_card"
+        android:elevation="3dp"
+        android:layout_marginHorizontal="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/chatRecycler"
+        app:layout_constraintBottom_toTopOf="@+id/chatControllersLayout"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp"
+        android:gravity="center_vertical">
 
-    <Button
-        android:id="@+id/chatReject"
-        android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/chatNewMessageTIL"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/chatAccept"
+            app:layout_constraintEnd_toStartOf="@id/chatSendMessage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chatRecycler">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/chatNewMessageChatET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/chatHint" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageButton
+            android:id="@+id/chatSendMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_send"
+            android:backgroundTint="@color/fui_transparent"
+            android:tint="@color/sDark"
+            app:layout_constraintBottom_toTopOf="@id/chatReject"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/chatNewMessageTIL"
+            app:layout_constraintTop_toBottomOf="@id/chatRecycler" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/chatControllersLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#B71C1C"
-        android:text="@string/reject"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@id/writeMessageLayout"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/chatAccept"
-        app:layout_constraintTop_toBottomOf="@id/chatNewMessageTIL" />
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/chatAccept"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/pLight"
+            android:layout_margin="5dp"
+            android:text="@string/accept"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:fontFamily="@font/montserrat_regular"
+            />
+
+        <Button
+            android:id="@+id/chatReject"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/sLight"
+            android:layout_margin="5dp"
+            android:text="@string/reject"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:fontFamily="@font/montserrat_regular" />
+
+    </LinearLayout>
+
+
 
     <Button
         android:id="@+id/chatFinish"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/finish"
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat_regular"
         android:visibility="gone"
+        android:background="@drawable/button"
+        android:backgroundTint="@color/pDark"
+        android:layout_margin="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,8 +11,7 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".fragment.AccountFragment"
-        android:background="@color/white">
+        tools:context=".fragment.AccountFragment">
 
         <LinearLayout
             android:id="@+id/accountUserNameLayout"
