@@ -35,14 +35,17 @@ class VolunteerActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentVolunteer) as NavHostFragment
         navController = navHostFragment.navController
-        navController.setGraph(R.navigation.volunteer_nav_graph)
-        AppBarConfiguration(
-            setOf(
-                R.id.acceptedRequestsFragment2,
-                R.id.searchRequestFragment2,
-                R.id.accountFragment2
+        if(savedInstanceState == null){
+            navController.setGraph(R.navigation.volunteer_nav_graph)
+            AppBarConfiguration(
+                setOf(
+                    R.id.acceptedRequestsFragment2,
+                    R.id.searchRequestFragment2,
+                    R.id.accountFragment2
+                )
             )
-        )
+        }
+
         volunteerBottomNavigationView.setupWithNavController(navController)
 
         val chatId = intent.getLongExtra("statusChanged", 0L)
