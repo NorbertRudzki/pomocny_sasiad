@@ -6,35 +6,51 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".fragment.AssessFragment"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="@drawable/ic_bg">
 
     <TextView
         android:id="@+id/assessQuestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:fontFamily="@font/montserrat_medium"/>
 
     <RatingBar
         android:id="@+id/assessRatingBar"
+        style="@style/RatingTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/assessOpinionTIL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/assessOpinionET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
-            android:hint="hint" />
+            android:hint="@string/writeYourOpinion"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:fontFamily="@font/montserrat_regular"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/assessSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/send" />
+        android:text="@string/send"
+        android:background="@drawable/button"
+        android:padding="10dp"
+        android:backgroundTint="@color/secondary"
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat_regular"
+        />
 </LinearLayout>
