@@ -20,6 +20,7 @@ import com.example.pomocnysasiad.activity.LoginActivity
 import com.example.pomocnysasiad.model.Code
 import com.example.pomocnysasiad.model.MyPreference
 import com.example.pomocnysasiad.model.User
+import com.example.pomocnysasiad.service.InNeedRequestService
 import com.example.pomocnysasiad.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
@@ -61,6 +62,10 @@ class AccountFragment : Fragment() {
                 val intentService = Intent(requireContext(), VolunteerRequestService::class.java)
                 requireContext().stopService(intentService)
             }
+            if(InNeedRequestService.isSearching) {
+                val intentService = Intent(requireContext(), InNeedRequestService::class.java)
+                requireContext().stopService(intentService)
+            }
             auth.signOut()
             startActivity(
                 Intent(requireContext(), LoginActivity::class.java)
@@ -71,6 +76,10 @@ class AccountFragment : Fragment() {
         accountChooseRoleBT.setOnClickListener {
             if (VolunteerRequestService.isSearching) {
                 val intentService = Intent(requireContext(), VolunteerRequestService::class.java)
+                requireContext().stopService(intentService)
+            }
+            if(InNeedRequestService.isSearching) {
+                val intentService = Intent(requireContext(), InNeedRequestService::class.java)
                 requireContext().stopService(intentService)
             }
             startActivity(

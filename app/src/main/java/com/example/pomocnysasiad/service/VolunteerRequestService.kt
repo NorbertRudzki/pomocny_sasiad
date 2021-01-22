@@ -62,7 +62,8 @@ class VolunteerRequestService : LifecycleService() {
                 Filter(
                     locationService.getLatZone(preferences.getRange().toDouble()),
                     locationService.getLongZone(preferences.getRange().toDouble()),
-                    locationService.getLongNearbyPoints(preferences.getRange().toDouble())
+                    locationService.getLongNearbyPoints(preferences.getRange().toDouble()),
+                    preferences.getSearchCategory()
                 )
             )
             var isReadyForNotify = false

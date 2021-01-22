@@ -17,9 +17,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
@@ -87,6 +89,8 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             checkPermissionAndSetLocation()
         }
 
+        handleChangeCategoryFilter()
+
         requestViewModel.getNearbyRequests().observe(viewLifecycleOwner){
             Log.d("Wczytano we fragmencie", it.toString())
             currentRequests = it
@@ -103,9 +107,18 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             Filter(
                 locationService.getLatZone(preferences.getRange().toDouble()),
                 locationService.getLongZone(preferences.getRange().toDouble()),
-                locationService.getLongNearbyPoints(preferences.getRange().toDouble())
+                locationService.getLongNearbyPoints(preferences.getRange().toDouble()),
+                preferences.getSearchCategory()
             )
         )
+
+        requestViewModel.getFilter().observe(viewLifecycleOwner){
+            Log.d("getFilter", it.categoryList.toString())
+            preferences.setSearchCategory(it.categoryList)
+            requireContext().stopService(Intent(requireContext(), VolunteerRequestService::class.java))
+            requireContext().startService(Intent(requireContext(), VolunteerRequestService::class.java))
+            displayCategoryFilterState(it.categoryList)
+        }
 
         rangeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             var range: Double = 1.0
@@ -124,7 +137,8 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                     Filter(
                         locationService.getLatZone(range),
                         locationService.getLongZone(range),
-                        locationService.getLongNearbyPoints(range)
+                        locationService.getLongNearbyPoints(range),
+                        preferences.getSearchCategory()
                     )
                 )
                 preferences.setRange(range.toFloat())
@@ -134,6 +148,25 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
         })
         rangeSeekBar.setProgress(preferences.getRange().toInt() * 2, true)
         rangeTextView.text = "${preferences.getRange()}km"
+    }
+
+    private fun handleChangeCategoryFilter(){
+        for( (index, value) in Category.categoryList.withIndex()) {
+            (requireView().findViewById<ImageView>(value["filterIcon"] as Int)).setOnClickListener {
+                requestViewModel.changeCategoryFilter(index)
+            }
+        }
+    }
+
+    private fun displayCategoryFilterState(list: List<Int>){
+        for( (index, value) in Category.categoryList.withIndex()){
+            val imageView: ImageView = requireView().findViewById(value["filterIcon"] as Int)
+            if(list.contains(index)){
+                imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.secondary))
+            } else {
+                imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.primary))
+            }
+        }
     }
 
     private fun checkPermissionAndSetLocation() {
@@ -172,8 +205,6 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private fun refreshMap() {
         mMap?.clear()
-//        locationDisplay.text =
-//            "current location:\nlatitude = ${preferences.getLocation().latitude} \nlongitude = ${preferences.getLocation().longitude}"
         currentRequests?.let {
             showPins(it)
         }
@@ -225,7 +256,8 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
                     Filter(
                         locationService.getLatZone(preferences.getRange().toDouble()),
                         locationService.getLongZone(preferences.getRange().toDouble()),
-                        locationService.getLongNearbyPoints(preferences.getRange().toDouble())
+                        locationService.getLongNearbyPoints(preferences.getRange().toDouble()),
+                        preferences.getSearchCategory()
                     )
                 )
                 locationLiveData.removeObservers(viewLifecycleOwner)

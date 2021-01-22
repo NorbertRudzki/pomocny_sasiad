@@ -15,6 +15,19 @@ class RequestViewModel(application: Application) : AndroidViewModel(application)
         filterRequest.postValue(filter)
     }
 
+    fun changeCategoryFilter(category: Int){
+        val filter = filterRequest.value
+        if(filter!!.categoryList.contains(category)){
+            filter.categoryList = filter.categoryList.filter { it != category }
+        } else {
+            val newList = ArrayList<Int>(filter.categoryList)
+            newList.add(category)
+            filter.categoryList = newList.toList()
+        }
+        filterRequest.postValue(filter)
+    }
+
+    fun getFilter(): LiveData<Filter> = filterRequest
 
     fun insertRequestCloud(request: Request) {
         firebaseRepository.insertRequest(request)

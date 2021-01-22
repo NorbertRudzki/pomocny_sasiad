@@ -25,7 +25,7 @@
             android:id="@+id/readLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Odswież lokalizację"
+            android:text="@string/refresh_location"
             android:background="@drawable/button"
             android:backgroundTint="@color/sDark"
             android:layout_margin="10dp"
@@ -43,6 +43,7 @@
             android:background="@drawable/shadow_card"
             android:padding="10dp">
             <ImageView
+                android:id="@+id/searchShopping"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="36dp"
@@ -51,6 +52,7 @@
                 />
 
             <ImageView
+                android:id="@+id/searchPet"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="36dp"
@@ -58,6 +60,7 @@
                 app:tint="@color/primary"/>
 
             <ImageView
+                android:id="@+id/searchGarbage"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="36dp"
@@ -65,6 +68,7 @@
                 app:tint="@color/primary"/>
 
             <ImageView
+                android:id="@+id/searchPhone"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="36dp"
@@ -72,6 +76,7 @@
                 app:tint="@color/primary"/>
 
             <ImageView
+                android:id="@+id/searchCar"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="36dp"
@@ -79,6 +84,7 @@
                 app:tint="@color/primary"/>
 
             <ImageView
+                android:id="@+id/searchOther"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="36dp"

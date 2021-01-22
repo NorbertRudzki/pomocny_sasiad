@@ -51,7 +51,7 @@ class FirebaseRepository {
             .whereIn("longitudeZone", filter.longZone)
             .addSnapshotListener { value, _ ->
                 if (value != null) {
-               // if (value != null && !value.isEmpty) {
+                    // if (value != null && !value.isEmpty) {
                     Log.d("getNearbyRequests", "triggered nor empty")
                     val list = ArrayList<Request>()
                     for (req in value.documents) {
@@ -61,8 +61,9 @@ class FirebaseRepository {
                     }
                     requests.postValue(list.filter { req ->
                         req.location.longitude >= filter.longNearbyPoints[0]
-                                && req.location.longitude <= filter.longNearbyPoints[1]
-                                && req.userInNeedId != getUserId()
+                        && req.location.longitude <= filter.longNearbyPoints[1]
+                        && req.userInNeedId != getUserId()
+                        && filter.categoryList.contains(req.category)
                     })
 
                 }
@@ -85,12 +86,15 @@ class FirebaseRepository {
                     Log.d("noticeNewRequest", "triggered nor empty")
                     Log.d("value.documentChanges[0]", value.documentChanges[0].document.toString())
                     Log.d("value.documentChanges size", value.documentChanges.size.toString())
-                    if(value.documentChanges.last().type == DocumentChange.Type.ADDED){
-                        val data = value.documentChanges.last().document.toObject(Request::class.java)
+                    if (value.documentChanges.last().type == DocumentChange.Type.ADDED) {
+                        val data =
+                            value.documentChanges.last().document.toObject(Request::class.java)
                         Log.d("ADDED", data.toString())
-                        if(data.location.longitude >= filter.longNearbyPoints[0]
+                        if (data.location.longitude >= filter.longNearbyPoints[0]
                             && data.location.longitude <= filter.longNearbyPoints[1]
-                            && data.userInNeedId != getUserId()){
+                            && data.userInNeedId != getUserId()
+                            && filter.categoryList.contains(data.category)
+                        ) {
                             request.postValue(data)
                         }
                     }
@@ -248,28 +252,28 @@ class FirebaseRepository {
         val code = MutableLiveData<Code>()
         cloud.collection("tokenCodes").whereEqualTo("userID", userID)
             .addSnapshotListener { value, _ ->
-                Log.d("getCode firebase","triggered")
-            if (value != null) {
-                Log.d("getCode firebase","not null")
-                if(value.isEmpty){
-                    Log.d("getCode firebase","empty")
-                    code.postValue(null)
-                } else {
-                    Log.d("getCode firebase","not empty")
-                    code.postValue(value.documents[0].toObject(Code::class.java))
+                Log.d("getCode firebase", "triggered")
+                if (value != null) {
+                    Log.d("getCode firebase", "not null")
+                    if (value.isEmpty) {
+                        Log.d("getCode firebase", "empty")
+                        code.postValue(null)
+                    } else {
+                        Log.d("getCode firebase", "not empty")
+                        code.postValue(value.documents[0].toObject(Code::class.java))
+                    }
                 }
             }
-        }
         return code
     }
 
     fun deleteCode(codeID: Int) {
         cloud.collection("tokenCodes").whereEqualTo("codeID", codeID).get().addOnSuccessListener {
-            Log.d("deleteCode","trigger")
+            Log.d("deleteCode", "trigger")
             if (it != null) {
-                Log.d("deleteCode","not null")
+                Log.d("deleteCode", "not null")
                 if (it.documents.size > 0) {
-                    Log.d("deleteCode","not empty")
+                    Log.d("deleteCode", "not empty")
                     val code = it.documents[0].toObject(Code::class.java)
                     increaseUsersToken(code!!.tokenNum.toLong())
                     it.documents[0].reference.delete()
@@ -327,9 +331,18 @@ class FirebaseRepository {
                 val newScore =
                     ((user.score * user.helpCounter) + score) / (user.helpCounter + 1).toFloat()
                 cloud.collection("users").document(userId).update(
-                    "helpCounter", FieldValue.increment(1),
-                    "opinionList", FieldValue.arrayUnion(Opinion(auth.currentUser!!.displayName!!, opinion, score)),
-                    "score", newScore
+                    "helpCounter",
+                    FieldValue.increment(1),
+                    "opinionList",
+                    FieldValue.arrayUnion(
+                        Opinion(
+                            auth.currentUser!!.displayName!!,
+                            opinion,
+                            score
+                        )
+                    ),
+                    "score",
+                    newScore
                 )
             }
         }

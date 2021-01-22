@@ -2,6 +2,10 @@ package com.example.pomocnysasiad.model
 
 import android.content.Context
 import android.location.Location
+import android.util.Log
+import com.google.gson.Gson
+import org.json.JSONArray
+import kotlin.math.floor
 
 class MyPreference(context: Context) {
     val PREFERENCE_NAME = "my preference"
@@ -10,6 +14,7 @@ class MyPreference(context: Context) {
     val PREF_LONGITUDE = "longitude"
     val PREF_RANGE = "range"
     val PREF_OPENED_CHAT = "chat"
+    val PREF_FILTER_CATEGORY = "category"
 
     val preference = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
     val editor = preference.edit()
@@ -51,4 +56,21 @@ class MyPreference(context: Context) {
         editor.putLong(PREF_OPENED_CHAT, id)
         editor.apply()
     }
+
+    fun setSearchCategory(list: List<Int>){
+        val jsonString = Gson().toJson(list)
+        editor.putString(PREF_FILTER_CATEGORY, jsonString)
+        editor.apply()
+    }
+
+    fun getSearchCategory(): List<Int>{
+        val jsonString = preference.getString(PREF_FILTER_CATEGORY, "")
+        return if(jsonString.isNullOrBlank()){
+            listOf(0,1,2,3,4,5)
+        } else {
+            Gson().fromJson(jsonString, List::class.java).map{ floor(it as Double).toInt() }
+        }
+
+    }
+
 }
