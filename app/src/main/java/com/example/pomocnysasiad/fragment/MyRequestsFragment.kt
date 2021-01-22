@@ -46,11 +46,9 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
             requireContext().stopService(intentService)
             requireContext().startService(intentService)
         }
-        val notificationId = arguments?.getLong("notification")
-        if (notificationId != null && notificationId != 0L) {
-            onChatClick(notificationId)
-        }
 
+
+        var notificationId = arguments?.getLong("notification")
 
         myRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
         chatVM.getAllMyRequests().observe(viewLifecycleOwner) { requests ->
@@ -61,6 +59,12 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
                         allChats = chats
                         myRequestsRecycler.adapter =
                             ChatRequestAdapter(prepareList(), this, requireContext())
+
+                        if (notificationId != null && notificationId != 0L) {
+                            val id = notificationId
+                            arguments?.putLong("notification", 0L)
+                            onChatClick(id)
+                        }
                     }
                 }
             }
@@ -70,8 +74,6 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
 
     private fun prepareList(): List<ChatRequestRecord> {
         val list = ArrayList<ChatRequestRecord>()
-        Log.d("requests size", allRequests!!.size.toString())
-        Log.d("chats size", allChats!!.size.toString())
         for ((index, value) in allChats!!.withIndex()) {
             if(index < allRequests!!.size){
                 list.add(
@@ -99,10 +101,14 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
     }
 
     override fun onChatClick(id: Long) {
-        findNavController().navigate(
-            MyRequestsFragmentDirections.actionMyRequestsFragmentToChatFragment().actionId,
-            bundleOf("id" to id)
-        )
+        Log.d("onChatClick", id.toString())
+        Log.d("(allChats!!.map { it.id }",allChats!!.map { it.id }.toString())
+        if (allChats!!.map { it.id }.contains(id)) {
+            findNavController().navigate(
+                MyRequestsFragmentDirections.actionMyRequestsFragmentToChatFragment().actionId,
+                bundleOf("id" to id)
+            )
+        }
     }
 
 }

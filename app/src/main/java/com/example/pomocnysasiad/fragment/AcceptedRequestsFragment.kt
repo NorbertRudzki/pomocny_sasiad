@@ -48,11 +48,8 @@ class AcceptedRequestsFragment : Fragment(), OnChatInteraction {
             requireContext().startService(intentService)
         }
 
-        val notificationId = arguments?.getLong("notification")
-        if (notificationId != null && notificationId != 0L) {
-            onChatClick(notificationId)
-        }
 
+        var notificationId = arguments?.getLong("notification")
         acceptedRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
         chatVM.getAllAcceptedRequests().observe(viewLifecycleOwner) { requests ->
             if (!requests.isNullOrEmpty()) {
@@ -62,20 +59,19 @@ class AcceptedRequestsFragment : Fragment(), OnChatInteraction {
                         allChats = chats
                         acceptedRequestsRecycler.adapter =
                             ChatRequestAdapter(prepareList(), this, requireContext())
+                        if (notificationId != null && notificationId != 0L) {
+                            onChatClick(notificationId!!)
+                            notificationId = 0L
+                        }
                     }
                 }
             }
         }
-
-
     }
 
     private fun prepareList(): List<ChatRequestRecord> {
         val list = ArrayList<ChatRequestRecord>()
-        Log.d("requests size", allRequests!!.size.toString())
-        Log.d("chats size", allChats!!.size.toString())
         for ((index, value) in allChats!!.withIndex()) {
-            Log.d("All Requests read", value.toString())
             if(index < allRequests!!.size){
                 list.add(
                     ChatRequestRecord(
@@ -102,10 +98,12 @@ class AcceptedRequestsFragment : Fragment(), OnChatInteraction {
     }
 
     override fun onChatClick(id: Long) {
-        findNavController().navigate(
-            AcceptedRequestsFragmentDirections.actionAcceptedRequestsFragment2ToChatFragment2().actionId,
-            bundleOf("id" to id)
-        )
+        if(allChats!!.map { it.id }.contains(id)){
+            findNavController().navigate(
+                AcceptedRequestsFragmentDirections.actionAcceptedRequestsFragment2ToChatFragment2().actionId,
+                bundleOf("id" to id)
+            )
+        }
     }
 
 }

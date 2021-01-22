@@ -49,7 +49,7 @@ class ChatFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                findNavController().popBackStack()
+              Log.d("findNavController().popBackStack()",findNavController().popBackStack().toString())
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
