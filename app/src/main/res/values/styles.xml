@@ -21,6 +21,7 @@
     </style>
 
     <style name="SpinnerTheme">
+        <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">@font/montserrat_semibold</item>
     </style>
     

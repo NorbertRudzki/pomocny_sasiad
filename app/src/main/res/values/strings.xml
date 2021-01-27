@@ -5,7 +5,7 @@
     <string name="volunteer">Wolontariusz</string>
     <string name="inNeed">Potrzebujący</string>
     <string name="title">Tytuł zgłoszenia</string>
-    <string name="description">Opis</string>
+    <string name="description">Uwagi</string>
     <string name="create">Utwórz zgłoszenie</string>
     <string name="select">Wybierz</string>
     <string name="category">Kategorie</string>
@@ -33,5 +33,8 @@
     <string name="refresh_location">Odśwież lokalizację</string>
 
     <string name="writeYourOpinion">Wpisz swoją opinię</string>
-
+    <string name="other">Inne</string>
+    <string name="form">Formularz</string>
+    <string name="fullname">Imię i nazwisko</string>
+    <string name="set">Ustaw</string>
 </resources>
