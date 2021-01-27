@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".fragment.RequestDetails"
-    android:layout_marginBottom="?attr/actionBarSize">
+    android:layout_marginBottom="@dimen/bottomNavigationViewSize">
 
     <RelativeLayout
         android:id="@+id/detailsHeader"
