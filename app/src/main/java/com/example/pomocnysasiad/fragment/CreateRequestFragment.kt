@@ -236,7 +236,6 @@ class CreateRequestFragment : Fragment(), OnCategorySelected, OnAnswerSelected {
                     }else {
                         row.questionRowET.setText(currentAnswer!![index])
                         row.questionRowSpinner.setSelection(adapter.getPosition(i.last()))
-
                     }
 
                     // row.questionRowSpinner.setSelection(2)

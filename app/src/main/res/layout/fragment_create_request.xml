@@ -62,13 +62,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Detale zlecenia"
+            android:text="@string/form"
             android:textSize="14sp"
             android:textColor="@color/pLight"
             android:fontFamily="@font/montserrat_medium"
             android:layout_marginTop="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginBottom="5dp"/>
+
+        <LinearLayout
+            android:id="@+id/createRequestForm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,8 +86,6 @@
             android:background="@drawable/shadow_card"
             android:elevation="5dp"
             android:orientation="vertical">
-
-
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -96,15 +102,6 @@
                     android:textColorHint="@color/sLight"
                     android:textSize="18sp"/>
             </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/createRequestForm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
 
         </LinearLayout>
 
