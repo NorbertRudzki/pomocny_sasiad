@@ -17,6 +17,8 @@ class UserViewModel: ViewModel() {
         repository.createNewUser()
     }
 
+    fun setDisplayName(name: String) = repository.setDisplayName(name)
+
     fun increaseToken(){
         repository.increaseUsersToken()
     }

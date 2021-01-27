@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.*
 import kotlin.collections.ArrayList
 
@@ -173,6 +174,12 @@ class FirebaseRepository {
 
     fun sendEmailVerif() {
         auth.currentUser!!.sendEmailVerification()
+    }
+
+    fun setDisplayName(name: String){
+        val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(name).build()
+        auth.currentUser!!.updateProfile(profileUpdates)
+        cloud.collection("users").document(auth.currentUser!!.uid).update("name", name)
     }
 
     //chat

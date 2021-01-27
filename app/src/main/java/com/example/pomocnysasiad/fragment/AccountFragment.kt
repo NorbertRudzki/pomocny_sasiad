@@ -45,11 +45,16 @@ class AccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        accountUserName.text = userVM.getUserName()
+
         auth = FirebaseAuth.getInstance()
         userVM.user.observe(viewLifecycleOwner) {
             if (it != null) {
                 currentUser = it
+                if(it.name.isNullOrBlank()){
+                    //todo ustaw
+                } else {
+                    accountUserName.text = it.name.toString()
+                }
                 accountUserTokens.text = it.tokens.toString()
                 accountRatingBar.rating = it.score
                 accountUserOpinions.text = it.helpCounter.toString()
