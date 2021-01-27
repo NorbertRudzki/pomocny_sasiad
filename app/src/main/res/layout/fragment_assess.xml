@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".fragment.AssessFragment"
     android:gravity="center"
-    android:background="@drawable/ic_bg">
+    android:background="@drawable/ic_bg_assess">
 
     <TextView
         android:id="@+id/assessQuestion"
