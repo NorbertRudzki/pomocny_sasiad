@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 <item
-    android:title="Przyjęte zgłoszenia"
+    android:title="Przyjęte"
     android:id="@+id/acceptedRequestsFragment2"
     android:icon="@drawable/ic_baseline_format_list_bulleted_24"
     />
     <item
-        android:title="Szukaj zgłoszeń"
+        android:title="Szukaj"
         android:id="@+id/searchRequestFragment2"
         android:icon="@drawable/ic_baseline_search_24"
         />
