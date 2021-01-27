@@ -37,6 +37,46 @@
                 android:textColor="@color/white"
                 android:textSize="24sp" />
 
+            <LinearLayout
+                android:id="@+id/setNameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:visibility="visible"
+                    android:backgroundTint="@color/secondary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/setNameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColorHint="@color/secondary"
+                    android:textColor="@color/sDark"
+                    android:hint="@string/fullname"
+                    />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/setNameButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/button"
+                    android:backgroundTint="@color/sLight"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/set"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/montserrat_regular"/>
+
+            </LinearLayout>
+
             <RatingBar
                 android:id="@+id/accountRatingBar"
                 style="@style/RatingTheme"

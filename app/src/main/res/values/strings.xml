@@ -35,5 +35,6 @@
     <string name="writeYourOpinion">Wpisz swoją opinię</string>
     <string name="other">Inne</string>
     <string name="form">Formularz</string>
-
+    <string name="fullname">Imię i nazwisko</string>
+    <string name="set">Ustaw</string>
 </resources>
