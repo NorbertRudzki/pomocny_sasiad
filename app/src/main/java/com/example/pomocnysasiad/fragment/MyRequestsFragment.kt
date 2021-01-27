@@ -48,7 +48,7 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
         }
 
 
-        var notificationId = arguments?.getLong("notification")
+        val notificationId = arguments?.getLong("notification")
 
         myRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
         chatVM.getAllMyRequests().observe(viewLifecycleOwner) { requests ->
@@ -61,9 +61,8 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
                             ChatRequestAdapter(prepareList(), this, requireContext())
 
                         if (notificationId != null && notificationId != 0L) {
-                            val id = notificationId
                             arguments?.putLong("notification", 0L)
-                            onChatClick(id)
+                            onChatClick(notificationId)
                         }
                     }
                 }

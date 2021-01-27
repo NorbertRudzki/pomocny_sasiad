@@ -1,6 +1,7 @@
 package com.example.pomocnysasiad.viewmodel
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,9 @@ class CreateRequestViewModel : ViewModel() {
     private val triedToSend: MutableLiveData<Boolean> by lazy {
         MutableLiveData()
     }
+    private val form: MutableLiveData<ArrayList<String>?> by lazy {
+        MutableLiveData()
+    }
 
     fun setTitle(title: String) {
         this.title.value = title
@@ -46,6 +50,10 @@ class CreateRequestViewModel : ViewModel() {
         this.triedToSend.value = tried
     }
 
+    fun setForm(form: ArrayList<String>?){
+        this.form.value = form
+    }
+
     fun getTitle(): LiveData<String> = title
 
     fun getDescription(): LiveData<String> = description
@@ -55,5 +63,7 @@ class CreateRequestViewModel : ViewModel() {
     fun getShoppingList(): LiveData<List<Product>?> = shoppingList
 
     fun isTriedToSend(): LiveData<Boolean> = triedToSend
+
+    fun getForm(): LiveData<ArrayList<String>?> = form
 
 }
