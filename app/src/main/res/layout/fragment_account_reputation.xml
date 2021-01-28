@@ -75,8 +75,15 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/emptyImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:src="@drawable/empty_opinion"
+        android:visibility="gone" />
 
-
+s
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reputationOpinionRecycler"
         android:layout_width="match_parent"
