@@ -8,6 +8,18 @@
     tools:context=".fragment.MyRequestsFragment"
     android:layout_marginBottom="@dimen/bottomNavigationViewSize">
 
+    <ImageView
+        android:id="@+id/emptyImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:src="@drawable/empty_request"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/myRequestsRecycler"
         android:layout_width="match_parent"
@@ -16,4 +28,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

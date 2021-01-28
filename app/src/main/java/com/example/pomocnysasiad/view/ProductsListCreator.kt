@@ -1,11 +1,18 @@
 package com.example.pomocnysasiad.view
 
+import android.app.ActionBar
 import android.app.Activity
+import android.graphics.Typeface
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginTop
+import androidx.core.view.setMargins
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.model.Product
 import com.example.pomocnysasiad.viewmodel.ProductsListViewModel
@@ -28,6 +35,12 @@ init {
         parent.removeAllViewsInLayout()
         parent.descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
         val label = TextView(activity)
+        label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
+        label.setTextColor(ContextCompat.getColor(parent.context, R.color.primary))
+        label.typeface = ResourcesCompat.getFont(parent.context,R.font.montserrat_regular)
+        val lp = parent.layoutParams as ViewGroup.MarginLayoutParams
+        lp.setMargins(10)
+        label.layoutParams = lp
         label.text = activity.resources.getString(R.string.shopping_list)
         parent.addView(label)
         for (i in list) {
@@ -60,9 +73,10 @@ init {
         }
         val labelAddProduct = TextView(activity)
         labelAddProduct.text = activity.resources.getString(R.string.add_product)
-        val param = parent.layoutParams as ViewGroup.MarginLayoutParams
-        param.setMargins(0,100,0,5)
-        labelAddProduct.layoutParams = param
+        labelAddProduct.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
+        labelAddProduct.setTextColor(ContextCompat.getColor(parent.context, R.color.primary))
+        labelAddProduct.typeface = ResourcesCompat.getFont(parent.context,R.font.montserrat_regular)
+        labelAddProduct.layoutParams = lp
         parent.addView(labelAddProduct)
 
         addNewProductRow = activity.layoutInflater.inflate(R.layout.product_row, null)
