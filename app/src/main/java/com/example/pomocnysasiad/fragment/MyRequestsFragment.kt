@@ -53,9 +53,15 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
         myRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
         chatVM.getAllMyRequests().observe(viewLifecycleOwner) { requests ->
             if (!requests.isNullOrEmpty()) {
+                Log.d("LOG","!requests.isNullOrEmpty()")
+                emptyImage.visibility = View.GONE
+                myRequestsRecycler.visibility = View.VISIBLE
                 allRequests = requests
                 chatVM.getAllInNeedChats().observe(viewLifecycleOwner) { chats ->
                     if (!chats.isNullOrEmpty() && !allRequests.isNullOrEmpty()) {
+                        Log.d("LOG","!chats.isNullOrEmpty()")
+                        emptyImage.visibility = View.GONE
+                        myRequestsRecycler.visibility = View.VISIBLE
                         allChats = chats
                         myRequestsRecycler.adapter =
                             ChatRequestAdapter(prepareList(), this, requireContext())
@@ -64,8 +70,16 @@ class MyRequestsFragment : Fragment(), OnChatInteraction {
                             arguments?.putLong("notification", 0L)
                             onChatClick(notificationId)
                         }
+                    } else {
+                        Log.d("LOG ELSE","!chats.isNullOrEmpty()")
+                        emptyImage.visibility = View.VISIBLE
+                        myRequestsRecycler.visibility = View.GONE
                     }
                 }
+            } else {
+                Log.d("LOG ELSE","!requests.isNullOrEmpty()")
+                emptyImage.visibility = View.VISIBLE
+                myRequestsRecycler.visibility = View.GONE
             }
         }
 

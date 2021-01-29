@@ -60,6 +60,14 @@ class AccountReputationFragment : Fragment() {
         reputationUser.text = user.name
         reputationHelpCounter.text = "${user.helpCounter}"
         reputationRatingBar.rating = user.score
-        reputationOpinionRecycler.adapter = OpinionAdapter(user.opinionList)
+        if(user.opinionList.isEmpty()){
+            emptyImage.visibility = View.VISIBLE
+            reputationOpinionRecycler.visibility = View.GONE
+        } else {
+            emptyImage.visibility = View.GONE
+            reputationOpinionRecycler.visibility = View.VISIBLE
+            reputationOpinionRecycler.adapter = OpinionAdapter(user.opinionList)
+        }
+
     }
 }

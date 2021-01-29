@@ -92,6 +92,15 @@ class CreateRequestFragment : Fragment(), OnCategorySelected, OnAnswerSelected {
         userVM.user.observe(viewLifecycleOwner) {
             if (it != null) {
                 currentUser = it
+                if(currentUser!!.name.isNullOrBlank()){
+                    AlertDialog.Builder(requireContext()).setTitle("Najpierw musisz ustawić swoją nazwę")
+                        .setNegativeButton("Przejdź do ustawień profilu"){_, _ ->
+                            findNavController().navigate(CreateRequestFragmentDirections.actionCreateRequestFragmentToAccountFragment3())
+                        }
+                        .setCancelable(false)
+                        .create()
+                        .show()
+                }
             }
         }
         createRequestName.setOnFocusChangeListener { _, hasFocus ->
@@ -176,29 +185,29 @@ class CreateRequestFragment : Fragment(), OnCategorySelected, OnAnswerSelected {
                 formOpen.add(
                     arrayListOf("Preferowana godzina", "rano", "południe", "popołudnie", "wieczór", "Inne(wpisz)")
                 )
-                formOpen.add(arrayListOf("Gatunek", "Pies", "Kot", "Ptak", "Królik", "Chomik", "Inne(wpisz)"))
-                formOpen.add(arrayListOf("Wielkość", "Mały", "Średni", "Duży", "Inne(wpisz)"))
-                formOpen.add(arrayListOf("Zadanie", "Spacer", "Dokarmianie", "Weterynarz", "Inne(wpisz)"))
+                formOpen.add(arrayListOf("Gatunek", "Pies", "Kot", "Ptak", "Królik", "Chomik", "Inne (wpisz)"))
+                formOpen.add(arrayListOf("Wielkość", "Mały", "Średni", "Duży", "Inne (wpisz)"))
+                formOpen.add(arrayListOf("Zadanie", "Spacer", "Dokarmianie", "Weterynarz", "Inne (wpisz)"))
                 formCheck.add("Może być niebezpieczny")
             }
             2 -> {
                 //smieci
-                formOpen.add(arrayListOf("Preferowana godzina", "rano", "południe", "popołudnie", "wieczór", "Inne(wpisz)"))
-                formOpen.add(arrayListOf("Typ", "Mieszane", "Butelki", "Duże gabaryty", "Worki", "Inne(wpisz)"))
+                formOpen.add(arrayListOf("Preferowana godzina", "rano", "południe", "popołudnie", "wieczór", "Inne (wpisz)"))
+                formOpen.add(arrayListOf("Typ", "Mieszane", "Butelki", "Duże gabaryty", "Worki", "Inne (wpisz)"))
                 formCheck.add("Nie wymaga segregacji/ posegregowane")
 
             }
             3 -> {
                 //rozmowa
-                formOpen.add(arrayListOf("Preferowana godzina", "rano", "południe", "popołudnie", "wieczór", "Inne(wpisz)"))
-                formOpen.add(arrayListOf("Ile czasu chcesz rozmawiać", "15min", "30min", "45min", "Ile tylko można", "Inne(wpisz)"))
+                formOpen.add(arrayListOf("Preferowana godzina", "rano", "południe", "popołudnie", "wieczór", "Inne (wpisz)"))
+                formOpen.add(arrayListOf("Ile czasu chcesz rozmawiać", "15min", "30min", "45min", "Ile tylko można", "Inne (wpisz)"))
             }
             4 -> {
                 //transport
-                formOpen.add(arrayListOf("Preferowana godzina", "rano", "południe", "popołudnie", "wieczór", "Inne(wpisz)"))
-                formOpen.add(arrayListOf("Co trzeba przetransportować", "Paczkę", "Rzeczy", "Ludzi", "Inne(wpisz)"))
-                formOpen.add(arrayListOf("Ilość", "1", "2", "3", "4", "Inne(wpisz)"))
-                formOpen.add(arrayListOf("Odległość", "mniej, niż 1km", "między 1km, a 3km", "między 3km, a 5km", "między 5km, a 10km", "Inne(wpisz)"))
+                formOpen.add(arrayListOf("Preferowana godzina", "rano", "południe", "popołudnie", "wieczór", "Inne (wpisz)"))
+                formOpen.add(arrayListOf("Co trzeba przetransportować", "Paczkę", "Rzeczy", "Ludzi", "Inne (wpisz)"))
+                formOpen.add(arrayListOf("Ilość", "1", "2", "3", "4", "Inne (wpisz)"))
+                formOpen.add(arrayListOf("Odległość", "mniej, niż 1km", "między 1km, a 3km", "między 3km, a 5km", "między 5km, a 10km", "Inne (wpisz)"))
                 formCheck.add("Wymaga dużego bagażnika")
             }
         }
@@ -316,9 +325,8 @@ class CreateRequestFragment : Fragment(), OnCategorySelected, OnAnswerSelected {
         if(selectedCategory != null && selectedCategory != position){
             interfaceVM.setForm(arrayListOf())
         }
-        selectedCategory = position
         setupRecycler(position)
-        if (position == 0 && productsListCreator == null) {
+        if (position == 0) {
             createRequestForm.visibility = View.VISIBLE
             productsListCreator =
                 ProductsListCreator(createRequestForm, requireActivity(), productsVM)
@@ -334,8 +342,9 @@ class CreateRequestFragment : Fragment(), OnCategorySelected, OnAnswerSelected {
             productsVM.getProducts().removeObservers(viewLifecycleOwner)
             productsListCreator = null
             currentProductsList = null
-            createRequestForm.visibility = View.GONE
+            //createRequestForm.visibility = View.GONE
         }
+        selectedCategory = position
         if (position != 0 && position != 5) {
             createForm(position)
         }

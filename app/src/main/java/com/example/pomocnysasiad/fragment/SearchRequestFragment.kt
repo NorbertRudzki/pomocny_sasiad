@@ -23,13 +23,16 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.pomocnysasiad.R
 import com.example.pomocnysasiad.service.VolunteerRequestService
 import com.example.pomocnysasiad.model.*
+import com.example.pomocnysasiad.viewmodel.ChatViewModel
 import com.example.pomocnysasiad.viewmodel.RequestViewModel
+import com.example.pomocnysasiad.viewmodel.UserViewModel
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
@@ -42,6 +45,7 @@ import kotlinx.coroutines.launch
 
 class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private lateinit var requestViewModel: RequestViewModel
+    private val userVM by viewModels<UserViewModel>()
     private val markerRequestsMap = HashMap<Marker, Request>()
     private lateinit var preferences: MyPreference
     private lateinit var locationService: LocationService
@@ -73,6 +77,16 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("life", "created")
+
+        if(userVM.getUserName().isNullOrBlank()){
+            AlertDialog.Builder(requireContext()).setTitle("Najpierw musisz ustawić swoją nazwę")
+                .setNegativeButton("Przejdź do ustawień profilu"){_, _ ->
+                    findNavController().navigate(SearchRequestFragmentDirections.actionSearchRequestFragment2ToAccountFragment2())
+                }
+                .setCancelable(false)
+                .create()
+                .show()
+        }
         preferences = MyPreference(requireContext())
         locationService = LocationService(requireContext(), preferences.getLocation())
         mapView.onCreate(savedInstanceState)
@@ -132,7 +146,6 @@ class SearchRequestFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarker
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                Toast.makeText(requireContext(), range.toString(), Toast.LENGTH_LONG).show()
                 requestViewModel.setFilter(
                     Filter(
                         locationService.getLatZone(range),

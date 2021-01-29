@@ -35,7 +35,8 @@
                 android:padding="10dp"
                 android:text="Jan Kowalski"
                 android:textColor="@color/white"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:visibility="visible"/>
 
             <LinearLayout
                 android:id="@+id/setNameLayout"

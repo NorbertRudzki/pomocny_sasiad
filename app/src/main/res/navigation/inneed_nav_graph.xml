@@ -50,6 +50,13 @@
             app:exitAnim="@anim/from_right"
             app:popEnterAnim="@anim/from_left"
             app:popExitAnim="@anim/from_right" />
+        <action
+            android:id="@+id/action_createRequestFragment_to_accountFragment3"
+            app:destination="@id/accountFragment3"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/from_right" />
     </fragment>
     <fragment
         android:id="@+id/acceptedRequestDetailsFragment2"

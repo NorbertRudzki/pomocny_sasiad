@@ -83,7 +83,6 @@
         android:src="@drawable/empty_opinion"
         android:visibility="gone" />
 
-s
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reputationOpinionRecycler"
         android:layout_width="match_parent"

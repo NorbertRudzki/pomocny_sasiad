@@ -53,9 +53,13 @@ class AcceptedRequestsFragment : Fragment(), OnChatInteraction {
         acceptedRequestsRecycler.layoutManager = LinearLayoutManager(requireContext())
         chatVM.getAllAcceptedRequests().observe(viewLifecycleOwner) { requests ->
             if (!requests.isNullOrEmpty()) {
+                emptyImageAC.visibility = View.GONE
+                acceptedRequestsRecycler.visibility = View.VISIBLE
                 allRequests = requests
                 chatVM.getAllVolunteerChats().observe(viewLifecycleOwner) { chats ->
                     if (!chats.isNullOrEmpty() && !allRequests.isNullOrEmpty()) {
+                        emptyImageAC.visibility = View.GONE
+                        acceptedRequestsRecycler.visibility = View.VISIBLE
                         allChats = chats
                         acceptedRequestsRecycler.adapter =
                             ChatRequestAdapter(prepareList(), this, requireContext())
@@ -63,8 +67,14 @@ class AcceptedRequestsFragment : Fragment(), OnChatInteraction {
                             onChatClick(notificationId!!)
                             notificationId = 0L
                         }
+                    } else {
+                        emptyImageAC.visibility = View.VISIBLE
+                        acceptedRequestsRecycler.visibility = View.GONE
                     }
                 }
+            } else {
+                emptyImageAC.visibility = View.VISIBLE
+                acceptedRequestsRecycler.visibility = View.GONE
             }
         }
     }
