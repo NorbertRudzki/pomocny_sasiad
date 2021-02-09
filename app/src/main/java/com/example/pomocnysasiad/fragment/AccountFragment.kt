@@ -62,6 +62,7 @@ class AccountFragment : Fragment() {
                     accountUserName.visibility = View.VISIBLE
                     accountUserName.text = it.name.toString()
                 }
+                Log.d("tokens",it.tokens.toString())
                 accountUserTokens.text = it.tokens.toString()
                 accountRatingBar.rating = it.score
                 accountUserOpinions.text = it.helpCounter.toString()
@@ -98,14 +99,14 @@ class AccountFragment : Fragment() {
                 Intent(this.context, ChooseRoleActivity::class.java)
             )
         }
+
         accountActivateCodeBtn.setOnClickListener {
-            try {
+
                 val data = userVM.getCode(accountCodeText.text.toString().toInt())
                 data.observe(viewLifecycleOwner, object : Observer<Code?> {
                     override fun onChanged(code: Code?) {
                         if (code != null) {
                             userVM.deleteCode(code.codeID)
-                            userVM.increaseToken(code.tokenNum.toLong())
                         } else {
                             Toast.makeText(context, "Podany kod nie istnieje", Toast.LENGTH_SHORT)
                                 .show()
@@ -113,9 +114,6 @@ class AccountFragment : Fragment() {
                         data.removeObserver(this)
                     }
                 })
-            } catch (e: NumberFormatException) {
-                Toast.makeText(context, "Kod musi byc liczbą", Toast.LENGTH_SHORT).show()
-            }
         }
         accountAddTockenBtn.setOnClickListener {
             tokenCounter += 1
@@ -130,8 +128,7 @@ class AccountFragment : Fragment() {
         accountCreateCodeBtn.setOnClickListener {
             currentUser?.let {
                 if (it.tokens >= tokenCounter) {
-                    var codeID = Random(System.nanoTime()).nextInt(899999) + 100000
-                    //TODO: jakies zabezpieczenie zeby sie 2 razy taki sam kod nie wygenerowal
+                    val codeID = Random(System.nanoTime()).nextInt(899999) + 100000
                     userVM.createCode(Code(codeID, it.id, tokenCounter))
                     userVM.decreaseToken(tokenCounter.toLong())
                 } else {
@@ -169,7 +166,6 @@ class AccountFragment : Fragment() {
             val data = userVM.getCode(currentUser!!.id)
             data.observe(viewLifecycleOwner,
                 { code ->
-                    Log.d("checkMyCode","triggered $code")
                     if (code != null) {
                         createCodeLayout.visibility = View.GONE
                         codeDisplayDeleteLayout.visibility = View.VISIBLE

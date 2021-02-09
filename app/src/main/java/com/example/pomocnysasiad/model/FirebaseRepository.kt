@@ -16,7 +16,6 @@ class FirebaseRepository {
     private var listenerChat: ListenerRegistration? = null
 
     init {
-        //todo raczej pobrac z locale, chyba, że target 100% polsza
         auth.setLanguageCode("pl")
 
     }
@@ -160,6 +159,7 @@ class FirebaseRepository {
     }
 
     fun increaseUsersToken(x: Long) {
+        Log.d("increaseUsersToken",x.toString())
         cloud.collection("users").document(auth.currentUser!!.uid)
             .update("tokens", FieldValue.increment(x))
     }
@@ -276,11 +276,8 @@ class FirebaseRepository {
 
     fun deleteCode(codeID: Int) {
         cloud.collection("tokenCodes").whereEqualTo("codeID", codeID).get().addOnSuccessListener {
-            Log.d("deleteCode", "trigger")
             if (it != null) {
-                Log.d("deleteCode", "not null")
                 if (it.documents.size > 0) {
-                    Log.d("deleteCode", "not empty")
                     val code = it.documents[0].toObject(Code::class.java)
                     increaseUsersToken(code!!.tokenNum.toLong())
                     it.documents[0].reference.delete()
